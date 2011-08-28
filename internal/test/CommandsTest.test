@@ -1,20 +1,30 @@
 #include <cxxtest/TestSuite.h>
 #include <Commands.h>
+#include <LineParser.h>
 
 using std::string;
 using std::vector;
 
 class CommandsTestSuite: public CxxTest::TestSuite
 {
+  LineParser parser;
 public:
   void setUp()
   {
+    parser.clear();
   }
 
-  void testEmpty( void )
+  void testEmptyBlank( void )
   {
     bool result = Commands().execute(vector<string>());
 
+    TS_ASSERT_EQUALS( result, false );
+  }
+  void testEmptyWithCommand( void )
+  {
+    parser.parse("test");
+    bool result = Commands().execute(parser);
+    
     TS_ASSERT_EQUALS( result, false );
   }
 };
