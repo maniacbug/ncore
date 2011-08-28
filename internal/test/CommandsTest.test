@@ -5,6 +5,11 @@
 using std::string;
 using std::vector;
 
+bool return_true(const vector<string>&)
+{
+  return true;
+}
+
 class CommandsTestSuite: public CxxTest::TestSuite
 {
   LineParser parser;
@@ -25,6 +30,24 @@ public:
     parser.parse("test");
     bool result = Commands().execute(parser);
     
+    TS_ASSERT_EQUALS( result, false );
+  }
+  void testAddWorker( void )
+  {
+    Commands commands;
+    bool ok = commands.add("cantfindme",return_true);
+
+    TS_ASSERT_EQUALS( ok, true );
+  }
+
+  void testWorkerNotFound( void )
+  {
+    Commands commands;
+    commands.add("cantfindme",return_true);
+    
+    parser.parse("test");
+    bool result = Commands().execute(parser);
+
     TS_ASSERT_EQUALS( result, false );
   }
 };
