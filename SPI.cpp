@@ -35,4 +35,6 @@ void SPIClass::setClockDivider(uint8_t rate)
 byte SPIClass::transfer(byte _data) {
   printf("NCORE: %06lu ",millis());
   printf("SPI transfer %02x\n",_data);
+
+  return 0;
 }

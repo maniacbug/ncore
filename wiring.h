@@ -26,6 +26,7 @@
 #define Wiring_h
 
 //#include <avr/io.h>
+#include <stdio.h>
 #include <inttypes.h>
 #include <stdlib.h>
 #include "binary.h"
@@ -106,6 +107,7 @@ typedef uint8_t boolean;
 typedef uint8_t byte;
 
 void init(void);
+void done(void);
 
 void pinMode(uint8_t, uint8_t);
 void digitalWrite(uint8_t, uint8_t);
@@ -131,6 +133,8 @@ void loop(void);
 
 int* empty(void);
 
+extern void fdevopen(int (*)(char, FILE*),int);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
@@ -141,5 +145,6 @@ int* empty(void);
 #define SPIE (*empty())  
 #define SPIF (*empty())  
 #define _BV(x) (1<<(x))
+
 
 #endif

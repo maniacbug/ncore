@@ -2,6 +2,10 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <stdarg.h>
+#include <string>
+
+using std::string;
 
 static struct timeval program_start;
 
@@ -85,4 +89,40 @@ void delayMicroseconds(unsigned int us)
   printf("delay %u us\n",us);
   usleep(us);
 }
+
+void fdevopen(int (*)(char, FILE*),int)
+{
 }
+
+void attachInterrupt(uint8_t num, void (*)(void), int)
+{
+  printf("NCORE: %06lu ",millis());
+  printf("attach irq %u\n",num);
+}
+void detachInterrupt(uint8_t num)
+{
+  printf("NCORE: %06lu ",millis());
+  printf("detach irq %u\n",num);
+}
+
+void printf_P(const char* format,...)
+{
+  string formatstr(format);
+
+  // replace '%S' with '%s'
+  size_t at = formatstr.find("%S");
+  while ( at != string::npos )
+  {
+    formatstr.replace(at,2,"%s");
+    at = formatstr.find("%S",at);
+  }
+
+  va_list args;
+  va_start (args, format);
+  vprintf (formatstr.c_str(), args);
+  va_end (args); 
+}
+
+}
+// vim:cin:ai:sts=2 sw=2
+
