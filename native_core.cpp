@@ -32,7 +32,8 @@ void digitalWrite(uint8_t pin,uint8_t level)
 int digitalRead(uint8_t pin)
 {
   int level = LOW;
-  printf("NCORE: read pin %i: it's %s\n",pin,level?"HIGH":"LOW");
+  printf("NCORE: %06lu ",millis());
+  printf("read pin %i: it's %s\n",pin,level?"HIGH":"LOW");
 
   return level;
 }

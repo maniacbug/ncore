@@ -1,3 +1,4 @@
+#include <WProgram.h>
 #include "HardwareSerial.h"
 
 HardwareSerial Serial;
@@ -5,7 +6,8 @@ HardwareSerial Serial;
 
 void HardwareSerial::begin(long)
 {
-  printf("NCORE: Serial started.\n");
+  printf("NCORE: %06lu ",millis());
+  printf("Serial started.\n");
 }
 
 void HardwareSerial::end()
@@ -29,7 +31,8 @@ int HardwareSerial::read(void)
 
 void HardwareSerial::flush()
 {
-  printf("FLUSH\n");
+  printf("NCORE: %06lu ",millis());
+  printf("Serial flushed.\n");
 }
 
 void HardwareSerial::write(uint8_t c)
