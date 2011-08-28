@@ -29,5 +29,15 @@ public:
     TS_ASSERT_EQUALS( parser.size(), 1 );
     TS_ASSERT_EQUALS( parser[0], commands );
   }
+  void testMany( void )
+  {
+    LineParser parser;
+    string commands("this is a test of many words");
+    parser.parse(commands);
+
+    TS_ASSERT_EQUALS( parser.size(), 7 );
+    TS_ASSERT_EQUALS( parser.at(0), string("this") );
+    TS_ASSERT_EQUALS( parser.at(6), string("words") );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
