@@ -129,8 +129,17 @@ void detachInterrupt(uint8_t);
 void setup(void);
 void loop(void);
 
+int* empty(void);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#define SPDR (*empty()) 
+#define SPCR (*empty())  
+#define SPSR (*empty())  
+#define SPIE (*empty())  
+#define SPIF (*empty())  
+#define _BV(x) (1<<(x))
 
 #endif
