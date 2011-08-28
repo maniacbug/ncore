@@ -20,5 +20,14 @@ public:
 
     TS_ASSERT_EQUALS( parser.size(), 0 );
   }
+  void testSingle( void )
+  {
+    LineParser parser;
+    string commands("test");
+    parser.parse(commands);
+
+    TS_ASSERT_EQUALS( parser.size(), 1 );
+    TS_ASSERT_EQUALS( parser[0], commands );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
