@@ -18,5 +18,12 @@ public:
 
     TS_ASSERT_EQUALS( value, LOW );
   }
+  void testSet( void )
+  {
+    pins.hwSet(0,HIGH);
+    int value = pins.digitalRead(0);
+
+    TS_ASSERT_EQUALS( value, HIGH );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
