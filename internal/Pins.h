@@ -11,7 +11,7 @@ protected:
 public:
   Pins(void) { digital_pin_states.reserve(num_pins); }
   int digitalRead(int pin) { return digital_pin_states[pin]; }
-  void hwSet(int pin,int level) { digital_pin_states[pin] = level; }
+  void hwSetDigital(int pin,int level) { digital_pin_states[pin] = level; }
 };
 
 #endif // __PINS_H__
