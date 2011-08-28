@@ -1,0 +1,21 @@
+#include <cxxtest/TestSuite.h>
+#include <Commands.h>
+
+using std::string;
+using std::vector;
+
+class CommandsTestSuite: public CxxTest::TestSuite
+{
+public:
+  void setUp()
+  {
+  }
+
+  void testEmpty( void )
+  {
+    bool result = Commands().execute(vector<string>());
+
+    TS_ASSERT_EQUALS( result, false );
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
