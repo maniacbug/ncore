@@ -1,0 +1,61 @@
+CXXTEST_DIR = $(HOME)/Source/cxxtest ;
+CXXTEST_GEN = $(CXXTEST_DIR)/python/scripts/cxxtestgen --error-printer ;
+CODE_DIR = .. ;
+HDRS = $(CXXTEST_DIR) $(PWD) $(CODE_DIR) ;
+LD = c++ ;
+LOCATE_TARGET = out ;
+LOCATE_SOURCE = out ;
+
+rule TestSuite
+{
+  Depends $(<) : $(>) ;
+  Clean clean : $(<) ;
+}
+
+actions TestSuite
+{
+  $(CXXTEST_GEN) $(>) > $(<)
+}
+
+rule TestSuiteObject
+{
+  local _CPP = $(>:S=.cpp) ;
+  MakeLocate $(_CPP) : $(LOCATE_SOURCE) ;
+  TestSuite $(_CPP) : $(>) ; 
+  C++ $(<) : $(_CPP) ; 
+}
+
+actions Link
+{
+  $(LD) -o $(<) $(>)
+}
+
+rule UserObject
+{
+  MakeLocate $(<) : $(LOCATE_TARGET) ;
+  
+  switch $(>)
+  {
+    case *.test : TestSuiteObject $(<) : $(>) ; 
+  }
+}
+
+rule RunTest
+{
+  Depends $(<) : $(>) ;
+  Clean clean : $(<) ;
+  MakeLocate $(<) : $(LOCATE_TARGET) ;
+  Depends all : $(<) ;
+}
+
+actions RunTest
+{
+  $(>) | tee $(<)
+}
+
+for _I in [ GLOB $(PWD) : *.test ] 
+{
+	Main $(_I:B) : $(_I) [ GLOB $(CODE_DIR) : *.cpp ] ;
+	RunTest result-$(_I:B) : $(_I:B) ;
+}
+

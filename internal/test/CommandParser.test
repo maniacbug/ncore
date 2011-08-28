@@ -1,0 +1,24 @@
+#include <cxxtest/TestSuite.h>
+#include <LineParser.h>
+#include <vector>
+#include <string>
+
+using std::string;
+using std::vector;
+
+class LineParserTestSuite: public CxxTest::TestSuite
+{
+public:
+  LineParserTestSuite(void)
+  {
+  }
+
+  void testEmpty( void )
+  {
+    LineParser parser;
+    parser.parse(string());
+
+    TS_ASSERT_EQUALS( parser.size(), 0 );
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
