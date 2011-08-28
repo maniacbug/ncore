@@ -3,15 +3,24 @@
 
 #include <vector>
 
+class Commands;
+
 class Pins
 {
 protected:
   static const int num_pins = 20;
-  std::vector<int> digital_pin_states;
+  static const int num_channels = 8;
+  std::vector<int> digital_states;
+  std::vector<int> analog_states;
 public:
-  Pins(void) { digital_pin_states.reserve(num_pins); }
-  int digitalRead(int pin) { return digital_pin_states[pin]; }
-  void hwSetDigital(int pin,int level) { digital_pin_states[pin] = level; }
+  Pins(void);
+  int digitalRead(int pin) const;
+  void hwSetDigital(int pin,int level);
+  int analogRead(int pin) const;
+  void hwSetAnalog(int pin,int level);
+
+  void addCommandsTo(Commands&) const;
 };
 
 #endif // __PINS_H__
+// vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -44,6 +44,8 @@ public:
    * Empties the entire map
    */
   void clear(void);
+
+  size_t size(void) const { return commandmap.size(); }
 };
 
 #endif // __COMMANDS_H__
