@@ -31,4 +31,9 @@ bool Commands::add(const std::string& _command, worker _fn)
   return result;
 }
 
+void Commands::clear(void)
+{
+  commandmap.clear();
+}
+
 // vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -17,6 +17,7 @@ public:
 
   bool execute(const std::vector<std::string>&);
   bool add(const std::string&,worker);
+  void clear(void);
 };
 
 #endif // __COMMANDS_H__
