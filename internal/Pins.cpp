@@ -115,7 +115,7 @@ bool Pins::command_pin_analog(vector<string>::const_iterator current,vector<stri
   istringstream ss_level(*current++);
   ss_level >> level;
   if ( level < 0 || level >= 1024 )
-    throw new runtime_error("Unknown level value");
+    throw new runtime_error("Level value out of range");
 
   // Make sure we're at the end of input 
   if ( current != end )
