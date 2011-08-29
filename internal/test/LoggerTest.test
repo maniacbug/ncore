@@ -1,0 +1,22 @@
+#include <cxxtest/TestSuite.h>
+#include <Logger.h>
+#include <vector>
+#include <string>
+
+using std::string;
+using std::vector;
+
+class LoggerTestSuite: public CxxTest::TestSuite
+{
+  Logger log;
+public:
+  void setUp()
+  {
+  }
+
+  void testEmpty( void )
+  {
+    TS_ASSERT_EQUALS( log.size(), 0 );
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
