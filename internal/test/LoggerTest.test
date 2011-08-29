@@ -58,12 +58,12 @@ public:
      int count(0);
      while ( and_pos!=std::string::npos )
      {
-	     and_pos = whole.find(partial, and_pos );
-	     if ( and_pos != std::string::npos )
-	     {
-	       ++count;
-	       and_pos += skip_count; 
-	     }
+       and_pos = whole.find(partial, and_pos );
+       if ( and_pos != std::string::npos )
+       {
+	 ++count;
+	 and_pos += skip_count; 
+       }
      }
      return count;
   }
@@ -138,7 +138,7 @@ class LoggerInternalTestSuite: public CxxTest::TestSuite
   class LoggerInternal: Logger
   {
   public:
-    void bad(void) 
+    void bad_static_list(void) 
     {
       // This is bad.  Don't do this in real life.
       Logger::reset(); 
@@ -146,10 +146,9 @@ class LoggerInternalTestSuite: public CxxTest::TestSuite
     }
   };
 public:
-  void testExtra(void)
+  void testBadStaticList(void)
   {
-    LoggerInternal i;
-    TS_ASSERT_THROWS_ANYTHING( i.bad() );
+    TS_ASSERT_THROWS_ANYTHING( LoggerInternal().bad_static_list() );
   }
 };
 

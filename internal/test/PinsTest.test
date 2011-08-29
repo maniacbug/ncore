@@ -207,13 +207,11 @@ class PinsInternalTestSuite: public CxxTest::TestSuite
 public:
   void testBadStaticPins(void)
   {
-    PinsInternal i;
-    TS_ASSERT_THROWS_ANYTHING( i.bad_static_pins() );
+    TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_pins() );
   }
   void testBadStaticPin(void)
   {
-    PinsInternal i;
-    TS_ASSERT_THROWS_ANYTHING( i.bad_static_pin() );
+    TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_pin() );
   }
 };
 
