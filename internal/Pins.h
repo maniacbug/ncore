@@ -15,6 +15,9 @@ protected:
 
   static bool static_command_pins(const std::vector<std::string>&);
   bool command_pins(const std::vector<std::string>&) const;
+  
+  static bool static_command_pin(const std::vector<std::string>&);
+  bool command_pin(const std::vector<std::string>&);
 public:
   Pins(void);
   void clear(void);
@@ -23,7 +26,7 @@ public:
   int analogRead(int pin) const;
   void hwSetAnalog(int pin,int level);
 
-  void addCommandsTo(Commands&) const;
+  void addCommandsTo(Commands&);
 };
 
 #endif // __PINS_H__

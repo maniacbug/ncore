@@ -1,10 +1,15 @@
 #include <iostream>
+#include <stdexcept>
+#include <sstream>
 #include <Pins.h>
 #include <Commands.h>
 
 using namespace std;
 
-static const Pins* global_pins = NULL;
+static Pins* global_pins = NULL;
+
+const int LOW = 0;
+const int HIGH = 1;
 
 Pins::Pins(void)
 {
@@ -35,12 +40,63 @@ void Pins::hwSetAnalog(int pin,int level)
   analog_states[pin] = level;
 }
 
+bool Pins::static_command_pin(const vector<string>& _commands)
+{
+  if ( ! global_pins )
+    return false;
+
+  return global_pins->command_pin(_commands);
+}
+
 bool Pins::static_command_pins(const vector<string>& _commands)
 {
   if ( ! global_pins )
     return false;
 
   return global_pins->command_pins(_commands);
+}
+
+bool Pins::command_pin(const vector<string>& _commands)
+{
+  bool result = false;
+  vector<string>::const_iterator current = _commands.begin();
+
+  // Skip over 'pin' command
+  ++current;
+
+  // Get the pin number
+  if ( current == _commands.end() )
+    throw new runtime_error("Expecting pin number");
+  
+  istringstream ss(*current++);
+  int pin;
+  ss >> pin;
+
+  if ( pin < 0 || pin >= num_pins )
+    throw new runtime_error("Pin out of range");
+
+  // Get the level, high or low
+  if ( current == _commands.end() )
+    throw new runtime_error("Expecting pin level");
+
+  int level;
+  if ( *current == "high" )
+    level = HIGH;
+  else if ( *current == "low" )
+    level = LOW;
+  else
+    throw new runtime_error("Unknown level value");
+
+  ++current;
+
+  // Make sure we're at the end of input 
+  if ( current != _commands.end() )
+    throw new runtime_error("Unexpected tokens at end of input");
+
+  hwSetDigital( pin, level );
+  result = true;
+
+  return result;
 }
 
 bool Pins::command_pins(const vector<string>& _commands) const
@@ -67,9 +123,10 @@ bool Pins::command_pins(const vector<string>& _commands) const
   return true;
 }
 
-void Pins::addCommandsTo(Commands& _commands) const
+void Pins::addCommandsTo(Commands& _commands)
 {
   global_pins = this;
   _commands.add("pins",Pins::static_command_pins);
+  _commands.add("pin",Pins::static_command_pin);
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp

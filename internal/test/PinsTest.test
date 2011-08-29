@@ -26,6 +26,7 @@ public:
     parser.clear();
     test_buffer.str(string());
     cout_sbuf = NULL;
+    pins.addCommandsTo(commands);
   }
 
   void testEmpty( void )
@@ -50,7 +51,6 @@ public:
   }
   void testAddCommands( void )
   {
-    pins.addCommandsTo(commands);
     int numcommands = commands.size();
 
     TS_ASSERT( numcommands > 0 );
@@ -74,7 +74,6 @@ public:
   }
   void testRunCommand( void )
   {
-    pins.addCommandsTo(commands);
     parser.parse("pins");
 
     startCoutCapture();
@@ -98,7 +97,6 @@ public:
   }
   void testRunCommandPinsEmpty( void )
   {
-    pins.addCommandsTo(commands);
     parser.parse("pins");
 
     startCoutCapture();
@@ -112,7 +110,6 @@ public:
   {
     pins.hwSetDigital(0,HIGH);
     pins.hwSetAnalog(0,512);
-    pins.addCommandsTo(commands);
     parser.parse("pins");
 
     startCoutCapture();
@@ -121,6 +118,14 @@ public:
     int num_zeroes = countSubStrings(output,":0");
     
     TS_ASSERT_EQUALS( num_zeroes, 26 );
+  }
+  void testCommandPinSet( void )
+  {
+    parser.parse("pin 5 high");
+    bool ok = commands.execute(parser);
+
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( pins.digitalRead(5), HIGH );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
