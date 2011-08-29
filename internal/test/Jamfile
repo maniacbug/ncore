@@ -4,42 +4,22 @@ CODE_DIR = .. ;
 CORE_DIR = ../.. ;
 HDRS = $(CXXTEST_DIR) $(PWD) $(CODE_DIR) $(CORE_DIR) ;
 CORE_MODULES = $(CORE_DIR)/native_core.cpp ;
-LD = c++ ;
+CODE_MODULES = [ GLOB $(CODE_DIR) : *.cpp ] ;
+TEST_MODULES = [ GLOB $(PWD) : *.test ] ;
+LINK = c++ ;
 LOCATE_TARGET = out ;
 LOCATE_SOURCE = out ;
 
 rule TestSuite
 {
   Depends $(<) : $(>) ;
+  MakeLocate $(<) : $(LOCATE_SOURCE) ;
   Clean clean : $(<) ;
 }
 
 actions TestSuite
 {
   $(CXXTEST_GEN) $(>) > $(<)
-}
-
-rule TestSuiteObject
-{
-  local _CPP = $(>:S=.cpp) ;
-  MakeLocate $(_CPP) : $(LOCATE_SOURCE) ;
-  TestSuite $(_CPP) : $(>) ; 
-  C++ $(<) : $(_CPP) ; 
-}
-
-actions Link
-{
-  $(LD) -o $(<) $(>)
-}
-
-rule UserObject
-{
-  MakeLocate $(<) : $(LOCATE_TARGET) ;
-  
-  switch $(>)
-  {
-    case *.test : TestSuiteObject $(<) : $(>) ; 
-  }
 }
 
 rule RunTest
@@ -55,9 +35,23 @@ actions RunTest
   $(>) | tee $(<)
 }
 
-for _I in [ GLOB $(PWD) : *.test ] 
+rule Objects
 {
-	Main $(_I:B) : $(_I) [ GLOB $(CODE_DIR) : *.cpp ] $(CORE_MODULES) ;
-	RunTest result-$(_I:B) : $(_I:B) ;
+        local _i ;
+
+        for _i in [ FGristFiles $(<) ]
+        {
+                Object $(_i:B)$(SUFOBJ) : $(_i) ;
+                Depends obj : $(_i:B)$(SUFOBJ) ;
+        }
 }
+rule Main
+{
+        MainFromObjects $(<) : $(>:B)$(SUFOBJ) ;
+        Objects $(>) ;
+}
+
+TestSuite runner.cpp : $(TEST_MODULES) ;
+Main Tests : runner.cpp $(CODE_MODULES) $(CORE_MODULES) ;
+RunTest result : Tests ;
 
