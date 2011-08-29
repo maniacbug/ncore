@@ -9,6 +9,9 @@ TEST_MODULES = [ GLOB $(PWD) : *.test ] ;
 LINK = c++ ;
 LOCATE_TARGET = out ;
 LOCATE_SOURCE = out ;
+CCFLAGS = -fprofile-arcs -ftest-coverage ;
+C++FLAGS = $(CCFLAGS) ;
+LINKFLAGS = -fprofile-arcs ;
 
 rule TestSuite
 {
