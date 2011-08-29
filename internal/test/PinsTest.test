@@ -1,7 +1,12 @@
+#include <iostream>
+#include <sstream>
+#include <streambuf>
 #include <cxxtest/TestSuite.h>
 #include <Pins.h>
 #include <LineParser.h>
 #include <Commands.h>
+
+using namespace std;
 
 const int LOW = 0;
 const int HIGH = 1;
@@ -10,10 +15,17 @@ class PinsTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
   Commands commands;
+  LineParser parser;
+  stringstream test_buffer;
+  streambuf* cout_sbuf;
 public:
   void setUp()
   {
+    pins.clear();
     commands.clear();
+    parser.clear();
+    test_buffer.str(string());
+    cout_sbuf = NULL;
   }
 
   void testEmpty( void )
@@ -42,6 +54,73 @@ public:
     int numcommands = commands.size();
 
     TS_ASSERT( numcommands > 0 );
+  }
+  int countSubStrings( const string& whole, const string& partial )
+  {
+    size_t skip_count = partial.size();
+
+     std::string::size_type and_pos( 0 );
+     int count(0);
+     while ( and_pos!=std::string::npos )
+     {
+	     and_pos = whole.find(partial, and_pos );
+	     if ( and_pos != std::string::npos )
+	     {
+	       ++count;
+	       and_pos += skip_count; 
+	     }
+     }
+     return count;
+  }
+  void testRunCommand( void )
+  {
+    pins.addCommandsTo(commands);
+    parser.parse("pins");
+
+    startCoutCapture();
+    bool ok = commands.execute(parser);
+    string output = endCoutCapture();
+    
+    TS_ASSERT_EQUALS( ok, true );
+  }
+  void startCoutCapture( void )
+  {
+    // Capture the input to a test buffer
+    cout_sbuf = std::cout.rdbuf(); // save original sbuf
+    cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
+  }
+  string endCoutCapture( void )
+  {
+    // Restore the output stream
+    cout.rdbuf(cout_sbuf); // restore the original stream buffer
+
+    return test_buffer.str();
+  }
+  void testRunCommandPinsEmpty( void )
+  {
+    pins.addCommandsTo(commands);
+    parser.parse("pins");
+
+    startCoutCapture();
+    bool ok = commands.execute(parser);
+    string output = endCoutCapture();
+    int num_zeroes = countSubStrings(output,":0");
+    
+    TS_ASSERT_EQUALS( num_zeroes, 28 );
+  }
+  void testRunCommandPinsSomeSet( void )
+  {
+    pins.hwSetDigital(0,HIGH);
+    pins.hwSetAnalog(0,512);
+    pins.addCommandsTo(commands);
+    parser.parse("pins");
+
+    startCoutCapture();
+    bool ok = commands.execute(parser);
+    string output = endCoutCapture();
+    int num_zeroes = countSubStrings(output,":0");
+    
+    TS_ASSERT_EQUALS( num_zeroes, 26 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
