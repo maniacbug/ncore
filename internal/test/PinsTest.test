@@ -174,5 +174,13 @@ public:
   {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 1000 something")) );
   }
+  void testCommandAnalogPinSetExceptions_4( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a1000 1000")) );
+  }
+  void testCommandAnalogPinSetExceptions_5( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 2000")) );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

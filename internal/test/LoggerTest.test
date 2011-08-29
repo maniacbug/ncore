@@ -23,13 +23,17 @@ public:
   void setUp()
   {
     test_buffer.str(string());
-    cout_sbuf = NULL;
+    cout_sbuf = std::cout.rdbuf(); // save original sbuf
     log.clear();
     parser.clear();
     log.addCommandsTo(commands);
    
     startCoutCapture();
     init();
+    endCoutCapture();
+  }
+  void tearDown()
+  {
     endCoutCapture();
   }
   void startCoutCapture( void )
@@ -90,6 +94,12 @@ public:
     string output = endCoutCapture();
     
     TS_ASSERT_EQUALS( ok, true );
+  }
+  void testListExceptions_1( void )
+  {
+    // Currently not implemented, so should throw
+    startCoutCapture();
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("list 1000")) );
   }
   void testListCommandWorks( void )
   {
