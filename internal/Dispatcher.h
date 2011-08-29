@@ -1,5 +1,5 @@
-#ifndef __COMMANDS_H__
-#define __COMMANDS_H__
+#ifndef __DISPATCHER_H__
+#define __DISPATCHER_H__
 
 #include <vector>
 #include <string>
@@ -8,7 +8,7 @@
 /**
  * Dispatches commands to workers
  */
-class Commands
+class Dispatcher
 {
 public:
   typedef bool (*worker)(const std::vector<std::string>&);
@@ -48,6 +48,6 @@ public:
   size_t size(void) const { return commandmap.size(); }
 };
 
-#endif // __COMMANDS_H__
+#endif // __DISPATCHER_H__
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

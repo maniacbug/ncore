@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <Pins.h>
-#include <Commands.h>
+#include <Dispatcher.h>
 
 using namespace std;
 
@@ -168,7 +168,7 @@ bool Pins::command_pins(const vector<string>& _commands) const
   return true;
 }
 
-void Pins::addCommandsTo(Commands& _commands)
+void Pins::addCommandsTo(Dispatcher& _commands)
 {
   global_pins = this;
   _commands.add("pins",Pins::static_command_pins);

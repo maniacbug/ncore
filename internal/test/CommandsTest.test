@@ -1,5 +1,5 @@
 #include <cxxtest/TestSuite.h>
-#include <Commands.h>
+#include <Dispatcher.h>
 #include <LineParser.h>
 
 using std::string;
@@ -10,10 +10,10 @@ bool return_true(const vector<string>&)
   return true;
 }
 
-class CommandsTestSuite: public CxxTest::TestSuite
+class DispatcherTestSuite: public CxxTest::TestSuite
 {
   LineParser parser;
-  Commands commands;
+  Dispatcher commands;
 public:
   void setUp()
   {
@@ -52,7 +52,7 @@ public:
     commands.add("cantfindme",return_true);
     
     parser.parse("test");
-    bool result = Commands().execute(parser);
+    bool result = Dispatcher().execute(parser);
 
     TS_ASSERT_EQUALS( result, false );
   }

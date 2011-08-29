@@ -6,7 +6,7 @@
 #include <sstream>
 #include <streambuf>
 #include <LineParser.h>
-#include <Commands.h>
+#include <Dispatcher.h>
 
 using namespace std;
 
@@ -15,7 +15,7 @@ extern "C" void init(void);
 class LoggerTestSuite: public CxxTest::TestSuite
 {
   Logger log;
-  Commands commands;
+  Dispatcher commands;
   LineParser parser;
   stringstream test_buffer;
   streambuf* cout_sbuf;

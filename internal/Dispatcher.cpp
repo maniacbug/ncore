@@ -1,11 +1,11 @@
-#include <Commands.h>
+#include <Dispatcher.h>
 #include <vector>
 #include <string>
 #include <iostream>
 
 using namespace std;
 
-bool Commands::execute(const std::vector<std::string>& _commands)
+bool Dispatcher::execute(const std::vector<std::string>& _commands)
 {
   bool result = false;
   const string& command = ( _commands.size() > 0 ) ? _commands.at(0) : string();
@@ -18,7 +18,7 @@ bool Commands::execute(const std::vector<std::string>& _commands)
   return result;
 }
 
-bool Commands::add(const std::string& _command, worker _fn)
+bool Dispatcher::add(const std::string& _command, worker _fn)
 {
   bool result = false;
 
@@ -31,7 +31,7 @@ bool Commands::add(const std::string& _command, worker _fn)
   return result;
 }
 
-void Commands::clear(void)
+void Dispatcher::clear(void)
 {
   commandmap.clear();
 }

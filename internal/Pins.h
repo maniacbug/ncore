@@ -3,7 +3,7 @@
 
 #include <vector>
 
-class Commands;
+class Dispatcher;
 
 class Pins
 {
@@ -28,7 +28,7 @@ public:
   int analogRead(int pin) const;
   void hwSetAnalog(int pin,int level);
 
-  void addCommandsTo(Commands&);
+  void addCommandsTo(Dispatcher&);
 };
 
 #endif // __PINS_H__

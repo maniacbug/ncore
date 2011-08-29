@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <Logger.h>
-#include <Commands.h>
+#include <Dispatcher.h>
 
 using namespace std;
 extern "C" unsigned long millis(void);
@@ -48,7 +48,7 @@ bool Logger::command_list(const vector<string>& _commands) const
   return true;
 }
 
-void Logger::addCommandsTo(Commands& _commands)
+void Logger::addCommandsTo(Dispatcher& _commands)
 {
   global_logger = this;
   _commands.add("list",Logger::static_command_list);

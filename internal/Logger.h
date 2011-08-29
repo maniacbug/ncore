@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-class Commands;
+class Dispatcher;
 
 class Logger: public std::vector<std::string>
 {
@@ -14,7 +14,7 @@ protected:
 public:
   void add(const std::string&,...);
   
-  void addCommandsTo(Commands&);
+  void addCommandsTo(Dispatcher&);
 };
 
 #endif // __LOGGER_H__

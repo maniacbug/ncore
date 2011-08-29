@@ -4,7 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include <Pins.h>
 #include <LineParser.h>
-#include <Commands.h>
+#include <Dispatcher.h>
 
 using namespace std;
 
@@ -14,7 +14,7 @@ const int HIGH = 1;
 class PinsTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
-  Commands commands;
+  Dispatcher commands;
   LineParser parser;
   stringstream test_buffer;
   streambuf* cout_sbuf;
