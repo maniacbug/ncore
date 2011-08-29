@@ -2,16 +2,43 @@
 #include <Logger.h>
 #include <vector>
 #include <string>
+#include <iostream>
+#include <sstream>
+#include <streambuf>
 
-using std::string;
-using std::vector;
+using namespace std;
+
+extern "C" void init(void);
 
 class LoggerTestSuite: public CxxTest::TestSuite
 {
   Logger log;
+  stringstream test_buffer;
+  streambuf* cout_sbuf;
 public:
   void setUp()
   {
+    test_buffer.str(string());
+    cout_sbuf = NULL;
+    log.clear();
+   
+    // Ideally this would silence init() if it used cout!
+    startCoutCapture();
+    init();
+    endCoutCapture();
+  }
+  void startCoutCapture( void )
+  {
+    // Capture the input to a test buffer
+    cout_sbuf = std::cout.rdbuf(); // save original sbuf
+    cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
+  }
+  string endCoutCapture( void )
+  {
+    // Restore the output stream
+    cout.rdbuf(cout_sbuf); // restore the original stream buffer
+
+    return test_buffer.str();
   }
 
   void testEmpty( void )
@@ -24,7 +51,12 @@ public:
     log.add("Test12");
     log.add("Test123");
     TS_ASSERT_EQUALS( log.size(), 3 );
-    TS_ASSERT_EQUALS( log.at(0), "Test1" );
+    TS_ASSERT( log.at(0).find("Test1") != string::npos );
+  }
+  void testVargs( void )
+  {
+    log.add("Test %02i",1);
+    TS_ASSERT( log.at(0).find("Test 01") != string::npos );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

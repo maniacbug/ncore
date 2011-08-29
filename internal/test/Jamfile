@@ -1,7 +1,9 @@
 CXXTEST_DIR = $(HOME)/Source/cxxtest ;
 CXXTEST_GEN = $(CXXTEST_DIR)/python/scripts/cxxtestgen --error-printer ;
 CODE_DIR = .. ;
-HDRS = $(CXXTEST_DIR) $(PWD) $(CODE_DIR) ;
+CORE_DIR = ../.. ;
+HDRS = $(CXXTEST_DIR) $(PWD) $(CODE_DIR) $(CORE_DIR) ;
+CORE_MODULES = $(CORE_DIR)/native_core.cpp ;
 LD = c++ ;
 LOCATE_TARGET = out ;
 LOCATE_SOURCE = out ;
@@ -55,7 +57,7 @@ actions RunTest
 
 for _I in [ GLOB $(PWD) : *.test ] 
 {
-	Main $(_I:B) : $(_I) [ GLOB $(CODE_DIR) : *.cpp ] ;
+	Main $(_I:B) : $(_I) [ GLOB $(CODE_DIR) : *.cpp ] $(CORE_MODULES) ;
 	RunTest result-$(_I:B) : $(_I:B) ;
 }
 

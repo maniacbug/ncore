@@ -7,7 +7,7 @@
 class Logger: public std::vector<std::string>
 {
 public:
-  void add(const std::string&);
+  void add(const std::string&,...);
 };
 
 #endif // __LOGGER_H__
