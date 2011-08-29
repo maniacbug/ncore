@@ -8,7 +8,10 @@ class Parser: public std::vector<std::string>
 {
 public:
   Parser(void) {}
-  Parser(const std::string& _str) { parse(_str); }
+  Parser(const std::string& _str)
+  {
+    parse(_str);
+  }
   void parse(const std::string&);
 };
 

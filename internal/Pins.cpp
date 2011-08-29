@@ -85,7 +85,7 @@ bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<str
 
   ++current;
 
-  // Make sure we're at the end of input 
+  // Make sure we're at the end of input
   if ( current != end )
     throw new runtime_error("Unexpected tokens at end of input");
 
@@ -103,10 +103,10 @@ bool Pins::command_pin_analog(vector<string>::const_iterator current,vector<stri
 
   if ( pin < 0 || pin >= num_channels )
     throw new runtime_error("Analog channel out of range");
- 
+
   if ( current == end )
     throw new runtime_error("Expecting pin level");
-  
+
   char c = (*current)[0];
   if ( c < '0' || c > '9' )
     throw new runtime_error("Unknown level value");
@@ -117,7 +117,7 @@ bool Pins::command_pin_analog(vector<string>::const_iterator current,vector<stri
   if ( level < 0 || level >= 1024 )
     throw new runtime_error("Level value out of range");
 
-  // Make sure we're at the end of input 
+  // Make sure we're at the end of input
   if ( current != end )
     throw new runtime_error("Unexpected tokens at end of input");
 
@@ -137,7 +137,7 @@ bool Pins::command_pin(const vector<string>& _commands)
   // Get the pin number
   if ( current == _commands.end() )
     throw new runtime_error("Expecting pin number");
- 
+
   // Is this an analog channel?
   string pin_str = *current;
   bool analog = ( pin_str[0] == 'a' );

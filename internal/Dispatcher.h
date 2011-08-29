@@ -20,7 +20,7 @@ protected:
 
 public:
   /**
-   * Executes the worker associated with the first token in @p commands 
+   * Executes the worker associated with the first token in @p commands
    *
    * @param commands Tokenized command and parameters
    *
@@ -28,7 +28,7 @@ public:
    * @retval false Worker function not found or returned false
    */
   bool execute(const std::vector<std::string>& commands);
-  
+
   /**
    * Adds a worker
    *
@@ -39,13 +39,16 @@ public:
    * @retval false Problema adding worker, not added
    */
   bool add(const std::string& command,worker fn);
-  
+
   /**
    * Empties the entire map
    */
   void clear(void);
 
-  size_t size(void) const { return commandmap.size(); }
+  size_t size(void) const
+  {
+    return commandmap.size();
+  }
 };
 
 #endif // __DISPATCHER_H__

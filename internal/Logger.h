@@ -14,7 +14,7 @@ protected:
   bool command_list(const std::vector<std::string>&) const;
 public:
   void add(const std::string&,...);
-  
+
   void addCommandsTo(Dispatcher&);
 };
 

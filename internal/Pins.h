@@ -12,12 +12,12 @@ protected:
   static const int num_channels = 8;
   std::vector<int> digital_states;
   std::vector<int> analog_states;
-  
+
   static void reset(void); /**< Reset state of statics. Only for testing! */
 
   static bool static_command_pins(const std::vector<std::string>&);
   bool command_pins(const std::vector<std::string>&) const;
-  
+
   static bool static_command_pin(const std::vector<std::string>&);
   bool command_pin(const std::vector<std::string>&);
   bool command_pin_digital(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );

@@ -31,7 +31,7 @@ public:
   {
     parser.parse("test");
     bool result = commands.execute(parser);
-    
+
     TS_ASSERT_EQUALS( result, false );
   }
   void testAddWorker( void )
@@ -50,7 +50,7 @@ public:
   void testWorkerNotFound( void )
   {
     commands.add("cantfindme",return_true);
-    
+
     parser.parse("test");
     bool result = Dispatcher().execute(parser);
 
@@ -59,7 +59,7 @@ public:
   void testWorkerDispatchOk( void )
   {
     commands.add("test",return_true);
-    
+
     parser.parse("test");
     bool result = commands.execute(parser);
 

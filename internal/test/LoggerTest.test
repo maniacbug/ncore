@@ -27,7 +27,7 @@ public:
     log.clear();
     parser.clear();
     log.addCommandsTo(commands);
-   
+
     startCoutCapture();
     init();
     endCoutCapture();
@@ -54,18 +54,18 @@ public:
   {
     size_t skip_count = partial.size();
 
-     std::string::size_type and_pos( 0 );
-     int count(0);
-     while ( and_pos!=std::string::npos )
-     {
-       and_pos = whole.find(partial, and_pos );
-       if ( and_pos != std::string::npos )
-       {
-	 ++count;
-	 and_pos += skip_count; 
-       }
-     }
-     return count;
+    std::string::size_type and_pos( 0 );
+    int count(0);
+    while ( and_pos!=std::string::npos )
+    {
+      and_pos = whole.find(partial, and_pos );
+      if ( and_pos != std::string::npos )
+      {
+        ++count;
+        and_pos += skip_count;
+      }
+    }
+    return count;
   }
 
   void testEmpty( void )
@@ -92,7 +92,7 @@ public:
     startCoutCapture();
     bool ok = commands.execute(parser);
     string output = endCoutCapture();
-    
+
     TS_ASSERT_EQUALS( ok, true );
   }
   void testListExceptions_1( void )
@@ -106,13 +106,13 @@ public:
     log.add("Test1");
     log.add("Test12");
     log.add("Test123");
-    
+
     parser.parse("list");
 
     startCoutCapture();
     commands.execute(parser);
     string output = endCoutCapture();
-    
+
     TS_ASSERT_EQUALS( countSubStrings(output,"NCORE"), 3 );
   }
   void todo_testListCommandRegexp( void )
@@ -120,13 +120,13 @@ public:
     log.add("Test1");
     log.add("Test12");
     log.add("Test123");
-    
+
     parser.parse("list /T.*12/");
 
     startCoutCapture();
     commands.execute(parser);
     string output = endCoutCapture();
-    
+
     TS_ASSERT_EQUALS( countSubStrings(output,"NCORE"), 2 );
   }
 };
@@ -138,11 +138,11 @@ class LoggerInternalTestSuite: public CxxTest::TestSuite
   class LoggerInternal: Logger
   {
   public:
-    void bad_static_list(void) 
+    void bad_static_list(void)
     {
       // This is bad.  Don't do this in real life.
-      Logger::reset(); 
-      Logger::static_command_list(vector<string>()); 
+      Logger::reset();
+      Logger::static_command_list(vector<string>());
     }
   };
 public:

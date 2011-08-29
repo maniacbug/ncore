@@ -57,25 +57,25 @@ public:
   {
     size_t skip_count = partial.size();
 
-     std::string::size_type and_pos( 0 );
-     int count(0);
-     while ( and_pos!=std::string::npos )
-     {
-	     and_pos = whole.find(partial, and_pos );
-	     if ( and_pos != std::string::npos )
-	     {
-	       ++count;
-	       and_pos += skip_count; 
-	     }
-     }
-     return count;
+    std::string::size_type and_pos( 0 );
+    int count(0);
+    while ( and_pos!=std::string::npos )
+    {
+      and_pos = whole.find(partial, and_pos );
+      if ( and_pos != std::string::npos )
+      {
+        ++count;
+        and_pos += skip_count;
+      }
+    }
+    return count;
   }
   void testRunCommand( void )
   {
     startCoutCapture();
     bool ok = commands.execute(Parser("pins"));
     string output = endCoutCapture();
-    
+
     TS_ASSERT_EQUALS( ok, true );
   }
   void startCoutCapture( void )
@@ -97,7 +97,7 @@ public:
     bool ok = commands.execute(Parser("pins"));
     string output = endCoutCapture();
     int num_zeroes = countSubStrings(output,":0");
-    
+
     TS_ASSERT_EQUALS( num_zeroes, 28 );
   }
   void testRunCommandPinsSomeSet( void )
@@ -109,7 +109,7 @@ public:
     bool ok = commands.execute(Parser("pins"));
     string output = endCoutCapture();
     int num_zeroes = countSubStrings(output,":0");
-    
+
     TS_ASSERT_EQUALS( num_zeroes, 26 );
   }
   void testCommandPinSet( void )
@@ -191,17 +191,17 @@ class PinsInternalTestSuite: public CxxTest::TestSuite
   class PinsInternal: Pins
   {
   public:
-    void bad_static_pins(void) 
+    void bad_static_pins(void)
     {
       // This is bad.  Don't do this in real life.
-      Pins::reset(); 
-      Pins::static_command_pins(vector<string>()); 
+      Pins::reset();
+      Pins::static_command_pins(vector<string>());
     }
-    void bad_static_pin(void) 
+    void bad_static_pin(void)
     {
       // This is bad.  Don't do this in real life.
-      Pins::reset(); 
-      Pins::static_command_pin(vector<string>()); 
+      Pins::reset();
+      Pins::static_command_pin(vector<string>());
     }
   };
 public:
