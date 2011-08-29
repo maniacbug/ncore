@@ -22,7 +22,6 @@ public:
     cout_sbuf = NULL;
     log.clear();
    
-    // Ideally this would silence init() if it used cout!
     startCoutCapture();
     init();
     endCoutCapture();

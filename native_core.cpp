@@ -4,8 +4,9 @@
 #include <sys/time.h>
 #include <stdarg.h>
 #include <string>
-
-using std::string;
+#include <iostream>
+#include <iomanip>
+using namespace std;
 
 static struct timeval program_start;
 
@@ -16,8 +17,7 @@ extern "C" {
 void init(void)
 {
   gettimeofday(&program_start,NULL);
-  printf("NCORE: %06lu ",millis());
-  printf("started\n");
+  cout << "NCORE: " << setfill('0') << setw(6) << millis() << " started" << endl;
 }
 
 void delay(unsigned long ms)
