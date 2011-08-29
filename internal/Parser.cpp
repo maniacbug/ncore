@@ -1,4 +1,4 @@
-#include <LineParser.h>
+#include <Parser.h>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void LineParser::parse(const string& _in)
+void Parser::parse(const string& _in)
 {
   istringstream iss(_in);
   copy(istream_iterator<string>(iss),

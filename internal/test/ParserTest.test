@@ -1,14 +1,14 @@
 #include <cxxtest/TestSuite.h>
-#include <LineParser.h>
+#include <Parser.h>
 #include <vector>
 #include <string>
 
 using std::string;
 using std::vector;
 
-class LineParserTestSuite: public CxxTest::TestSuite
+class ParserTestSuite: public CxxTest::TestSuite
 {
-  LineParser parser;
+  Parser parser;
 public:
   void setUp()
   {

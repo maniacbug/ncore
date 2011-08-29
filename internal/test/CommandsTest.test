@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 #include <Dispatcher.h>
-#include <LineParser.h>
+#include <Parser.h>
 
 using std::string;
 using std::vector;
@@ -12,7 +12,7 @@ bool return_true(const vector<string>&)
 
 class DispatcherTestSuite: public CxxTest::TestSuite
 {
-  LineParser parser;
+  Parser parser;
   Dispatcher commands;
 public:
   void setUp()

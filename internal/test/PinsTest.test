@@ -3,7 +3,7 @@
 #include <streambuf>
 #include <cxxtest/TestSuite.h>
 #include <Pins.h>
-#include <LineParser.h>
+#include <Parser.h>
 #include <Dispatcher.h>
 
 using namespace std;
@@ -15,7 +15,7 @@ class PinsTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
   Dispatcher commands;
-  LineParser parser;
+  Parser parser;
   stringstream test_buffer;
   streambuf* cout_sbuf;
 public:
