@@ -173,6 +173,16 @@ public:
 
     TS_ASSERT_EQUALS( pins.analogRead(5), 512 );
   }
+  void testCommandAnalogSetTwice( void )
+  {
+    parser.parse("pin a0 512");
+    commands.execute(parser);
+    parser.clear();
+    parser.parse("pin a0 1");
+    commands.execute(parser);
+
+    TS_ASSERT_EQUALS( pins.analogRead(0), 1 );
+  }
   void testCommandAnalogPinSetExceptions_1( void )
   {
     parser.parse("pin a5");
