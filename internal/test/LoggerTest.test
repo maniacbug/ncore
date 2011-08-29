@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sstream>
 #include <streambuf>
+#include <LineParser.h>
+#include <Commands.h>
 
 using namespace std;
 
@@ -13,6 +15,8 @@ extern "C" void init(void);
 class LoggerTestSuite: public CxxTest::TestSuite
 {
   Logger log;
+  Commands commands;
+  LineParser parser;
   stringstream test_buffer;
   streambuf* cout_sbuf;
 public:
@@ -21,6 +25,7 @@ public:
     test_buffer.str(string());
     cout_sbuf = NULL;
     log.clear();
+    log.addCommandsTo(commands);
    
     startCoutCapture();
     init();
@@ -39,6 +44,23 @@ public:
 
     return test_buffer.str();
   }
+  int countSubStrings( const string& whole, const string& partial )
+  {
+    size_t skip_count = partial.size();
+
+     std::string::size_type and_pos( 0 );
+     int count(0);
+     while ( and_pos!=std::string::npos )
+     {
+	     and_pos = whole.find(partial, and_pos );
+	     if ( and_pos != std::string::npos )
+	     {
+	       ++count;
+	       and_pos += skip_count; 
+	     }
+     }
+     return count;
+  }
 
   void testEmpty( void )
   {
@@ -56,6 +78,44 @@ public:
   {
     log.add("Test %02i",1);
     TS_ASSERT( log.at(0).find("Test 01") != string::npos );
+  }
+  void testListCommandOk( void )
+  {
+    parser.parse("list");
+
+    startCoutCapture();
+    bool ok = commands.execute(parser);
+    string output = endCoutCapture();
+    
+    TS_ASSERT_EQUALS( ok, true );
+  }
+  void todo_testListCommandWorks( void )
+  {
+    log.add("Test1");
+    log.add("Test12");
+    log.add("Test123");
+    
+    parser.parse("list");
+
+    startCoutCapture();
+    commands.execute(parser);
+    string output = endCoutCapture();
+    
+    TS_ASSERT_EQUALS( countSubStrings(output,"NCORE"), 3 );
+  }
+  void todo_testListCommandRegexp( void )
+  {
+    log.add("Test1");
+    log.add("Test12");
+    log.add("Test123");
+    
+    parser.parse("list /T.*12/");
+
+    startCoutCapture();
+    commands.execute(parser);
+    string output = endCoutCapture();
+    
+    TS_ASSERT_EQUALS( countSubStrings(output,"NCORE"), 2 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

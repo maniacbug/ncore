@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <Logger.h>
+#include <Commands.h>
 
 using namespace std;
 extern "C" unsigned long millis(void);
@@ -18,6 +19,16 @@ void Logger::add(const std::string& format,...)
   ss << "NCORE: " << millis() << " " << buffer << endl;
 
   push_back(ss.str());
+}
+
+bool Logger::static_command_list(const vector<string>& _commands)
+{
+  return true;
+}
+
+void Logger::addCommandsTo(Commands& _commands)
+{
+  _commands.add("list",Logger::static_command_list);
 }
 
 #if 0
