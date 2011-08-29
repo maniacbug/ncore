@@ -18,6 +18,8 @@ protected:
   
   static bool static_command_pin(const std::vector<std::string>&);
   bool command_pin(const std::vector<std::string>&);
+  bool command_pin_digital(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );
+  bool command_pin_analog(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );
 public:
   Pins(void);
   void clear(void);
