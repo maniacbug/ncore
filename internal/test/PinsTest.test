@@ -15,7 +15,6 @@ class PinsTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
   Dispatcher commands;
-  Parser parser;
   stringstream test_buffer;
   streambuf* cout_sbuf;
 public:
@@ -23,7 +22,6 @@ public:
   {
     pins.clear();
     commands.clear();
-    parser.clear();
     test_buffer.str(string());
     cout_sbuf = NULL;
     pins.addCommandsTo(commands);
@@ -74,10 +72,8 @@ public:
   }
   void testRunCommand( void )
   {
-    parser.parse("pins");
-
     startCoutCapture();
-    bool ok = commands.execute(parser);
+    bool ok = commands.execute(Parser("pins"));
     string output = endCoutCapture();
     
     TS_ASSERT_EQUALS( ok, true );
@@ -97,10 +93,8 @@ public:
   }
   void testRunCommandPinsEmpty( void )
   {
-    parser.parse("pins");
-
     startCoutCapture();
-    bool ok = commands.execute(parser);
+    bool ok = commands.execute(Parser("pins"));
     string output = endCoutCapture();
     int num_zeroes = countSubStrings(output,":0");
     
@@ -110,10 +104,9 @@ public:
   {
     pins.hwSetDigital(0,HIGH);
     pins.hwSetAnalog(0,512);
-    parser.parse("pins");
 
     startCoutCapture();
-    bool ok = commands.execute(parser);
+    bool ok = commands.execute(Parser("pins"));
     string output = endCoutCapture();
     int num_zeroes = countSubStrings(output,":0");
     
@@ -121,82 +114,65 @@ public:
   }
   void testCommandPinSet( void )
   {
-    parser.parse("pin 5 high");
-    commands.execute(parser);
+    commands.execute(Parser("pin 5 high"));
 
     TS_ASSERT_EQUALS( pins.digitalRead(5), HIGH );
   }
   void testCommandPinSetAndBack( void )
   {
-    parser.parse("pin 5 high");
-    commands.execute(parser);
-    parser.clear();
-    parser.parse("pin 5 low");
-    commands.execute(parser);
+    commands.execute(Parser("pin 5 high"));
+    commands.execute(Parser("pin 5 low"));
 
     TS_ASSERT_EQUALS( pins.digitalRead(5), LOW );
   }
   void testCommandPinSetExceptions_1( void )
   {
-    parser.parse("pin");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin")) );
   }
   void testCommandPinSetExceptions_2( void )
   {
-    parser.parse("pin 100 high");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 100 high")) );
   }
   void testCommandPinSetExceptions_3( void )
   {
-    parser.parse("pin 5");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5")) );
   }
   void testCommandPinSetExceptions_4( void )
   {
-    parser.parse("pin 5 something");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5 something")) );
   }
   void testCommandPinSetExceptions_5( void )
   {
-    parser.parse("pin 5 high something");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5 high something")) );
   }
   void testCommandPinSetExceptions_6( void )
   {
-    parser.parse("pin something high");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin something high")) );
   }
   void testCommandAnalogSet( void )
   {
-    parser.parse("pin a5 512");
-    commands.execute(parser);
+    commands.execute(Parser("pin a5 512"));
 
     TS_ASSERT_EQUALS( pins.analogRead(5), 512 );
   }
   void testCommandAnalogSetTwice( void )
   {
-    parser.parse("pin a0 512");
-    commands.execute(parser);
-    parser.clear();
-    parser.parse("pin a0 1");
-    commands.execute(parser);
+    commands.execute(Parser("pin a0 512"));
+    commands.execute(Parser("pin a0 1"));
 
     TS_ASSERT_EQUALS( pins.analogRead(0), 1 );
   }
   void testCommandAnalogPinSetExceptions_1( void )
   {
-    parser.parse("pin a5");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5")) );
   }
   void testCommandAnalogPinSetExceptions_2( void )
   {
-    parser.parse("pin a5 high");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 high")) );
   }
   void testCommandAnalogPinSetExceptions_3( void )
   {
-    parser.parse("pin a5 1000 something");
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 1000 something")) );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

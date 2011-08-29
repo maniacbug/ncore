@@ -104,6 +104,9 @@ bool Pins::command_pin_analog(vector<string>::const_iterator current,vector<stri
   if ( pin < 0 || pin >= num_channels )
     throw new runtime_error("Analog channel out of range");
  
+  if ( current == end )
+    throw new runtime_error("Expecting pin level");
+  
   char c = (*current)[0];
   if ( c < '0' || c > '9' )
     throw new runtime_error("Unknown level value");
