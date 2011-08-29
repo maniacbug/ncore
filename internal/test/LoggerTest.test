@@ -130,4 +130,27 @@ public:
     TS_ASSERT_EQUALS( countSubStrings(output,"NCORE"), 2 );
   }
 };
+
+// Extra tests to dig deep into the unexposed internals of Logger
+// in pursuit of 100% code coverage
+class LoggerInternalTestSuite: public CxxTest::TestSuite
+{
+  class LoggerInternal: Logger
+  {
+  public:
+    void bad(void) 
+    {
+      // This is bad.  Don't do this in real life.
+      Logger::reset(); 
+      Logger::static_command_list(vector<string>()); 
+    }
+  };
+public:
+  void testExtra(void)
+  {
+    LoggerInternal i;
+    TS_ASSERT_THROWS_ANYTHING( i.bad() );
+  }
+};
+
 // vim:cin:ai:sts=2 sw=2 ft=cpp

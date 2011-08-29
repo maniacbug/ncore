@@ -43,7 +43,7 @@ void Pins::hwSetAnalog(int pin,int level)
 bool Pins::static_command_pin(const vector<string>& _commands)
 {
   if ( ! global_pins )
-    return false;
+    throw new runtime_error("No pins registered to receive commands");
 
   return global_pins->command_pin(_commands);
 }
@@ -51,7 +51,7 @@ bool Pins::static_command_pin(const vector<string>& _commands)
 bool Pins::static_command_pins(const vector<string>& _commands)
 {
   if ( ! global_pins )
-    return false;
+    throw new runtime_error("No pins registered to receive commands");
 
   return global_pins->command_pins(_commands);
 }
@@ -176,5 +176,9 @@ void Pins::addCommandsTo(Dispatcher& _commands)
   global_pins = this;
   _commands.add("pins",Pins::static_command_pins);
   _commands.add("pin",Pins::static_command_pin);
+}
+void Pins::reset(void)
+{
+  global_pins = NULL;
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp

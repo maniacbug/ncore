@@ -183,4 +183,38 @@ public:
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 2000")) );
   }
 };
+
+// Extra tests to dig deep into the unexposed internals of Logger
+// in pursuit of 100% code coverage
+class PinsInternalTestSuite: public CxxTest::TestSuite
+{
+  class PinsInternal: Pins
+  {
+  public:
+    void bad_static_pins(void) 
+    {
+      // This is bad.  Don't do this in real life.
+      Pins::reset(); 
+      Pins::static_command_pins(vector<string>()); 
+    }
+    void bad_static_pin(void) 
+    {
+      // This is bad.  Don't do this in real life.
+      Pins::reset(); 
+      Pins::static_command_pin(vector<string>()); 
+    }
+  };
+public:
+  void testBadStaticPins(void)
+  {
+    PinsInternal i;
+    TS_ASSERT_THROWS_ANYTHING( i.bad_static_pins() );
+  }
+  void testBadStaticPin(void)
+  {
+    PinsInternal i;
+    TS_ASSERT_THROWS_ANYTHING( i.bad_static_pin() );
+  }
+};
+
 // vim:cin:ai:sts=2 sw=2 ft=cpp

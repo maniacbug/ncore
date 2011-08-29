@@ -28,7 +28,7 @@ void Logger::add(const std::string& format,...)
 bool Logger::static_command_list(const vector<string>& _commands)
 {
   if ( ! global_logger )
-    return false;
+    throw new runtime_error("No logger registered to receive commands");
 
   return global_logger->command_list(_commands);
 }
@@ -54,6 +54,10 @@ void Logger::addCommandsTo(Dispatcher& _commands)
   _commands.add("list",Logger::static_command_list);
 }
 
+void Logger::reset(void)
+{
+  global_logger = NULL;
+}
 #if 0
 
 void logger::add(const char* format,...)
