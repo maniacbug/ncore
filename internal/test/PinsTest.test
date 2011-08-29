@@ -161,12 +161,32 @@ public:
     parser.parse("pin 5 high something");
     TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
   }
+  void testCommandPinSetExceptions_6( void )
+  {
+    parser.parse("pin something high");
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+  }
   void testCommandAnalogSet( void )
   {
     parser.parse("pin a5 512");
     commands.execute(parser);
 
     TS_ASSERT_EQUALS( pins.analogRead(5), 512 );
+  }
+  void testCommandAnalogPinSetExceptions_1( void )
+  {
+    parser.parse("pin a5");
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+  }
+  void testCommandAnalogPinSetExceptions_2( void )
+  {
+    parser.parse("pin a5 high");
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
+  }
+  void testCommandAnalogPinSetExceptions_3( void )
+  {
+    parser.parse("pin a5 1000 something");
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(parser) );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -58,6 +58,10 @@ bool Pins::static_command_pins(const vector<string>& _commands)
 
 bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<string>::const_iterator end)
 {
+  char c = (*current)[0];
+  if ( c < '0' || c > '9' )
+    throw new runtime_error("Unknown pin value");
+
   istringstream ss(*current++);
   int pin;
   ss >> pin;
@@ -99,7 +103,11 @@ bool Pins::command_pin_analog(vector<string>::const_iterator current,vector<stri
 
   if ( pin < 0 || pin >= num_channels )
     throw new runtime_error("Analog channel out of range");
-  
+ 
+  char c = (*current)[0];
+  if ( c < '0' || c > '9' )
+    throw new runtime_error("Unknown level value");
+
   int level;
   istringstream ss_level(*current++);
   ss_level >> level;
