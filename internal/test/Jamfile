@@ -35,7 +35,23 @@ rule RunTest
 
 actions RunTest
 {
+  $(RM) $(LOCATE_TARGET)/*.gcda
   $(>) | tee $(<)
+}
+
+rule Coverage 
+{
+  Depends $(<) : $(>) ;
+  Depends $(<) : result ;
+  MakeLocate $(<) : $(LOCATE_TARGET) ;
+  Clean clean : $(<) ;
+  Clean clean : $(2:D=).gcov ;
+}
+
+actions Coverage 
+{
+  gcov $(>) -o $(LOCATE_TARGET)/ > $(<)
+  $(MV) *.gcov $(LOCATE_TARGET)/
 }
 
 rule Objects
@@ -57,4 +73,4 @@ rule Main
 TestSuite runner.cpp : $(TEST_MODULES) ;
 Main Tests : runner.cpp $(CODE_MODULES) $(CORE_MODULES) ;
 RunTest result : Tests ;
-
+Coverage coverage : $(CODE_MODULES) ;
