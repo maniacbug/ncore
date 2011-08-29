@@ -10,6 +10,7 @@ class Logger: public std::vector<std::string>
 {
 protected:
   static bool static_command_list(const std::vector<std::string>& _commands);
+  bool command_list(const std::vector<std::string>&) const;
 public:
   void add(const std::string&,...);
   

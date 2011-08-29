@@ -25,6 +25,7 @@ public:
     test_buffer.str(string());
     cout_sbuf = NULL;
     log.clear();
+    parser.clear();
     log.addCommandsTo(commands);
    
     startCoutCapture();
@@ -34,6 +35,7 @@ public:
   void startCoutCapture( void )
   {
     // Capture the input to a test buffer
+    test_buffer.str(string());
     cout_sbuf = std::cout.rdbuf(); // save original sbuf
     cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
   }
@@ -89,7 +91,7 @@ public:
     
     TS_ASSERT_EQUALS( ok, true );
   }
-  void todo_testListCommandWorks( void )
+  void testListCommandWorks( void )
   {
     log.add("Test1");
     log.add("Test12");

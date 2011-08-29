@@ -1,4 +1,6 @@
 #include <sstream>
+#include <iostream>
+#include <stdexcept>
 #include <stdio.h>
 #include <stdarg.h>
 #include <Logger.h>
@@ -6,6 +8,8 @@
 
 using namespace std;
 extern "C" unsigned long millis(void);
+
+static Logger* global_logger = NULL;
 
 void Logger::add(const std::string& format,...)
 {
@@ -23,11 +27,30 @@ void Logger::add(const std::string& format,...)
 
 bool Logger::static_command_list(const vector<string>& _commands)
 {
+  if ( ! global_logger )
+    return false;
+
+  return global_logger->command_list(_commands);
+}
+
+bool Logger::command_list(const vector<string>& _commands) const
+{
+  if ( _commands.size() != 1 )
+    throw new runtime_error("No parameters expected");
+
+  vector<string>::const_iterator current = begin();
+  while ( current != end() )
+  {
+    cout << *current;
+    ++current;
+  }
+
   return true;
 }
 
 void Logger::addCommandsTo(Commands& _commands)
 {
+  global_logger = this;
   _commands.add("list",Logger::static_command_list);
 }
 
