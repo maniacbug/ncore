@@ -81,6 +81,18 @@ public:
 
     TS_ASSERT_EQUALS( value, 512 );
   }
+  void todo_testRanges( void )
+  {
+    // TODO: Range tests for all the internal pin setters
+  }
+  void testPinModeInput( void )
+  {
+    // Setting pinMode INPUT means digitalWrite will have no impact
+    pins.pinMode(2,OUTPUT);
+    pins.digitalWrite(2,HIGH);
+
+    TS_ASSERT_EQUALS( pins.hwGetDigital(2), LOW );
+  }
   void testAttachInterrupt( void )
   {
     pins.attachInterrupt( 0, isr );

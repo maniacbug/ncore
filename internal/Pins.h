@@ -5,6 +5,13 @@
 
 class Dispatcher;
 
+#ifndef OUTPUT
+const int OUTPUT = 1;
+#endif
+#ifndef INPUT 
+const int INPUT = 0; 
+#endif
+
 class Pins
 {
 protected:
@@ -12,6 +19,7 @@ protected:
   static const int num_channels = 8;
   static const int num_interrupts = 2;
   std::vector<int> digital_states;
+  std::vector<int> pin_modes;
   std::vector<int> analog_states;
   std::vector<void (*)(void)> isr_table;
 
@@ -39,6 +47,7 @@ public:
   void hwTriggerInterrupt(int irq) const;
   void digitalWrite(int pin,int level);
   int hwGetDigital(int pin) const;
+  void pinMode(int pin, int dir);
   
   void addCommandsTo(Dispatcher&);
 };

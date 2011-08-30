@@ -18,16 +18,21 @@ Pins::Pins(void)
 void Pins::clear(void)
 {
   digital_states.clear();
+  pin_modes.clear();
   analog_states.clear();
   isr_table.clear();
 
   digital_states.resize(num_pins);
+  pin_modes.resize(num_pins);
   analog_states.resize(num_channels);
   isr_table.resize(num_interrupts);
 }
 int Pins::digitalRead(int pin) const
 {
-  return digital_states[pin];
+  if ( pin_modes[pin] == INPUT )
+    return digital_states[pin];
+  else
+    return 0;
 }
 void Pins::hwSetDigital(int pin,int level)
 {
@@ -43,11 +48,16 @@ void Pins::hwSetAnalog(int pin,int level)
 }
 void Pins::digitalWrite(int pin,int level)
 {
-  analog_states[pin] = level;
+  if ( pin_modes[pin] == OUTPUT )
+    analog_states[pin] = level;
 }
 int Pins::hwGetDigital(int pin) const
 {
   return digital_states[pin];
+}
+void Pins::pinMode(int pin, int dir)
+{
+  pin_modes[pin] = dir;
 }
 
 void Pins::attachInterrupt(int irq, void (*isr)(void))
