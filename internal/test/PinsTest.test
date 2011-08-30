@@ -170,28 +170,13 @@ public:
 
     TS_ASSERT_EQUALS( pins.digitalRead(5), LOW );
   }
-  void testCommandPinSetExceptions_1( void )
+  void testCommandPinSetExceptions( void )
   {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin")) );
-  }
-  void testCommandPinSetExceptions_2( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 100 high")) );
-  }
-  void testCommandPinSetExceptions_3( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5")) );
-  }
-  void testCommandPinSetExceptions_4( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5 something")) );
-  }
-  void testCommandPinSetExceptions_5( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5 high something")) );
-  }
-  void testCommandPinSetExceptions_6( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin something high")) );
   }
   void testCommandAnalogSet( void )
@@ -207,24 +192,12 @@ public:
 
     TS_ASSERT_EQUALS( pins.analogRead(0), 1 );
   }
-  void testCommandAnalogPinSetExceptions_1( void )
+  void testCommandAnalogPinSetExceptions( void )
   {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5")) );
-  }
-  void testCommandAnalogPinSetExceptions_2( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 high")) );
-  }
-  void testCommandAnalogPinSetExceptions_3( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 1000 something")) );
-  }
-  void testCommandAnalogPinSetExceptions_4( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a1000 1000")) );
-  }
-  void testCommandAnalogPinSetExceptions_5( void )
-  {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 2000")) );
   }
   void testCommandIrq( void )
