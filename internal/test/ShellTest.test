@@ -1,19 +1,101 @@
 #include <cxxtest/TestSuite.h>
+#include <Shell.h>
+#include <Logger.h>
+#include <Dispatcher.h>
+#include <Parser.h>
+#include <Pins.h>
 #include <vector>
 #include <string>
+#include <streambuf>
+#include <iostream>
+#include <sstream>
 
-using std::string;
-using std::vector;
+using namespace std;
 
 class ShellTestSuite: public CxxTest::TestSuite
 {
+  Pins pins;
+  Dispatcher commands;
+  Logger log;
+  stringstream test_buffer;
+  streambuf* cout_sbuf;
 public:
   void setUp()
   {
+    pins.clear();
+    commands.clear();
+    log.clear();
+    //mock_readline.clear();
+    pins.addCommandsTo(commands);
+    log.addCommandsTo(commands);
+    test_buffer.str(string());
+    cout_sbuf = NULL;
+  }
+  void startCoutCapture( void )
+  {
+    // Capture the input to a test buffer
+    cout_sbuf = std::cout.rdbuf(); // save original sbuf
+    cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
+  }
+  void endCoutCapture( void )
+  {
+    // Restore the output stream
+    cout.rdbuf(cout_sbuf); // restore the original stream buffer
+  }
+  int countSubStrings( const string& whole, const string& partial )
+  {
+    size_t skip_count = partial.size();
+
+    std::string::size_type and_pos( 0 );
+    int count(0);
+    while ( and_pos!=std::string::npos )
+    {
+      and_pos = whole.find(partial, and_pos );
+      if ( and_pos != std::string::npos )
+      {
+        ++count;
+        and_pos += skip_count;
+      }
+    }
+    return count;
   }
 
-  void testNothing( void )
+  void testRuns( void )
   {
+    startCoutCapture();
+    Shell().run(Dispatcher());
+    endCoutCapture();
+
+    TS_ASSERT( test_buffer.str().size() > 0 );
+  }
+  void testEmpty( void )
+  {
+    startCoutCapture();
+    Shell().run(Dispatcher());
+    endCoutCapture();
+
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 1 );
+  }
+  void todo_testQuit( void )
+  {
+    //mock_readline.add("quit");
+
+    startCoutCapture();
+    Shell().run(commands);
+    endCoutCapture();
+
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 1 );
+  }
+  void todo_testTwoCommands( void )
+  {
+    //mock_readline.add("pins");
+    //mock_readline.add("quit");
+
+    startCoutCapture();
+    Shell().run(commands);
+    endCoutCapture();
+
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 2 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

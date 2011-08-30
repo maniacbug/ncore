@@ -6,10 +6,11 @@ HDRS = $(CXXTEST_DIR) $(PWD) $(CODE_DIR) $(CORE_DIR) ;
 CORE_MODULES = $(CORE_DIR)/native_core.cpp ;
 CODE_MODULES = [ GLOB $(CODE_DIR) : *.cpp ] ;
 TEST_MODULES = [ GLOB $(PWD) : *.test ] ;
+MOCK_MODULES = readline.cpp ;
 LINK = c++ ;
 LOCATE_TARGET = out ;
 LOCATE_SOURCE = out ;
-CCFLAGS = -fprofile-arcs -ftest-coverage ;
+CCFLAGS = -fprofile-arcs -ftest-coverage -g ;
 C++FLAGS = $(CCFLAGS) ;
 LINKFLAGS = -fprofile-arcs ;
 
@@ -72,6 +73,13 @@ rule Main
 }
 
 TestSuite runner.cpp : $(TEST_MODULES) ;
-Main Tests : runner.cpp $(CODE_MODULES) $(CORE_MODULES) ;
+Main Tests : runner.cpp $(CODE_MODULES) $(CORE_MODULES) $(MOCK_MODULES) ;
 RunTest result : Tests ;
 Coverage coverage : $(CODE_MODULES) ;
+
+Main Threads : threads.cpp ;
+LINKFLAGS on Threads = -lreadline -lpthread ;
+C++FLAGS on threads.o = ;
+
+Main Shell : shell.cpp $(CODE_MODULES) $(CORE_MODULES) ;
+LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;

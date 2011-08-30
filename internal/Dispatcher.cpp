@@ -5,7 +5,7 @@
 
 using namespace std;
 
-bool Dispatcher::execute(const std::vector<std::string>& _commands)
+bool Dispatcher::execute(const std::vector<std::string>& _commands) const
 {
   bool result = false;
   const string& command = ( _commands.size() > 0 ) ? _commands.at(0) : string();
