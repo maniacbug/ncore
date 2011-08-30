@@ -27,7 +27,6 @@ public:
     pins.clear();
     commands.clear();
     log.clear();
-    //mock_readline.clear();
     pins.addCommandsTo(commands);
     log.addCommandsTo(commands);
     test_buffer.str(string());
@@ -109,6 +108,26 @@ public:
     endCoutCapture();
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"not found") , 1 );
+  }
+  void testRealCommand( void )
+  {
+    mock_readline_add("pins");
+
+    startCoutCapture();
+    Shell().run(commands);
+    endCoutCapture();
+
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"13:0") , 1 );
+  }
+  void testBadCommand( void )
+  {
+    mock_readline_add("pin something");
+
+    startCoutCapture();
+    Shell().run(commands);
+    endCoutCapture();
+
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Error: ") , 1 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
