@@ -1,14 +1,19 @@
-#include <cxxtest/TestSuite.h>
-#include <Shell.h>
-#include <Logger.h>
-#include <Dispatcher.h>
-#include <Parser.h>
-#include <Pins.h>
+// Standard C++ includes
 #include <vector>
 #include <string>
 #include <streambuf>
 #include <iostream>
 #include <sstream>
+// Standard C includes
+// None
+// Library includes
+#include <cxxtest/TestSuite.h>
+// Project includes
+#include <Shell.h>
+#include <Logger.h>
+#include <Dispatcher.h>
+#include <Parser.h>
+#include <Pins.h>
 
 using namespace std;
 
@@ -145,6 +150,18 @@ public:
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"12:1") , 1 );
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"10:1") , 1 );
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"5:1000") , 1 );
+  }
+  void testCR( void )
+  {
+    mock_readline_add(" ");
+
+    startCoutCapture();
+    Shell().run(commands);
+    endCoutCapture();
+
+    cout << test_buffer.str();
+
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 2 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
