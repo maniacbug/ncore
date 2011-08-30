@@ -82,7 +82,7 @@ public:
     mock_readline_add("quit");
 
     startCoutCapture();
-    Shell().run(commands);
+    Shell().run(Dispatcher());
     endCoutCapture();
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$ quit") , 1 );
@@ -93,7 +93,7 @@ public:
     mock_readline_add("quit");
 
     startCoutCapture();
-    Shell().run(commands);
+    Shell().run(Dispatcher());
     endCoutCapture();
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 2 );
@@ -104,7 +104,7 @@ public:
     mock_readline_add("quit");
 
     startCoutCapture();
-    Shell().run(commands);
+    Shell().run(Dispatcher());
     endCoutCapture();
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"not found") , 1 );
