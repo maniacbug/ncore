@@ -48,10 +48,11 @@ rule Coverage
   Clean clean : $(2:D=).gcov ;
 }
 
-actions Coverage 
+actions ignore Coverage 
 {
   gcov $(>) -o $(LOCATE_TARGET)/ > $(<)
   $(MV) *.gcov $(LOCATE_TARGET)/
+  grep "###" $(LOCATE_TARGET)/$(CODE_MODULES:D=).gcov
 }
 
 rule Objects
