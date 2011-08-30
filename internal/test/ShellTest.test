@@ -99,16 +99,16 @@ public:
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 2 );
   }
-  void todo_testNotFound( void )
+  void testNotFound( void )
   {
-    //mock_readline.add("something");
-    //mock_readline.add("quit");
+    mock_readline_add("something");
+    mock_readline_add("quit");
 
     startCoutCapture();
     Shell().run(commands);
     endCoutCapture();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 1 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"not found") , 1 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
