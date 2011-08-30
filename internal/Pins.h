@@ -10,8 +10,10 @@ class Pins
 protected:
   static const int num_pins = 20;
   static const int num_channels = 8;
+  static const int num_interrupts = 2;
   std::vector<int> digital_states;
   std::vector<int> analog_states;
+  std::vector<void (*)(void)> isr_table;
 
   static void reset(void); /**< Reset state of statics. Only for testing! */
 
@@ -29,6 +31,9 @@ public:
   void hwSetDigital(int pin,int level);
   int analogRead(int pin) const;
   void hwSetAnalog(int pin,int level);
+  void attachInterrupt(int irq, void (*isr)(void));
+  void detachInterrupt(int irq);
+  void hwTriggerInterrupt(int irq);
 
   void addCommandsTo(Dispatcher&);
 };

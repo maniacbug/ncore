@@ -19,9 +19,11 @@ void Pins::clear(void)
 {
   digital_states.clear();
   analog_states.clear();
+  isr_table.clear();
 
   digital_states.resize(num_pins);
   analog_states.resize(num_channels);
+  isr_table.resize(num_interrupts);
 }
 int Pins::digitalRead(int pin) const
 {
@@ -38,6 +40,28 @@ int Pins::analogRead(int pin) const
 void Pins::hwSetAnalog(int pin,int level)
 {
   analog_states[pin] = level;
+}
+
+void Pins::attachInterrupt(int irq, void (*isr)(void))
+{
+  if ( irq >= 0 && irq < num_interrupts )
+    isr_table[irq] = isr;
+}
+
+void Pins::detachInterrupt(int irq)
+{
+  attachInterrupt(irq,NULL);
+}
+
+void Pins::hwTriggerInterrupt(int irq)
+{
+  if ( irq < 0 || irq >= num_interrupts )
+    throw new runtime_error("Interrupt number out of range");
+
+  if ( ! isr_table[irq] )
+    throw new runtime_error("No handler assigned for this interrupt");
+
+  isr_table[irq]();
 }
 
 bool Pins::static_command_pin(const vector<string>& _commands)

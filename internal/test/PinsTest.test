@@ -17,6 +17,7 @@ class PinsTestSuite: public CxxTest::TestSuite
   Dispatcher commands;
   stringstream test_buffer;
   streambuf* cout_sbuf;
+  static int isr_called_count;
 public:
   void setUp()
   {
@@ -25,6 +26,32 @@ public:
     test_buffer.str(string());
     cout_sbuf = NULL;
     pins.addCommandsTo(commands);
+    isr_called_count = 0;
+  }
+  static void isr(void)
+  {
+    ++isr_called_count;
+  }
+  static void isr_large(void)
+  {
+    isr_called_count += 5;
+  }
+  int countSubStrings( const string& whole, const string& partial )
+  {
+    size_t skip_count = partial.size();
+
+    std::string::size_type and_pos( 0 );
+    int count(0);
+    while ( and_pos!=std::string::npos )
+    {
+      and_pos = whole.find(partial, and_pos );
+      if ( and_pos != std::string::npos )
+      {
+        ++count;
+        and_pos += skip_count;
+      }
+    }
+    return count;
   }
 
   void testEmpty( void )
@@ -47,28 +74,38 @@ public:
 
     TS_ASSERT_EQUALS( value, 512 );
   }
+  void testAttachInterrupt( void )
+  {
+    pins.attachInterrupt( 0, isr );
+    pins.hwTriggerInterrupt( 0 );
+
+    TS_ASSERT_EQUALS( isr_called_count, 1 );
+  }
+  void testAttachInterruptTooHigh( void )
+  {
+    pins.attachInterrupt( 10, isr );
+    TS_ASSERT_THROWS_ANYTHING( pins.hwTriggerInterrupt( 10 ) );
+  }
+  void testOverrideInterrupt( void )
+  {
+    pins.attachInterrupt( 0, isr );
+    pins.attachInterrupt( 0, isr_large );
+    pins.hwTriggerInterrupt( 0 );
+
+    TS_ASSERT_EQUALS( isr_called_count, 5 );
+  }
+  void testDetachInterrupt( void )
+  {
+    pins.attachInterrupt( 0, isr );
+    pins.detachInterrupt( 0 );
+
+    TS_ASSERT_THROWS_ANYTHING( pins.hwTriggerInterrupt( 0 ) );
+  }
   void testAddCommands( void )
   {
     int numcommands = commands.size();
 
     TS_ASSERT( numcommands > 0 );
-  }
-  int countSubStrings( const string& whole, const string& partial )
-  {
-    size_t skip_count = partial.size();
-
-    std::string::size_type and_pos( 0 );
-    int count(0);
-    while ( and_pos!=std::string::npos )
-    {
-      and_pos = whole.find(partial, and_pos );
-      if ( and_pos != std::string::npos )
-      {
-        ++count;
-        and_pos += skip_count;
-      }
-    }
-    return count;
   }
   void testRunCommand( void )
   {
@@ -214,5 +251,8 @@ public:
     TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_pin() );
   }
 };
+
+int PinsTestSuite::isr_called_count;
+
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp
