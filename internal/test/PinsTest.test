@@ -67,6 +67,13 @@ public:
 
     TS_ASSERT_EQUALS( value, HIGH );
   }
+  void testDigitalWrite( void )
+  {
+    pins.digitalWrite(0,HIGH);
+    int value = pins.hwGetDigital(0);
+
+    TS_ASSERT_EQUALS( value, HIGH );
+  }
   void testSetAnalog( void )
   {
     pins.hwSetAnalog(0,512);

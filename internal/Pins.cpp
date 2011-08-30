@@ -41,6 +41,14 @@ void Pins::hwSetAnalog(int pin,int level)
 {
   analog_states[pin] = level;
 }
+void Pins::digitalWrite(int pin,int level)
+{
+  analog_states[pin] = level;
+}
+int Pins::hwGetDigital(int pin) const
+{
+  return digital_states[pin];
+}
 
 void Pins::attachInterrupt(int irq, void (*isr)(void))
 {

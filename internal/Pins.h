@@ -37,7 +37,9 @@ public:
   void attachInterrupt(int irq, void (*isr)(void));
   void detachInterrupt(int irq);
   void hwTriggerInterrupt(int irq) const;
-
+  void digitalWrite(int pin,int level);
+  int hwGetDigital(int pin) const;
+  
   void addCommandsTo(Dispatcher&);
 };
 
