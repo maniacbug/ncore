@@ -12,6 +12,8 @@
 
 using namespace std;
 
+extern void mock_readline_add(const string& _str);
+
 class ShellTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
@@ -76,15 +78,15 @@ public:
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 1 );
   }
-  void todo_testQuit( void )
+  void testQuit( void )
   {
-    //mock_readline.add("quit");
+    mock_readline_add("quit");
 
     startCoutCapture();
     Shell().run(commands);
     endCoutCapture();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 1 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$ quit") , 1 );
   }
   void todo_testTwoCommands( void )
   {
@@ -96,6 +98,17 @@ public:
     endCoutCapture();
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 2 );
+  }
+  void todo_testNotFound( void )
+  {
+    //mock_readline.add("something");
+    //mock_readline.add("quit");
+
+    startCoutCapture();
+    Shell().run(commands);
+    endCoutCapture();
+
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 1 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
