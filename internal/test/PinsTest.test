@@ -81,6 +81,14 @@ public:
 
     TS_ASSERT_EQUALS( isr_called_count, 1 );
   }
+  void testCallsCorrectInterrupt( void )
+  {
+    pins.attachInterrupt( 0, isr );
+    pins.attachInterrupt( 1, isr_large );
+    pins.hwTriggerInterrupt( 1 );
+
+    TS_ASSERT_EQUALS( isr_called_count, 5 );
+  }
   void testAttachInterruptTooHigh( void )
   {
     pins.attachInterrupt( 10, isr );
@@ -219,6 +227,19 @@ public:
   {
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 2000")) );
   }
+  void testCommandIrq( void )
+  {
+    pins.attachInterrupt( 1, isr );
+    commands.execute(Parser("irq 1"));
+
+    TS_ASSERT_EQUALS( isr_called_count, 1 );
+  }
+  void testCommandIrqExceptions( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq 100")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq something")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq")) );
+  }
 };
 
 // Extra tests to dig deep into the unexposed internals of Logger
@@ -240,15 +261,19 @@ class PinsInternalTestSuite: public CxxTest::TestSuite
       Pins::reset();
       Pins::static_command_pin(vector<string>());
     }
+    void bad_static_irq(void)
+    {
+      // This is bad.  Don't do this in real life.
+      Pins::reset();
+      Pins::static_command_irq(vector<string>());
+    }
   };
 public:
-  void testBadStaticPins(void)
+  void testBadStaticCommands(void)
   {
     TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_pins() );
-  }
-  void testBadStaticPin(void)
-  {
     TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_pin() );
+    TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_irq() );
   }
 };
 

@@ -53,7 +53,7 @@ void Pins::detachInterrupt(int irq)
   attachInterrupt(irq,NULL);
 }
 
-void Pins::hwTriggerInterrupt(int irq)
+void Pins::hwTriggerInterrupt(int irq) const
 {
   if ( irq < 0 || irq >= num_interrupts )
     throw new runtime_error("Interrupt number out of range");
@@ -78,6 +78,14 @@ bool Pins::static_command_pins(const vector<string>& _commands)
     throw new runtime_error("No pins registered to receive commands");
 
   return global_pins->command_pins(_commands);
+}
+
+bool Pins::static_command_irq(const vector<string>& _commands)
+{
+  if ( ! global_pins )
+    throw new runtime_error("No pins registered to receive commands");
+
+  return global_pins->command_irq(_commands);
 }
 
 bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<string>::const_iterator end)
@@ -195,11 +203,37 @@ bool Pins::command_pins(const vector<string>& _commands) const
   return true;
 }
 
+bool Pins::command_irq(const vector<string>& _commands) const
+{
+  bool result = false;
+  vector<string>::const_iterator current = _commands.begin();
+
+  // Skip over 'irq' command
+  ++current;
+
+  // Get the irq number
+  if ( current == _commands.end() )
+    throw new runtime_error("Expecting irq number");
+  
+  char c = (*current)[0];
+  if ( c < '0' || c > '9' )
+    throw new runtime_error("Unknown pin value");
+
+  istringstream ss(*current++);
+  int irq;
+  ss >> irq;
+
+  hwTriggerInterrupt( irq );
+
+  return result;
+}
+
 void Pins::addCommandsTo(Dispatcher& _commands)
 {
   global_pins = this;
   _commands.add("pins",Pins::static_command_pins);
   _commands.add("pin",Pins::static_command_pin);
+  _commands.add("irq",Pins::static_command_irq);
 }
 void Pins::reset(void)
 {

@@ -24,6 +24,9 @@ protected:
   bool command_pin(const std::vector<std::string>&);
   bool command_pin_digital(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );
   bool command_pin_analog(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );
+  
+  static bool static_command_irq(const std::vector<std::string>&);
+  bool command_irq(const std::vector<std::string>&) const;
 public:
   Pins(void);
   void clear(void);
@@ -33,7 +36,7 @@ public:
   void hwSetAnalog(int pin,int level);
   void attachInterrupt(int irq, void (*isr)(void));
   void detachInterrupt(int irq);
-  void hwTriggerInterrupt(int irq);
+  void hwTriggerInterrupt(int irq) const;
 
   void addCommandsTo(Dispatcher&);
 };
