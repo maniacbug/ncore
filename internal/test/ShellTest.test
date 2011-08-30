@@ -88,10 +88,10 @@ public:
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$ quit") , 1 );
   }
-  void todo_testTwoCommands( void )
+  void testTwoCommands( void )
   {
-    //mock_readline.add("pins");
-    //mock_readline.add("quit");
+    mock_readline_add("something");
+    mock_readline_add("quit");
 
     startCoutCapture();
     Shell().run(commands);
