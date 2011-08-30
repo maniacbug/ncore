@@ -129,5 +129,22 @@ public:
 
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Error: ") , 1 );
   }
+  void testCommandSequence( void )
+  {
+    mock_readline_add("pin 13 high");
+    mock_readline_add("pin 12 high");
+    mock_readline_add("pin 10 high");
+    mock_readline_add("pin a5 1000");
+    mock_readline_add("pins");
+
+    startCoutCapture();
+    Shell().run(commands);
+    endCoutCapture();
+
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"13:1") , 1 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"12:1") , 1 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"10:1") , 1 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"5:1000") , 1 );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
