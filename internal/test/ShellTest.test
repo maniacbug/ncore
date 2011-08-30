@@ -1,0 +1,19 @@
+#include <cxxtest/TestSuite.h>
+#include <vector>
+#include <string>
+
+using std::string;
+using std::vector;
+
+class ShellTestSuite: public CxxTest::TestSuite
+{
+public:
+  void setUp()
+  {
+  }
+
+  void testNothing( void )
+  {
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
