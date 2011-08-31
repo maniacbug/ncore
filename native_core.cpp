@@ -1,43 +1,61 @@
-#include <WProgram.h>
+#include <string>
+#include <iostream>
+#include <iomanip>
+
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <stdarg.h>
-#include <string>
-#include <iostream>
-#include <iomanip>
+
+#include <Logger.h>
+#include <Pins.h>
+#include <WProgram.h>
+
 using namespace std;
 
 static struct timeval program_start;
 
 extern "C" void __cxa_pure_virtual() { while (1); }
 
+static Logger* logger = NULL;
+static Pins* pins = NULL;
+
+void init(Pins& _p,Logger& _l)
+{
+  pins = &_p;
+  logger = &_l;
+  gettimeofday(&program_start,NULL);
+  logger->add("started"); 
+}
+
 extern "C" {
 
 void init(void)
 {
+  logger = new Logger;
   gettimeofday(&program_start,NULL);
-  cout << "NCORE: " << setfill('0') << setw(6) << millis() << " started" << endl;
+  logger->add("started"); 
 }
 
 void delay(unsigned long ms)
 {
-  printf("NCORE: %06lu ",millis());
-  printf("delay %lu\n",ms);
+  logger->add("delay %lu",ms);
   usleep(ms*1000LU);
 }
 
 void digitalWrite(uint8_t pin,uint8_t level)
 {
-  printf("NCORE: %06lu ",millis());
-  printf("pin %i: %s\n",pin,level?"HIGH":"LOW");
+  logger->add("pin %i: %s",pin,level?"HIGH":"LOW");
+  if ( pins )
+    pins->digitalWrite(pin,level);
 }
 
 int digitalRead(uint8_t pin)
 {
   int level = LOW;
-  printf("NCORE: %06lu ",millis());
-  printf("read pin %i: it's %s\n",pin,level?"HIGH":"LOW");
+  if ( pins )
+    level = pins->digitalRead(pin);
+  //logger->add("read pin %i: it's %s",pin,level?"HIGH":"LOW");
 
   return level;
 }
@@ -58,8 +76,9 @@ int analogRead(uint8_t pin)
 
 void pinMode(uint8_t pin,uint8_t mode)
 {
-  printf("NCORE: %06lu ",millis());
-  printf("pin %i: mode %s\n",pin,mode?"OUTPUT":"INPUT");
+  logger->add("pin %i: mode %s",pin,mode?"OUTPUT":"INPUT");
+  if ( pins )
+    pins->pinMode(pin,mode);
 }
 
 unsigned long millis(void)
