@@ -1,13 +1,16 @@
-#include <cxxtest/TestSuite.h>
-#include <pthread.h>
-#include <Logger.h>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <streambuf>
+
+#include <cxxtest/TestSuite.h>
+#include <pthread.h>
+
+#include <Logger.h>
 #include <Parser.h>
 #include <Dispatcher.h>
+#include <OutputCapture.h>
 
 using namespace std;
 
@@ -18,34 +21,18 @@ class LoggerTestSuite: public CxxTest::TestSuite
   Logger log;
   Dispatcher commands;
   Parser parser;
-  stringstream test_buffer;
-  streambuf* cout_sbuf;
+  OutputCapture cap;
 public:
   void setUp()
   {
-    test_buffer.str(string());
-    cout_sbuf = std::cout.rdbuf(); // save original sbuf
+    cap.clear();
     log.clear();
     parser.clear();
     log.addCommandsTo(commands);
   }
   void tearDown()
   {
-    endCoutCapture();
-  }
-  void startCoutCapture( void )
-  {
-    // Capture the input to a test buffer
-    test_buffer.str(string());
-    cout_sbuf = std::cout.rdbuf(); // save original sbuf
-    cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
-  }
-  string endCoutCapture( void )
-  {
-    // Restore the output stream
-    cout.rdbuf(cout_sbuf); // restore the original stream buffer
-
-    return test_buffer.str();
+    cap.stop();
   }
   int countSubStrings( const string& whole, const string& partial )
   {
@@ -86,16 +73,15 @@ public:
   {
     parser.parse("list");
 
-    startCoutCapture();
+    cap.start();
     bool ok = commands.execute(parser);
-    string output = endCoutCapture();
+    cap.stop();
 
     TS_ASSERT_EQUALS( ok, true );
   }
   void testListExceptions_1( void )
   {
-    // Currently not implemented, so should throw
-    startCoutCapture();
+    cap.start();
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("list 1000")) );
   }
   void testListCommandWorks( void )
@@ -106,11 +92,11 @@ public:
 
     parser.parse("list");
 
-    startCoutCapture();
+    cap.start();
     commands.execute(parser);
-    string output = endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(output,"NCORE"), 3 );
+    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"NCORE"), 3 );
   }
   void todo_testListCommandRegexp( void )
   {
@@ -120,11 +106,11 @@ public:
 
     parser.parse("list /T.*12/");
 
-    startCoutCapture();
+    cap.start();
     commands.execute(parser);
-    string output = endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(output,"NCORE"), 2 );
+    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"NCORE"), 2 );
   }
   static void * write_logs(void* pv)
   {
@@ -146,18 +132,18 @@ public:
       log.add("Foreground thread");
     pthread_join( bg_thread, NULL );
 
-    startCoutCapture();
+    cap.start();
     commands.execute(Parser("list"));
-    endCoutCapture();
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Background"), 50 );
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Foreground"), 50 );
+    cap.stop();
+    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"Background"), 50 );
+    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"Foreground"), 50 );
   }
   void testThreadSafeListing( void )
   {
     pthread_t bg_thread;
     int err = pthread_create( &bg_thread, NULL, write_logs, this );
     TS_ASSERT_EQUALS( err, 0 );
-    startCoutCapture();
+    cap.start();
     int i = 7;
     while (i--)
     {
@@ -165,7 +151,7 @@ public:
       commands.execute(Parser("list"));
     }
     pthread_join( bg_thread, NULL );
-    endCoutCapture();
+    cap.stop();
    
     // Just running means it worked
     TS_ASSERT( 1 );
