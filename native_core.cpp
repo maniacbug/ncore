@@ -26,12 +26,17 @@ void add_commands_to(Dispatcher& d)
   logger.addCommandsTo(d);
 }
 
+void system_log(const string& s)
+{
+  logger.add(s);
+}
+
 extern "C" {
 
 void init(void)
 {
-  logger.add("started");
   logger.setClock(theclock);
+  logger.add("started");
 }
 
 //
@@ -102,7 +107,7 @@ void detachInterrupt(uint8_t num)
 
 void printf_P(const char* format,...)
 {
-  string formatstr(format);
+  std::string formatstr(format);
 
   // replace '%S' with '%s'
   size_t at = formatstr.find("%S");
