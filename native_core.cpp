@@ -9,22 +9,22 @@
 
 #include <Logger.h>
 #include <Pins.h>
+#include <Clock.h>
 #include <WProgram.h>
 
 using namespace std;
-
-static struct timeval program_start;
 
 extern "C" void __cxa_pure_virtual() { while (1); }
 
 static Logger* logger = NULL;
 static Pins* pins = NULL;
 
+static Clock theclock;
+
 void init(Pins& _p,Logger& _l)
 {
   pins = &_p;
   logger = &_l;
-  gettimeofday(&program_start,NULL);
   logger->add("started"); 
 }
 
@@ -33,14 +33,13 @@ extern "C" {
 void init(void)
 {
   logger = new Logger;
-  gettimeofday(&program_start,NULL);
   logger->add("started"); 
 }
 
 void delay(unsigned long ms)
 {
   logger->add("delay %lu",ms);
-  usleep(ms*1000LU);
+  theclock.delay(ms);
 }
 
 void digitalWrite(uint8_t pin,uint8_t level)
@@ -62,15 +61,15 @@ int digitalRead(uint8_t pin)
 
 void analogWrite(uint8_t pin,int level)
 {
-  printf("NCORE: %06lu ",millis());
-  printf("pin %i: %i\n",pin,level);
+  logger->add("pin %i: %i\n",pin,level);
 }
 
 int analogRead(uint8_t pin)
 {
   int level = 0;
-  printf("NCORE: %06lu ",millis());
-  printf("read pin %i: it's %i\n",pin,level);
+  logger->add("read pin %i: it's %i\n",pin,level);
+  if ( pins )
+    level = pins->analogRead(pin);
   return level;
 }
 
@@ -83,16 +82,7 @@ void pinMode(uint8_t pin,uint8_t mode)
 
 unsigned long millis(void)
 {
-  unsigned long result;
-  struct timeval now;
-  gettimeofday(&now,NULL);
-
-  result = ( now.tv_sec - program_start.tv_sec ) * 1000LU ;
-  result += ( now.tv_usec - program_start.tv_usec ) / 1000L ;
-  
-  //printf("NCORE: time is %lu\n",now.tv_sec,now.tv_usec,result);
-
-  return result;
+  return theclock.millis();
 }
 
 unsigned long pulseIn(uint8_t pin, uint8_t /*state*/, unsigned long /*timeout*/ )
@@ -104,9 +94,8 @@ unsigned long pulseIn(uint8_t pin, uint8_t /*state*/, unsigned long /*timeout*/ 
 }
 void delayMicroseconds(unsigned int us)
 {
-  printf("NCORE: %06lu ",millis());
-  printf("delay %u us\n",us);
-  usleep(us);
+  logger->add("delay %u us\n",us);
+  theclock.delayMicroseconds(us);
 }
 
 void fdevopen(int (*)(char, FILE*),int)
