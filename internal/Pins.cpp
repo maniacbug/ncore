@@ -190,7 +190,7 @@ bool Pins::command_pin(const vector<string>& _commands)
     return command_pin_digital(current,_commands.end());
 }
 
-bool Pins::command_pins(const vector<string>& _commands) const
+bool Pins::command_pins(const vector<string>&) const
 {
   int counter = 0;
   cout << "DIGITAL PINS: ";

@@ -95,7 +95,7 @@ unsigned long millis(void)
   return result;
 }
 
-unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout )
+unsigned long pulseIn(uint8_t pin, uint8_t /*state*/, unsigned long /*timeout*/ )
 {
   printf("NCORE: %06lu ",millis());
   printf("pin %i: pulseIn 1000\n",pin);
