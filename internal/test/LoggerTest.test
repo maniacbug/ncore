@@ -183,6 +183,23 @@ public:
     log.add("test");
     TS_ASSERT_EQUALS( countSubStrings(log[0],"0000"),1 );
   }
+  void testClockMultipleEntries( void )
+  {
+    Clock clock;
+    log.setClock(clock);
+
+    log.add("test");
+    clock.delay(100);
+    log.add("test");
+    clock.delay(100);
+    log.add("test");
+    clock.delay(100);
+    log.add("test");
+
+    TS_ASSERT_EQUALS( countSubStrings(log.at(1),"100"),1 );
+    TS_ASSERT_EQUALS( countSubStrings(log.at(2),"200"),1 );
+    TS_ASSERT_EQUALS( countSubStrings(log.at(3),"300"),1 );
+  }
 };
 
 // Extra tests to dig deep into the unexposed internals of Logger
