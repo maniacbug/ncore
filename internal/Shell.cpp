@@ -24,7 +24,9 @@ void Shell::run(const Dispatcher& _commands)
 
     try
     {
-      bool ok = _commands.execute(parser);
+      bool ok = true;
+      if ( parser.size() )
+	ok = _commands.execute(parser);
       if (!ok && command != "quit")
 	cout << "Command not found: " << parser.at(0) << endl;
     }

@@ -29,10 +29,7 @@ void Pins::clear(void)
 }
 int Pins::digitalRead(int pin) const
 {
-  if ( pin_modes[pin] == INPUT )
-    return digital_states[pin];
-  else
-    return 0;
+  return digital_states[pin];
 }
 void Pins::hwSetDigital(int pin,int level)
 {
@@ -49,7 +46,7 @@ void Pins::hwSetAnalog(int pin,int level)
 void Pins::digitalWrite(int pin,int level)
 {
   if ( pin_modes[pin] == OUTPUT )
-    analog_states[pin] = level;
+    digital_states[pin] = level;
 }
 int Pins::hwGetDigital(int pin) const
 {

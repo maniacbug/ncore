@@ -35,7 +35,12 @@ public:
     pins.addCommandsTo(commands);
     log.addCommandsTo(commands);
     test_buffer.str(string());
-    cout_sbuf = NULL;
+    cout_sbuf = std::cout.rdbuf(); // save original sbuf
+  }
+  void teardown()
+  {
+    // Restore the output stream
+    cout.rdbuf(cout_sbuf); // restore the original stream buffer
   }
   void startCoutCapture( void )
   {
@@ -156,7 +161,15 @@ public:
     mock_readline_add(" ");
 
     startCoutCapture();
-    Shell().run(commands);
+    try
+    {
+      Shell().run(commands);
+    }
+    catch(...)
+    {
+      TS_FAIL( "Exception thrown" );
+      endCoutCapture();
+    }
     endCoutCapture();
 
     cout << test_buffer.str();
