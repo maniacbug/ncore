@@ -1,0 +1,76 @@
+#include <cxxtest/TestSuite.h>
+#include <Clock.h>
+#include <vector>
+#include <string>
+#include <unistd.h>
+
+using std::string;
+using std::vector;
+
+struct timeval mock_time = {0,0};
+
+extern "C" {
+int usleep(useconds_t us)
+{
+  mock_time.tv_usec += us;
+  while ( mock_time.tv_usec >= 1000000L )
+  {
+    mock_time.tv_sec ++;
+    mock_time.tv_usec -= 1000000L;
+  }
+  return 0;
+}
+
+int gettimeofday(struct timeval *tv, struct timezone *)
+{
+  memcpy(tv,&mock_time,sizeof(mock_time));
+  return 0;
+}
+
+}
+
+class ClockTestSuite: public CxxTest::TestSuite
+{
+  Clock clock;
+public:
+  void setUp()
+  {
+    memset(&mock_time,0,sizeof(mock_time));
+    clock = Clock();
+  }
+
+  void testMock( void )
+  {
+    usleep(1000);
+    usleep(1000);
+    usleep(1000);
+    struct timeval t;
+    gettimeofday(&t,NULL);
+    TS_ASSERT_EQUALS(t.tv_sec,0);
+    TS_ASSERT_EQUALS(t.tv_usec,3000);
+  }
+  void testStart( void )
+  {
+    TS_ASSERT_EQUALS( clock.millis(), 0 );
+  }
+  void testDelay( void )
+  {
+    clock.delay(10);
+    TS_ASSERT_EQUALS( clock.millis(), 10 );
+  }
+  void testDelayUS( void )
+  {
+    clock.delayMicroseconds(1000);
+    TS_ASSERT_EQUALS( clock.millis(), 1 );
+  }
+  void testCombined( void )
+  {
+    clock.delay(10);
+    clock.delay(10);
+    clock.delay(10);
+    clock.delayMicroseconds(2000);
+    clock.delayMicroseconds(900);
+    TS_ASSERT_EQUALS( clock.millis(), 32 );
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
