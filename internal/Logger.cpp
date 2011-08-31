@@ -54,12 +54,14 @@ bool Logger::command_list(const vector<string>& _commands) const
   if ( _commands.size() != 1 )
     throw new runtime_error("No parameters expected");
 
+  pthread_mutex_lock( mutex );
   vector<string>::const_iterator current = begin();
   while ( current != end() )
   {
     cout << *current;
     ++current;
   }
+  pthread_mutex_unlock( mutex );
 
   return true;
 }

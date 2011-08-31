@@ -136,7 +136,7 @@ public:
 
     int i = 50;
     while (i--)
-      p->log.add("Background thread");
+      p->log.add("Background thread %02i",i);
   }
   void testThreadSafe( void )
   {
@@ -154,6 +154,25 @@ public:
     endCoutCapture();
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Background"), 50 );
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Foreground"), 50 );
+  }
+  void testThreadSafeListing( void )
+  {
+    pthread_t bg_thread;
+    int err = pthread_create( &bg_thread, NULL, write_logs, this );
+    TS_ASSERT_EQUALS( err, 0 );
+    startCoutCapture();
+    usleep(5);
+    int i = 7;
+    while (i--)
+    {
+      cout << i << endl;
+      commands.execute(Parser("list"));
+      usleep(5);
+    }
+    pthread_join( bg_thread, NULL );
+    endCoutCapture();
+    
+    TS_ASSERT( countSubStrings(test_buffer.str(),"Background") > 200 );
   }
 };
 
