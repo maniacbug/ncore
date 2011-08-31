@@ -12,11 +12,9 @@
 
 using namespace std;
 
-Dispatcher dispatcher;
-Pins pins;
-Logger log;
+extern void add_commands_to(Dispatcher&);
 
-extern void init(Pins&,Logger&);
+Dispatcher dispatcher;
 
 static void* sketch_main(void*)
 {
@@ -27,17 +25,18 @@ static void* sketch_main(void*)
 
   while(1)
     loop();
+
+  return NULL;
 }
 
 int main(void)
 {
-  init(pins,log);
+  init();
 
-  pins.addCommandsTo(dispatcher);
-  log.addCommandsTo(dispatcher);
+  add_commands_to(dispatcher);
 
   pthread_t sketch_thread;
-  int err = pthread_create( &sketch_thread, NULL, sketch_main, NULL );
+  pthread_create( &sketch_thread, NULL, sketch_main, NULL );
 
   string command;
   do
