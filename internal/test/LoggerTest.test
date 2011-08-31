@@ -1,4 +1,5 @@
 #include <cxxtest/TestSuite.h>
+#include <pthread.h>
 #include <Logger.h>
 #include <vector>
 #include <string>
@@ -128,6 +129,31 @@ public:
     string output = endCoutCapture();
 
     TS_ASSERT_EQUALS( countSubStrings(output,"NCORE"), 2 );
+  }
+  static void * write_logs(void* pv)
+  {
+    LoggerTestSuite* p = reinterpret_cast<LoggerTestSuite*>(pv);
+
+    int i = 50;
+    while (i--)
+      p->log.add("Background thread");
+  }
+  void testThreadSafe( void )
+  {
+    pthread_t bg_thread;
+    int err = pthread_create( &bg_thread, NULL, write_logs, this );
+    TS_ASSERT_EQUALS( err, 0 );
+    usleep(5);
+    int i = 50;
+    while (i--)
+      log.add("Foreground thread");
+    pthread_join( bg_thread, NULL );
+
+    startCoutCapture();
+    commands.execute(Parser("list"));
+    endCoutCapture();
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Background"), 50 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Foreground"), 50 );
   }
 };
 

@@ -5,14 +5,29 @@
 #include <stdarg.h>
 #include <Logger.h>
 #include <Dispatcher.h>
+#include <pthread.h>
 
 using namespace std;
 extern "C" unsigned long millis(void);
 
 static Logger* global_logger = NULL;
 
+Logger::Logger(void)
+{
+  mutex = new pthread_mutex_t;
+  *mutex = PTHREAD_MUTEX_INITIALIZER;
+}
+
+Logger::~Logger()
+{
+  if ( mutex )
+    delete mutex;
+}
+
 void Logger::add(const std::string& format,...)
 {
+  pthread_mutex_lock( mutex );
+
   static char buffer[500];
   va_list ap;
   va_start(ap,format);
@@ -23,6 +38,7 @@ void Logger::add(const std::string& format,...)
   ss << "NCORE: " << millis() << " " << buffer << endl;
 
   push_back(ss.str());
+  pthread_mutex_unlock( mutex );
 }
 
 bool Logger::static_command_list(const vector<string>& _commands)

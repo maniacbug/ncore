@@ -12,7 +12,7 @@ LOCATE_TARGET = out ;
 LOCATE_SOURCE = out ;
 CCFLAGS = -fprofile-arcs -ftest-coverage -g ;
 C++FLAGS = $(CCFLAGS) ;
-LINKFLAGS = -fprofile-arcs ;
+LINKFLAGS = -fprofile-arcs -lpthread ;
 
 rule TestSuite
 {

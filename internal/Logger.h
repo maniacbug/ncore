@@ -8,11 +8,15 @@ class Dispatcher;
 
 class Logger: public std::vector<std::string>
 {
+private:
+  pthread_mutex_t* mutex;
 protected:
   static void reset(void); /**< Reset state of statics. Only for testing! */
   static bool static_command_list(const std::vector<std::string>& _commands);
   bool command_list(const std::vector<std::string>&) const;
 public:
+  Logger(void);
+  ~Logger();
   void add(const std::string&,...);
 
   void addCommandsTo(Dispatcher&);
