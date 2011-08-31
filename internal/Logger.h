@@ -9,7 +9,7 @@ class Dispatcher;
 class Logger: public std::vector<std::string>
 {
 private:
-  pthread_mutex_t* mutex;
+  pthread_mutex_t mutex;
 protected:
   static void reset(void); /**< Reset state of statics. Only for testing! */
   static bool static_command_list(const std::vector<std::string>& _commands);

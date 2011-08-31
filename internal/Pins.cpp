@@ -172,7 +172,6 @@ bool Pins::command_pin_analog(vector<string>::const_iterator current,vector<stri
 
 bool Pins::command_pin(const vector<string>& _commands)
 {
-  bool result = false;
   vector<string>::const_iterator current = _commands.begin();
 
   // Skip over 'pin' command

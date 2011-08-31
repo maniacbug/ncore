@@ -194,7 +194,7 @@ public:
   void testRunCommandPinsEmpty( void )
   {
     cap.start();
-    bool ok = commands.execute(Parser("pins"));
+    commands.execute(Parser("pins"));
     cap.stop();
     int num_zeroes = countSubStrings(cap.buffer(),":0");
 
@@ -206,7 +206,7 @@ public:
     pins.hwSetAnalog(0,512);
 
     cap.start();
-    bool ok = commands.execute(Parser("pins"));
+    commands.execute(Parser("pins"));
     cap.stop();
     int num_zeroes = countSubStrings(cap.buffer(),":0");
 
@@ -296,6 +296,7 @@ public:
     while (1)
     {
     }
+    return NULL;
   }
   void testConcurrency( void )
   {

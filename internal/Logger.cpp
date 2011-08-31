@@ -17,19 +17,17 @@ static Logger* global_logger = NULL;
 
 Logger::Logger(void)
 {
-  mutex = new pthread_mutex_t;
-  *mutex = PTHREAD_MUTEX_INITIALIZER;
+  pthread_mutex_init(&mutex,NULL);
 }
 
 Logger::~Logger()
 {
-  if ( mutex )
-    delete mutex;
+  pthread_mutex_destroy(&mutex);
 }
 
 void Logger::add(const std::string& format,...)
 {
-  pthread_mutex_lock( mutex );
+  pthread_mutex_lock( &mutex );
 
   static char buffer[500];
   va_list ap;
@@ -41,7 +39,7 @@ void Logger::add(const std::string& format,...)
   ss << "NCORE: " << setfill('0') << setw(6) << millis() << " " << buffer << endl;
 
   push_back(ss.str());
-  pthread_mutex_unlock( mutex );
+  pthread_mutex_unlock( &mutex );
 }
 
 bool Logger::static_command_list(const vector<string>& _commands)
@@ -57,14 +55,14 @@ bool Logger::command_list(const vector<string>& _commands) const
   if ( _commands.size() != 1 )
     throw new runtime_error("No parameters expected");
 
-  pthread_mutex_lock( mutex );
+  pthread_mutex_lock( const_cast<pthread_mutex_t*>(&mutex) );
   vector<string>::const_iterator current = begin();
   while ( current != end() )
   {
     cout << *current;
     ++current;
   }
-  pthread_mutex_unlock( mutex );
+  pthread_mutex_unlock( const_cast<pthread_mutex_t*>(&mutex) );
 
   return true;
 }

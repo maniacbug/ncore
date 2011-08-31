@@ -137,6 +137,8 @@ public:
     int i = 50;
     while (i--)
       p->log.add("Background thread %02i",i);
+
+    return NULL;
   }
   void testThreadSafe( void )
   {
