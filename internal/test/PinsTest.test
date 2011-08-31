@@ -1,12 +1,18 @@
 #include <iostream>
 #include <sstream>
 #include <streambuf>
+
+#include <pthread.h>
 #include <cxxtest/TestSuite.h>
+
 #include <Pins.h>
 #include <Parser.h>
 #include <Dispatcher.h>
+#include <Logger.h>
 
 using namespace std;
+
+extern "C" void init(void);
 
 const int LOW = 0;
 const int HIGH = 1;
@@ -15,6 +21,8 @@ class PinsTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
   Dispatcher commands;
+  Logger log;
+
   stringstream test_buffer;
   streambuf* cout_sbuf;
   static int isr_called_count;
@@ -23,10 +31,18 @@ public:
   {
     pins.clear();
     commands.clear();
+    log.clear();
+
     test_buffer.str(string());
     cout_sbuf = NULL;
     pins.addCommandsTo(commands);
     isr_called_count = 0;
+    
+    log.addCommandsTo(commands);
+
+    startCoutCapture();
+    init();
+    endCoutCapture();
   }
   static void isr(void)
   {
@@ -240,6 +256,67 @@ public:
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq 100")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq something")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq")) );
+  }
+  unsigned long master_clock;
+  unsigned long my_clock;
+  void delay( unsigned long ticks )
+  {
+    my_clock += ticks;
+    while ( my_clock > master_clock )
+    {
+      // wait
+    }
+  }
+  void reset_clock(void)
+  {
+    master_clock = 0;
+    my_clock = 0;
+  }
+  void advance_clock( unsigned long ticks )
+  {
+    master_clock += ticks;
+  }
+  static void* sketch_blink(void* pv)
+  {
+    PinsTestSuite* p = reinterpret_cast<PinsTestSuite*>(pv);
+   
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL);
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL); 
+    
+    int state = LOW;
+    p->pins.pinMode(13,OUTPUT);
+    p->pins.pinMode(10,INPUT);
+    while(1)
+    if (p->pins.digitalRead(10) == HIGH)
+    {
+      state ^= HIGH;
+      p->pins.digitalWrite(13,state);
+      p->log.add("PIN 13 %s",state?"HIGH":"LOW");
+      p->delay(1000L);
+    }
+  }
+  void todo_testConcurrency( void )
+  {
+    // FIXME: This test is a little unreliable because of its dependency on
+    // timing.  Need to take control of the timing.
+    reset_clock();
+    pthread_t bg_thread;
+    int err = pthread_create( &bg_thread, NULL, sketch_blink, this );
+    TS_ASSERT_EQUALS( err, 0 );
+    usleep(100);
+    pins.hwSetDigital(10,HIGH);
+    advance_clock(10000L);
+    usleep(100);
+    pins.hwSetDigital(10,LOW);
+    advance_clock(10000L);
+    usleep(100);
+    pthread_cancel( bg_thread );
+    pthread_join( bg_thread, NULL );
+    
+    //startCoutCapture();
+    commands.execute(Parser("list"));
+    //endCoutCapture();
+    //TS_ASSERT( countSubStrings(test_buffer.str(),"PIN 13 LOW") >= 4 );
   }
 };
 

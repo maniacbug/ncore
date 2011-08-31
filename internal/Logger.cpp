@@ -1,11 +1,14 @@
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
+#include <iomanip>
+
 #include <stdio.h>
 #include <stdarg.h>
+#include <pthread.h>
+
 #include <Logger.h>
 #include <Dispatcher.h>
-#include <pthread.h>
 
 using namespace std;
 extern "C" unsigned long millis(void);
@@ -35,7 +38,7 @@ void Logger::add(const std::string& format,...)
   va_end(ap);
 
   ostringstream ss;
-  ss << "NCORE: " << millis() << " " << buffer << endl;
+  ss << "NCORE: " << setfill('0') << setw(6) << millis() << " " << buffer << endl;
 
   push_back(ss.str());
   pthread_mutex_unlock( mutex );

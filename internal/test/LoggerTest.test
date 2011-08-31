@@ -172,7 +172,7 @@ public:
     pthread_join( bg_thread, NULL );
     endCoutCapture();
     
-    TS_ASSERT( countSubStrings(test_buffer.str(),"Background") > 200 );
+    TS_ASSERT( countSubStrings(test_buffer.str(),"Background") > 100 );
   }
 };
 
