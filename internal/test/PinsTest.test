@@ -63,10 +63,6 @@ public:
     isr_called_count = 0;
     
     log.addCommandsTo(commands);
-
-    cap.start();
-    init();
-    cap.stop();
   }
   static void isr(void)
   {

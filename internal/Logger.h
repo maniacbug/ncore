@@ -5,11 +5,13 @@
 #include <vector>
 
 class Dispatcher;
+class Clock;
 
 class Logger: public std::vector<std::string>
 {
 private:
   pthread_mutex_t mutex;
+  const Clock* clock;
 protected:
   static void reset(void); /**< Reset state of statics. Only for testing! */
   static bool static_command_list(const std::vector<std::string>& _commands);
@@ -18,6 +20,7 @@ public:
   Logger(void);
   ~Logger();
   void add(const std::string&,...);
+  void setClock(const Clock&);
 
   void addCommandsTo(Dispatcher&);
 };

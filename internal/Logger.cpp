@@ -11,13 +11,14 @@
 
 #include <Logger.h>
 #include <Dispatcher.h>
+#include <Clock.h>
 
 using namespace std;
 extern "C" unsigned long millis(void);
 
 static Logger* global_logger = NULL;
 
-Logger::Logger(void)
+Logger::Logger(void): clock(NULL)
 {
   pthread_mutex_init(&mutex,NULL);
 }
@@ -38,10 +39,18 @@ void Logger::add(const std::string& format,...)
   va_end(ap);
 
   ostringstream ss;
-  ss << "NCORE: " << setfill('0') << setw(6) << millis() << " " << buffer << endl;
+  ss << "NCORE: ";
+  if (clock)
+    ss << setfill('0') << setw(6) << clock->millis() << " ";
+  ss << buffer << endl;
 
   push_back(ss.str());
   pthread_mutex_unlock( &mutex );
+}
+
+void Logger::setClock(const Clock& _clock)
+{
+  clock = &_clock;
 }
 
 bool Logger::static_command_list(const vector<string>& _commands)

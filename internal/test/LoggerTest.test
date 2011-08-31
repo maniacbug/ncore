@@ -28,10 +28,6 @@ public:
     log.clear();
     parser.clear();
     log.addCommandsTo(commands);
-
-    startCoutCapture();
-    init();
-    endCoutCapture();
   }
   void tearDown()
   {
@@ -173,6 +169,19 @@ public:
    
     // Just running means it worked
     TS_ASSERT( 1 );
+  }
+  void testWithNoClock( void )
+  {
+    log.add("test");
+    TS_ASSERT_EQUALS( countSubStrings(log[0],"0000"),0 );
+  }
+  void testWithClock( void )
+  {
+    Clock clock;
+    log.setClock(clock);
+
+    log.add("test");
+    TS_ASSERT_EQUALS( countSubStrings(log[0],"0000"),1 );
   }
 };
 

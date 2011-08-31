@@ -74,7 +74,7 @@ rule Main
 }
 
 TestSuite runner.cpp : $(TEST_MODULES) ;
-Main Tests : runner.cpp $(CODE_MODULES) $(CORE_MODULES) $(MOCK_MODULES) ;
+Main Tests : runner.cpp $(CODE_MODULES) $(MOCK_MODULES) ;
 RunTest result : Tests ;
 Coverage coverage : $(CODE_MODULES) ;
 
