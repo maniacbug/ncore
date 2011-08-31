@@ -29,38 +29,37 @@ void Pins::clear(void)
 }
 int Pins::digitalRead(int pin) const
 {
-  return digital_states[pin];
+  return digital_states.at(pin);
 }
 void Pins::hwSetDigital(int pin,int level)
 {
-  digital_states[pin] = level;
+  digital_states.at(pin) = level;
 }
 int Pins::analogRead(int pin) const
 {
-  return analog_states[pin];
+  return analog_states.at(pin);
 }
 void Pins::hwSetAnalog(int pin,int level)
 {
-  analog_states[pin] = level;
+  analog_states.at(pin) = level;
 }
 void Pins::digitalWrite(int pin,int level)
 {
-  if ( pin_modes[pin] == OUTPUT )
-    digital_states[pin] = level;
+  if ( pin_modes.at(pin) == OUTPUT )
+    digital_states.at(pin) = level;
 }
 int Pins::hwGetDigital(int pin) const
 {
-  return digital_states[pin];
+  return digital_states.at(pin);
 }
 void Pins::pinMode(int pin, int dir)
 {
-  pin_modes[pin] = dir;
+  pin_modes.at(pin) = dir;
 }
 
 void Pins::attachInterrupt(int irq, void (*isr)(void))
 {
-  if ( irq >= 0 && irq < num_interrupts )
-    isr_table[irq] = isr;
+  isr_table.at(irq) = isr;
 }
 
 void Pins::detachInterrupt(int irq)
@@ -70,10 +69,7 @@ void Pins::detachInterrupt(int irq)
 
 void Pins::hwTriggerInterrupt(int irq) const
 {
-  if ( irq < 0 || irq >= num_interrupts )
-    throw new runtime_error("Interrupt number out of range");
-
-  if ( ! isr_table[irq] )
+  if ( ! isr_table.at(irq) )
     throw new runtime_error("No handler assigned for this interrupt");
 
   isr_table[irq]();

@@ -82,9 +82,14 @@ public:
 
     TS_ASSERT_EQUALS( value, 512 );
   }
-  void todo_testRanges( void )
+  void testRanges( void )
   {
-    // TODO: Range tests for all the internal pin setters
+    TS_ASSERT_THROWS_ANYTHING( pins.digitalWrite(1000,HIGH) );
+    TS_ASSERT_THROWS_ANYTHING( pins.digitalRead(1000) );
+    TS_ASSERT_THROWS_ANYTHING( pins.pinMode(1000,OUTPUT) );
+    TS_ASSERT_THROWS_ANYTHING( pins.hwSetDigital(1000,HIGH) );
+    TS_ASSERT_THROWS_ANYTHING( pins.hwSetAnalog(1000,1000) );
+    TS_ASSERT_THROWS_ANYTHING( pins.hwGetDigital(1000) );
   }
   void testPinModeInput( void )
   {
@@ -114,7 +119,7 @@ public:
   }
   void testAttachInterruptTooHigh( void )
   {
-    pins.attachInterrupt( 10, isr );
+    TS_ASSERT_THROWS_ANYTHING( pins.attachInterrupt( 10, isr ) );
     TS_ASSERT_THROWS_ANYTHING( pins.hwTriggerInterrupt( 10 ) );
   }
   void testOverrideInterrupt( void )

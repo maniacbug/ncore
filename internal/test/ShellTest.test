@@ -172,8 +172,6 @@ public:
     }
     endCoutCapture();
 
-    cout << test_buffer.str();
-
     TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 2 );
   }
 };
