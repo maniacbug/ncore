@@ -17,14 +17,39 @@ extern "C" void init(void);
 const int LOW = 0;
 const int HIGH = 1;
 
+class OutputCapture
+{
+  stringstream test_buffer;
+  streambuf* cout_sbuf;
+public:
+  void clear(void)
+  {
+    test_buffer.str(string());
+    cout_sbuf = std::cout.rdbuf(); // save original sbuf
+  }
+  void start( void )
+  {
+    // Capture the input to a test buffer
+    cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
+  }
+  void stop( void )
+  {
+    // Restore the output stream
+    cout.rdbuf(cout_sbuf); // restore the original stream buffer
+  }
+  string buffer(void) const
+  {
+    return test_buffer.str();
+  }
+};
+
 class PinsTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
   Dispatcher commands;
   Logger log;
+  OutputCapture cap;
 
-  stringstream test_buffer;
-  streambuf* cout_sbuf;
   static int isr_called_count;
 public:
   void setUp()
@@ -32,17 +57,16 @@ public:
     pins.clear();
     commands.clear();
     log.clear();
+    cap.clear();
 
-    test_buffer.str(string());
-    cout_sbuf = NULL;
     pins.addCommandsTo(commands);
     isr_called_count = 0;
     
     log.addCommandsTo(commands);
 
-    startCoutCapture();
+    cap.start();
     init();
-    endCoutCapture();
+    cap.stop();
   }
   static void isr(void)
   {
@@ -161,31 +185,18 @@ public:
   }
   void testRunCommand( void )
   {
-    startCoutCapture();
+    cap.start();
     bool ok = commands.execute(Parser("pins"));
-    string output = endCoutCapture();
+    cap.stop();
 
     TS_ASSERT_EQUALS( ok, true );
   }
-  void startCoutCapture( void )
-  {
-    // Capture the input to a test buffer
-    cout_sbuf = std::cout.rdbuf(); // save original sbuf
-    cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
-  }
-  string endCoutCapture( void )
-  {
-    // Restore the output stream
-    cout.rdbuf(cout_sbuf); // restore the original stream buffer
-
-    return test_buffer.str();
-  }
   void testRunCommandPinsEmpty( void )
   {
-    startCoutCapture();
+    cap.start();
     bool ok = commands.execute(Parser("pins"));
-    string output = endCoutCapture();
-    int num_zeroes = countSubStrings(output,":0");
+    cap.stop();
+    int num_zeroes = countSubStrings(cap.buffer(),":0");
 
     TS_ASSERT_EQUALS( num_zeroes, 28 );
   }
@@ -194,10 +205,10 @@ public:
     pins.hwSetDigital(0,HIGH);
     pins.hwSetAnalog(0,512);
 
-    startCoutCapture();
+    cap.start();
     bool ok = commands.execute(Parser("pins"));
-    string output = endCoutCapture();
-    int num_zeroes = countSubStrings(output,":0");
+    cap.stop();
+    int num_zeroes = countSubStrings(cap.buffer(),":0");
 
     TS_ASSERT_EQUALS( num_zeroes, 26 );
   }
@@ -298,11 +309,11 @@ public:
     pthread_cancel( sketch_thread );
     pthread_join( sketch_thread, NULL );
     
-    startCoutCapture();
+    cap.start();
     commands.execute(Parser("list"));
-    endCoutCapture();
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"PIN 13") , 5 );
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"HIGH") , 3 );
+    cap.stop();
+    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"PIN 13") , 5 );
+    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"HIGH") , 3 );
   }
 };
 
