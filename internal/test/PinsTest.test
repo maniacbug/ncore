@@ -257,25 +257,6 @@ public:
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq something")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq")) );
   }
-  unsigned long master_clock;
-  unsigned long my_clock;
-  void delay( unsigned long ticks )
-  {
-    my_clock += ticks;
-    while ( my_clock > master_clock )
-    {
-      // wait
-    }
-  }
-  void reset_clock(void)
-  {
-    master_clock = 0;
-    my_clock = 0;
-  }
-  void advance_clock( unsigned long ticks )
-  {
-    master_clock += ticks;
-  }
   static void* sketch_blink(void* pv)
   {
     PinsTestSuite* p = reinterpret_cast<PinsTestSuite*>(pv);
@@ -284,39 +265,44 @@ public:
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL); 
     
     int state = LOW;
-    p->pins.pinMode(13,OUTPUT);
-    p->pins.pinMode(10,INPUT);
-    while(1)
-    if (p->pins.digitalRead(10) == HIGH)
+    const int toggle_pin = 13;
+    const int done_pin = 11;
+    const int start_pin = 10;
+    p->pins.pinMode(toggle_pin,OUTPUT);
+    p->pins.pinMode(done_pin,OUTPUT);
+    p->pins.pinMode(start_pin,INPUT);
+    while (p->pins.digitalRead(start_pin) == LOW)
+    {
+    }
+    int i = 5;
+    while(i--)
     {
       state ^= HIGH;
-      p->pins.digitalWrite(13,state);
-      p->log.add("PIN 13 %s",state?"HIGH":"LOW");
-      p->delay(1000L);
+      p->pins.digitalWrite(toggle_pin,state);
+      p->log.add("PIN %i %s",toggle_pin,state?"HIGH":"LOW");
+    }
+    p->pins.digitalWrite(done_pin,HIGH);
+    while (1)
+    {
     }
   }
-  void todo_testConcurrency( void )
+  void testConcurrency( void )
   {
-    // FIXME: This test is a little unreliable because of its dependency on
-    // timing.  Need to take control of the timing.
-    reset_clock();
-    pthread_t bg_thread;
-    int err = pthread_create( &bg_thread, NULL, sketch_blink, this );
+    pthread_t sketch_thread;
+    int err = pthread_create( &sketch_thread, NULL, sketch_blink, this );
     TS_ASSERT_EQUALS( err, 0 );
-    usleep(100);
     pins.hwSetDigital(10,HIGH);
-    advance_clock(10000L);
-    usleep(100);
-    pins.hwSetDigital(10,LOW);
-    advance_clock(10000L);
-    usleep(100);
-    pthread_cancel( bg_thread );
-    pthread_join( bg_thread, NULL );
+    while ( pins.hwGetDigital(11) == LOW )
+    {
+    }
+    pthread_cancel( sketch_thread );
+    pthread_join( sketch_thread, NULL );
     
-    //startCoutCapture();
+    startCoutCapture();
     commands.execute(Parser("list"));
-    //endCoutCapture();
-    //TS_ASSERT( countSubStrings(test_buffer.str(),"PIN 13 LOW") >= 4 );
+    endCoutCapture();
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"PIN 13") , 5 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"HIGH") , 3 );
   }
 };
 
