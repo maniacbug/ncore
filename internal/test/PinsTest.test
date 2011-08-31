@@ -235,6 +235,8 @@ public:
   }
   void testCommandIrqExceptions( void )
   {
+    pins.attachInterrupt( 1, isr );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq 1 more")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq 100")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq something")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq")) );
