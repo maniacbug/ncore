@@ -2,6 +2,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <iomanip>
+#include <algorithm>
+#include <iterator>
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -56,12 +58,7 @@ bool Logger::command_list(const vector<string>& _commands) const
     throw new runtime_error("No parameters expected");
 
   pthread_mutex_lock( const_cast<pthread_mutex_t*>(&mutex) );
-  vector<string>::const_iterator current = begin();
-  while ( current != end() )
-  {
-    cout << *current;
-    ++current;
-  }
+  copy(begin(),end(),ostream_iterator<string>(cout,""));
   pthread_mutex_unlock( const_cast<pthread_mutex_t*>(&mutex) );
 
   return true;
