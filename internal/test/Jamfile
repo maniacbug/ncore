@@ -7,6 +7,7 @@ CORE_MODULES = $(CORE_DIR)/native_core.cpp ;
 CODE_MODULES = [ GLOB $(CODE_DIR) : *.cpp ] ;
 TEST_MODULES = [ GLOB $(PWD) : *.test ] ;
 MOCK_MODULES = readline.cpp ;
+SKETCH_MODULES = IfBlink.cpp ;
 LINK = c++ ;
 LOCATE_TARGET = out ;
 LOCATE_SOURCE = out ;
@@ -81,5 +82,5 @@ Main Threads : threads.cpp ;
 LINKFLAGS on Threads = -lreadline -lpthread ;
 C++FLAGS on threads.o = ;
 
-Main Shell : shell.cpp $(CODE_MODULES) $(CORE_MODULES) ;
+Main Shell : shell.cpp $(CODE_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
