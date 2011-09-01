@@ -11,6 +11,7 @@ protected:
 
 public:
   SketchThread(void);
+  void waitToFinish(void);
   virtual ~SketchThread();
 };
 

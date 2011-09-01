@@ -1,62 +1,60 @@
+#include <iterator>
+#include <algorithm>
+#include <numeric>
+
 #include <pthread.h>
+#include <time.h>
 #include <cxxtest/TestSuite.h>
 
+#include <Logger.h>
 #include <SketchThread.h>
 #include <OutputCapture.h>
 
 using namespace std;
 
-volatile bool setup_done = false;
-
-class SketchThreadTestSuite: public CxxTest::TestSuite
+static Logger logger;
+  
+struct count_contains
 {
-  Logger log;
-  OutputCapture cap;
-
-  static int isr_called_count;
-public:
-  void setUp()
+  string key;
+  count_contains(const string& _key): key(_key) {}
+  int operator()(int sum,const string& whole)
   {
-    cap.clear();
-  }
-  int countSubStrings( const string& whole, const string& partial )
-  {
-    size_t skip_count = partial.size();
-
-    std::string::size_type and_pos( 0 );
-    int count(0);
-    while ( and_pos!=std::string::npos )
-    {
-      and_pos = whole.find(partial, and_pos );
-      if ( and_pos != std::string::npos )
-      {
-        ++count;
-        and_pos += skip_count;
-      }
-    }
-    return count;
-  }
-
-  void testStart( void )
-  {
-    setup_done = false;
-    cap.start();
-    SketchThread t;
-    while (!setup_done) {} 
-    cap.stop();
-
-    TS_ASSERT_EQUALS( cap.contains("setup"), 1 );
+    return sum + ( (whole.find(key) != std::string::npos )?1:0 );
   }
 };
 
+class SketchThreadTestSuite: public CxxTest::TestSuite
+{
+public:
+  void setUp()
+  {
+    logger.clear();
+  }
+  void testThread( void )
+  {
+    SketchThread t;
+    t.waitToFinish();
+    
+    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("setup")), 1 );
+    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("loop")), 10 );
+  }
+};
+
+static volatile int i;
+
 extern "C" void setup(void)
 {
-  cout << "setup" << endl;
-  setup_done = true;
+  i = 10;
+  logger.add("setup");
 }
 
 extern "C" void loop(void)
 {
+  if (i--)
+    logger.add("loop");
+  else
+    pthread_exit(NULL);
 }
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

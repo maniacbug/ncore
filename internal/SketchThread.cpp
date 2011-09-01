@@ -24,6 +24,11 @@ void* SketchThread::sketch_thread_main(void*)
   return NULL;
 }
 
+void SketchThread::waitToFinish(void)
+{
+  pthread_join( *pthread, NULL );
+}
+
 SketchThread::~SketchThread(void)
 {
   pthread_cancel( *pthread );
