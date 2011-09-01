@@ -1,0 +1,62 @@
+#include <pthread.h>
+#include <cxxtest/TestSuite.h>
+
+#include <SketchThread.h>
+#include <OutputCapture.h>
+
+using namespace std;
+
+volatile bool thread_done = false;
+
+class SketchThreadTestSuite: public CxxTest::TestSuite
+{
+  Logger log;
+  OutputCapture cap;
+
+  static int isr_called_count;
+public:
+  void setUp()
+  {
+    cap.clear();
+  }
+  int countSubStrings( const string& whole, const string& partial )
+  {
+    size_t skip_count = partial.size();
+
+    std::string::size_type and_pos( 0 );
+    int count(0);
+    while ( and_pos!=std::string::npos )
+    {
+      and_pos = whole.find(partial, and_pos );
+      if ( and_pos != std::string::npos )
+      {
+        ++count;
+        and_pos += skip_count;
+      }
+    }
+    return count;
+  }
+
+  void testEmpty( void )
+  {
+    thread_done = false;
+    cap.start();
+    SketchThread t;
+    while (!thread_done) {} 
+    cap.stop();
+
+    TS_ASSERT_EQUALS( cap.contains("setup"), 1 );
+  }
+};
+
+extern "C" void setup(void)
+{
+  cout << "setup" << endl;
+  thread_done = true;
+}
+
+extern "C" void loop(void)
+{
+}
+
+// vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -85,7 +85,7 @@ public:
     Shell().run(Dispatcher());
     endCoutCapture();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 1 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore") , 1 );
   }
   void testQuit( void )
   {
@@ -95,7 +95,7 @@ public:
     Shell().run(Dispatcher());
     endCoutCapture();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$ quit") , 1 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"quit") , 1 );
   }
   void testTwoCommands( void )
   {
@@ -106,7 +106,7 @@ public:
     Shell().run(Dispatcher());
     endCoutCapture();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 2 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore") , 2 );
   }
   void testNotFound( void )
   {
@@ -172,7 +172,7 @@ public:
     }
     endCoutCapture();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore$") , 2 );
+    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore") , 2 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

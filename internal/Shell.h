@@ -1,7 +1,8 @@
 #ifndef __SHELL_H__
 #define __SHELL_H__
 
-#include <Dispatcher.h>
+class Dispatcher;
+class Clock;
 
 class Shell
 {

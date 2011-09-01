@@ -1,20 +1,28 @@
+#include <iostream>
+#include <stdexcept>
+#include <sstream>
+
+#include <readline/readline.h>
+
 #include <Shell.h>
 #include <Dispatcher.h>
 #include <Parser.h>
-#include <iostream>
-#include <stdexcept>
-#include <readline/readline.h>
+#include <Clock.h>
 
 using namespace std;
 
-void Shell::run(const Dispatcher& _commands)
+void Shell::run(const Dispatcher& _commands) //, const Clock& _clock)
 {
+  Clock _clock;
+
   cout << "NCORE command shell" << endl;
   
   string command;
   do
   {
-    char* input = readline("ncore$ ");
+    ostringstream prompt;
+    prompt << "ncore " << _clock.millis() << "$ ";
+    char* input = readline(prompt.str().c_str());
     if (input)
       command = string(input);
     else

@@ -24,6 +24,24 @@ public:
   {
     return test_buffer.str();
   }
+  int contains(const string& partial)
+  {
+    string whole = buffer();
+    size_t skip_count = partial.size();
+
+    std::string::size_type and_pos( 0 );
+    int count(0);
+    while ( and_pos!=std::string::npos )
+    {
+      and_pos = whole.find(partial, and_pos );
+      if ( and_pos != std::string::npos )
+      {
+        ++count;
+        and_pos += skip_count;
+      }
+    }
+    return count;
+  }
 };
 
 #endif // __OUTPUT_CAPTURE_H__
