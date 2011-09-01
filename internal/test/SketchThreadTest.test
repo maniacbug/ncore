@@ -6,7 +6,7 @@
 
 using namespace std;
 
-volatile bool thread_done = false;
+volatile bool setup_done = false;
 
 class SketchThreadTestSuite: public CxxTest::TestSuite
 {
@@ -37,12 +37,12 @@ public:
     return count;
   }
 
-  void testEmpty( void )
+  void testStart( void )
   {
-    thread_done = false;
+    setup_done = false;
     cap.start();
     SketchThread t;
-    while (!thread_done) {} 
+    while (!setup_done) {} 
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("setup"), 1 );
@@ -52,7 +52,7 @@ public:
 extern "C" void setup(void)
 {
   cout << "setup" << endl;
-  thread_done = true;
+  setup_done = true;
 }
 
 extern "C" void loop(void)
