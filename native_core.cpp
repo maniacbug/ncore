@@ -68,8 +68,10 @@ int digitalRead(uint8_t pin)
 
 int analogRead(uint8_t pin)
 {
+  if ( pin >= A0 )
+    pin -= A0;
   int level = thePins.analogRead(pin);
-  theLogger.add("read pin %i: it's %i",pin,level);
+  theLogger.add("read pin A%i: it's %i",pin,level);
   return level;
 }
 

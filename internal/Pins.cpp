@@ -38,9 +38,6 @@ void Pins::hwSetDigital(int pin,int level)
 }
 int Pins::analogRead(int pin) const
 {
-  if ( pin >= 14 )
-    pin -= 14;
-
   return analog_states.at(pin);
 }
 void Pins::hwSetAnalog(int pin,int level)
