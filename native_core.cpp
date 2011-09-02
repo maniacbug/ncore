@@ -43,7 +43,7 @@ unsigned long millis(void)
 }
 void delayMicroseconds(unsigned int us)
 {
-  theLogger.add("delay %u us\n",us);
+  theLogger.add("delay %u us",us);
   theClock.delayMicroseconds(us);
 }
 
@@ -69,7 +69,7 @@ int digitalRead(uint8_t pin)
 int analogRead(uint8_t pin)
 {
   int level = thePins.analogRead(pin);
-  theLogger.add("read pin %i: it's %i\n",pin,level);
+  theLogger.add("read pin %i: it's %i",pin,level);
   return level;
 }
 
@@ -81,12 +81,12 @@ void pinMode(uint8_t pin,uint8_t mode)
 
 void attachInterrupt(uint8_t num, void (*fn)(void), int)
 {
-  theLogger.add("attach irq %u\n",num);
+  theLogger.add("attach irq %u",num);
   thePins.attachInterrupt(num,fn);
 }
 void detachInterrupt(uint8_t num)
 {
-  theLogger.add("detach irq %u\n",num);
+  theLogger.add("detach irq %u",num);
   thePins.detachInterrupt(num);
 }
 
@@ -118,14 +118,14 @@ void printf_P(const char* format,...)
 
 unsigned long pulseIn(uint8_t pin, uint8_t /*state*/, unsigned long /*timeout*/ )
 {
-  theLogger.add("pin %i: pulseIn 1000\n",pin);
+  theLogger.add("pin %i: pulseIn 1000",pin);
   
   return 1000LU;
 }
 
 void analogWrite(uint8_t pin,int level)
 {
-  theLogger.add("pin %i: %i\n",pin,level);
+  theLogger.add("pin %i: %i",pin,level);
 }
 
 void fdevopen(int (*)(char, FILE*),int)
