@@ -27,20 +27,18 @@ void Shell::run(const Dispatcher& _commands) //, const Clock& _clock)
       command = string(input);
     else
       command = "quit";
-    
-    Parser parser(command);
-
-    try
+   
+    if ( command != "quit" && command != "")
     {
-      bool ok = true;
-      if ( parser.size() )
-	ok = _commands.execute(parser);
-      if (!ok && command != "quit")
-	cout << "Command not found: " << parser.at(0) << endl;
-    }
-    catch (runtime_error* e)
-    {
-      cout << "Error: " << e->what() << endl;
+      try
+      {
+	if (!_commands.execute(command))
+	  cout << "Command not found: " << command << endl;
+      }
+      catch (runtime_error* e)
+      {
+	cout << "Error: " << e->what() << endl;
+      }
     }
   }
   while (command != "quit" );
