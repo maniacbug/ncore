@@ -106,9 +106,5 @@ Main Tests : runner.cpp $(CODE_MODULES) $(MOCK_MODULES) ;
 RunTest result : Tests ;
 Coverage coverage : $(CODE_MODULES) ;
 
-Main Threads : threads.cpp ;
-LINKFLAGS on Threads = -lreadline -lpthread ;
-C++FLAGS on threads.o = ;
-
 Main Shell : shell.cpp $(CODE_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
