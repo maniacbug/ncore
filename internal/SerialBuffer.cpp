@@ -26,7 +26,7 @@ void SerialBuffer::flush(void)
 {
   log.add(outstream.str());
   outstream.str(string());
-  last_logged_at = internalClock.millis();
+  outstream_has_data = false;
 }
 
 void SerialBuffer::put(const string& str)
@@ -39,14 +39,26 @@ void SerialBuffer::put(char c)
   {
     flush();
   }
+  else if ( c == '\r' )
+  {
+    // ignore \r's
+  }
   else if ( c < ' ' || c > 'z' )
   {
     outstream << "[0x" << setbase(16) << (unsigned int)(unsigned char)c << "]" ;
+    if ( !outstream_has_data )
+      last_logged_at = internalClock.millis();
+    outstream_has_data = true;
   }
   else
+  {
     outstream << c;
+    if ( !outstream_has_data )
+      last_logged_at = internalClock.millis();
+    outstream_has_data = true;
+  }
 
-  if ( internalClock.millis() - last_logged_at > 1000 )
+  if ( outstream_has_data && internalClock.millis() - last_logged_at > 1000 )
     flush();
 }
 
