@@ -12,6 +12,16 @@ using namespace std;
 
 static SerialBuffer* global_object = NULL;
 
+//
+// Public interface
+//
+
+void SerialBuffer::flush(void)
+{
+  log.add(outstream.str());
+  outstream.str(string());
+}
+
 void SerialBuffer::put(const string& str)
 {
   log.add(str); 
@@ -20,8 +30,7 @@ void SerialBuffer::put(char c)
 {
   if ( c == '\n' )
   {
-    log.add(outstream.str());
-    outstream.str(string());
+    flush();
   }
   else
     outstream << c;

@@ -14,6 +14,8 @@ private:
   const Clock* clock;
 protected:
   static void reset(void); /**< Reset state of statics. Only for testing! */
+  void throttle_output_rate(void);
+  
   static bool static_command_list(const std::vector<std::string>& _commands);
   bool command_list(const std::vector<std::string>&) const;
 public:

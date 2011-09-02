@@ -7,7 +7,8 @@ CORE_MODULES = [ GLOB $(CORE_DIR) : *.cpp ] ;
 CODE_MODULES = [ GLOB $(CODE_DIR) : *.cpp ] ;
 TEST_MODULES = [ GLOB $(PWD) : *.test ] ;
 MOCK_MODULES = readline.cpp ;
-SKETCH_MODULES = IfBlink.cpp ;
+ARDUINO_EXAMPLES_DIR = /opt/arduino-0022/examples ;
+SKETCH_MODULES = $(ARDUINO_EXAMPLES_DIR)/1.Basics/DigitalReadSerial/DigitalReadSerial.pde ;
 LINK = c++ ;
 LOCATE_TARGET = out ;
 LOCATE_SOURCE = out ;
@@ -56,7 +57,34 @@ actions ignore Coverage
   $(MV) *.gcov $(LOCATE_TARGET)/
   grep "###" $(LOCATE_TARGET)/$(CODE_MODULES:D=).gcov
 }
+rule Pde
+{
+  Depends $(<) : $(>) ;
+  MakeLocate $(<) : $(LOCATE_SOURCE) ;
+  Clean clean : $(<) ;
+}
 
+actions Pde
+{
+  echo "#include <WProgram.h>" > $(<) 
+  echo "#line 1 \"$(>)\"" >> $(<)
+  cat $(>) >> $(<) 
+}
+
+rule C++Pde
+{
+  local _CPP = $(>:B).cpp ;
+  Pde $(_CPP) : $(>) ;
+  C++ $(<) : $(_CPP) ;
+}
+
+rule UserObject
+{
+  switch $(>:S)
+  {
+    case .pde : C++Pde $(<) : $(>) ;
+  }
+}
 rule Objects
 {
         local _i ;

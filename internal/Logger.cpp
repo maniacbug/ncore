@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <iterator>
+#include <sstream>
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -17,6 +18,37 @@ using namespace std;
 extern "C" unsigned long millis(void);
 
 static Logger* global_logger = NULL;
+
+//
+// Static rate throttler
+//
+
+static unsigned long last_check = 0;
+static const unsigned long min_interval = 500; // ms
+static const int lines_per_check = 10;
+static int lines_remaining = lines_per_check;
+
+void Logger::throttle_output_rate(void)
+{
+  if ( clock && ! lines_remaining-- )
+  {
+    lines_remaining += lines_per_check;
+    unsigned long now = clock->millis();
+    if ( now - last_check < min_interval )
+    {
+      unsigned long wait = min_interval - (now - last_check); 
+      ostringstream warning;
+      warning << "Rate limiter: delay " << wait << "ms";
+      add(warning.str());
+      clock->delay(wait);
+    }
+    last_check = clock->millis();
+  }
+}
+
+//
+// Public interface
+//
 
 Logger::Logger(void): clock(NULL)
 {
@@ -46,6 +78,8 @@ void Logger::add(const std::string& format,...)
 
   push_back(ss.str());
   pthread_mutex_unlock( &mutex );
+
+  throttle_output_rate();
 }
 
 void Logger::setClock(const Clock& _clock)

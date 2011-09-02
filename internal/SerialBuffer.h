@@ -21,6 +21,7 @@ public:
   void put(char);
   bool available(void) const;
   char get(void);
+  void flush(void);
   
   void setInput(const std::string&);
   void addCommandsTo(Dispatcher&);
