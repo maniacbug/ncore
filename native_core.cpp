@@ -16,27 +16,16 @@ using namespace std;
 
 extern "C" void __cxa_pure_virtual() { while (1); }
 
-static Logger logger;
-static Pins pins;
-static Clock theclock;
-
-void add_commands_to(Dispatcher& d)
-{
-  pins.addCommandsTo(d);
-  logger.addCommandsTo(d);
-}
-
-void system_log(const string& s)
-{
-  logger.add(s);
-}
+extern Logger theLogger;
+extern Pins thePins;
+extern Clock theClock;
 
 extern "C" {
 
 void init(void)
 {
-  logger.setClock(theclock);
-  logger.add("started");
+  theLogger.setClock(theClock);
+  theLogger.add("started");
 }
 
 //
@@ -45,17 +34,17 @@ void init(void)
 
 void delay(unsigned long ms)
 {
-  logger.add("delay %lu",ms);
-  theclock.delay(ms);
+  theLogger.add("delay %lu",ms);
+  theClock.delay(ms);
 }
 unsigned long millis(void)
 {
-  return theclock.millis();
+  return theClock.millis();
 }
 void delayMicroseconds(unsigned int us)
 {
-  logger.add("delay %u us\n",us);
-  theclock.delayMicroseconds(us);
+  theLogger.add("delay %u us\n",us);
+  theClock.delayMicroseconds(us);
 }
 
 //
@@ -64,41 +53,41 @@ void delayMicroseconds(unsigned int us)
 
 void digitalWrite(uint8_t pin,uint8_t level)
 {
-  logger.add("pin %i: %s",pin,level?"HIGH":"LOW");
-  pins.digitalWrite(pin,level);
+  theLogger.add("pin %i: %s",pin,level?"HIGH":"LOW");
+  thePins.digitalWrite(pin,level);
 }
 
 int digitalRead(uint8_t pin)
 {
   int level = LOW;
-  level = pins.digitalRead(pin);
-  //logger.add("read pin %i: it's %s",pin,level?"HIGH":"LOW");
+  level = thePins.digitalRead(pin);
+  //theLogger.add("read pin %i: it's %s",pin,level?"HIGH":"LOW");
 
   return level;
 }
 
 int analogRead(uint8_t pin)
 {
-  int level = pins.analogRead(pin);
-  logger.add("read pin %i: it's %i\n",pin,level);
+  int level = thePins.analogRead(pin);
+  theLogger.add("read pin %i: it's %i\n",pin,level);
   return level;
 }
 
 void pinMode(uint8_t pin,uint8_t mode)
 {
-  logger.add("pin %i: mode %s",pin,mode?"OUTPUT":"INPUT");
-  pins.pinMode(pin,mode);
+  theLogger.add("pin %i: mode %s",pin,mode?"OUTPUT":"INPUT");
+  thePins.pinMode(pin,mode);
 }
 
 void attachInterrupt(uint8_t num, void (*fn)(void), int)
 {
-  logger.add("attach irq %u\n",num);
-  pins.attachInterrupt(num,fn);
+  theLogger.add("attach irq %u\n",num);
+  thePins.attachInterrupt(num,fn);
 }
 void detachInterrupt(uint8_t num)
 {
-  logger.add("detach irq %u\n",num);
-  pins.detachInterrupt(num);
+  theLogger.add("detach irq %u\n",num);
+  thePins.detachInterrupt(num);
 }
 
 //
@@ -129,14 +118,14 @@ void printf_P(const char* format,...)
 
 unsigned long pulseIn(uint8_t pin, uint8_t /*state*/, unsigned long /*timeout*/ )
 {
-  logger.add("pin %i: pulseIn 1000\n",pin);
+  theLogger.add("pin %i: pulseIn 1000\n",pin);
   
   return 1000LU;
 }
 
 void analogWrite(uint8_t pin,int level)
 {
-  logger.add("pin %i: %i\n",pin,level);
+  theLogger.add("pin %i: %i\n",pin,level);
 }
 
 void fdevopen(int (*)(char, FILE*),int)

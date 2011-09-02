@@ -10,23 +10,30 @@
 #include <Pins.h>
 #include <Shell.h>
 #include <SketchThread.h>
+#include <SerialBuffer.h>
+#include <Clock.h>
 
 using namespace std;
 
+Dispatcher theDispatcher;
+Logger theLogger;
+Pins thePins;
+Clock theClock;
+SerialBuffer theSerialBuffer(theLogger);
+
 extern "C" void init(void);
-extern void add_commands_to(Dispatcher&);
 
 int main(void)
 {
-  Dispatcher dispatcher;
+  theLogger.addCommandsTo(theDispatcher);
+  thePins.addCommandsTo(theDispatcher);
+  theSerialBuffer.addCommandsTo(theDispatcher);
   
   init();
 
-  add_commands_to(dispatcher);
-
   SketchThread thread;
 
-  Shell().run(dispatcher);
+  Shell().run(theDispatcher);
 
   return 0;
 }
