@@ -23,14 +23,12 @@ static Logger* global_logger = NULL;
 // Static rate throttler
 //
 
-static unsigned long last_check = 0;
 static const unsigned long min_interval = 500; // ms
 static const int lines_per_check = 10;
-static int lines_remaining = lines_per_check;
 
 void Logger::throttle_output_rate(void)
 {
-  if ( clock && ! lines_remaining-- )
+  if ( clock && ! --lines_remaining )
   {
     lines_remaining += lines_per_check;
     unsigned long now = clock->millis();
@@ -38,8 +36,8 @@ void Logger::throttle_output_rate(void)
     {
       unsigned long wait = min_interval - (now - last_check); 
       ostringstream warning;
-      warning << "Rate limiter: delay " << wait << "ms";
-      add(warning.str());
+      warning << "Rate limiter: delay " << wait << "ms" << endl;
+      push_back(warning.str());
       clock->delay(wait);
     }
     last_check = clock->millis();
@@ -50,7 +48,7 @@ void Logger::throttle_output_rate(void)
 // Public interface
 //
 
-Logger::Logger(void): clock(NULL)
+Logger::Logger(void): clock(NULL), last_check(0), lines_remaining(lines_per_check)
 {
   pthread_mutex_init(&mutex,NULL);
 }
@@ -58,6 +56,13 @@ Logger::Logger(void): clock(NULL)
 Logger::~Logger()
 {
   pthread_mutex_destroy(&mutex);
+}
+
+void Logger::clear(void)
+{
+  vector<string>::clear();
+  last_check = 0;
+  lines_remaining = lines_per_check;
 }
 
 void Logger::add(const std::string& format,...)

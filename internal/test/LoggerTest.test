@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 #include <streambuf>
+#include <iterator>
+#include <algorithm>
 
 #include <cxxtest/TestSuite.h>
 #include <pthread.h>
@@ -15,6 +17,12 @@
 using namespace std;
 
 extern "C" void init(void);
+
+ostream& operator<<(ostream& os, const Logger& log)
+{
+  copy(log.begin(),log.end(),ostream_iterator<string>(os," "));
+  return os;
+}
 
 class LoggerTestSuite: public CxxTest::TestSuite
 {
@@ -185,6 +193,21 @@ public:
     TS_ASSERT_EQUALS( countSubStrings(log.at(1),"100"),1 );
     TS_ASSERT_EQUALS( countSubStrings(log.at(2),"200"),1 );
     TS_ASSERT_EQUALS( countSubStrings(log.at(3),"300"),1 );
+  }
+  void testRateLimiter( void )
+  {
+    Clock clock;
+    log.setClock(clock);
+
+    int i = 12;
+    while(i--)
+    {
+      log.add("test");
+      clock.delay(1);
+    }
+
+    TS_ASSERT_EQUALS( log.size(), 13 );
+    TS_ASSERT_EQUALS( countSubStrings(log.at(10),"limit"), 1 );
   }
 };
 

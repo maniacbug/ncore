@@ -12,6 +12,8 @@ class Logger: public std::vector<std::string>
 private:
   pthread_mutex_t mutex;
   const Clock* clock;
+  unsigned long last_check;
+  int lines_remaining
 protected:
   static void reset(void); /**< Reset state of statics. Only for testing! */
   void throttle_output_rate(void);
@@ -23,6 +25,7 @@ public:
   ~Logger();
   void add(const std::string&,...);
   void setClock(const Clock&);
+  void clear(void);
 
   void addCommandsTo(Dispatcher&);
 };
