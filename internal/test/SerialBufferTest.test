@@ -24,10 +24,34 @@ public:
   {
     SerialBuffer s(log);
 
-    s.put("test\n");
+    s.put("test");
 
     TS_ASSERT_EQUALS( log.size(), 1 );
     TS_ASSERT( log.at(0).find("test") != string::npos );
+  }
+  void testChars( void )
+  {
+    SerialBuffer s(log);
+
+    s.put('t');
+    s.put('e');
+    s.put('s');
+    s.put('t');
+    s.put('\n');
+
+    TS_ASSERT_EQUALS( log.size(), 1 );
+    TS_ASSERT( log.at(0).find("test") != string::npos );
+  }
+  void testNoCR( void )
+  {
+    SerialBuffer s(log);
+
+    s.put('t');
+    s.put('e');
+    s.put('s');
+    s.put('t');
+
+    TS_ASSERT_EQUALS( log.size(), 0 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

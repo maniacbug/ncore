@@ -12,6 +12,7 @@ class SerialBuffer
 public:
   SerialBuffer(Logger& _log): log(_log) {}
   void put(const std::string &);
+  void put(char);
 };
 
 #endif // __SERIAL_BUFFER_H__
