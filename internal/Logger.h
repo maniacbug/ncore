@@ -13,7 +13,7 @@ private:
   pthread_mutex_t mutex;
   const Clock* clock;
   unsigned long last_check;
-  int lines_remaining
+  int lines_remaining;
 protected:
   static void reset(void); /**< Reset state of statics. Only for testing! */
   void throttle_output_rate(void);
