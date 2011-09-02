@@ -8,22 +8,22 @@ using namespace std;
 class SerialBufferTestSuite: public CxxTest::TestSuite
 {
   Logger log;
+  SerialBuffer s;
+  Dispatcher dispatch;
 public:
+  SerialBufferTestSuite(void): s(log) {}
   void setUp()
   {
     log.clear();
+    dispatch.clear();
   }
 
   void testEmpty( void )
   {
-    SerialBuffer s(log);
-
     TS_ASSERT_EQUALS( log.size(), 0 );
   }
   void testOutput( void )
   {
-    SerialBuffer s(log);
-
     s.put("test");
 
     TS_ASSERT_EQUALS( log.size(), 1 );
@@ -31,8 +31,6 @@ public:
   }
   void testChars( void )
   {
-    SerialBuffer s(log);
-
     s.put('t');
     s.put('e');
     s.put('s');
@@ -44,8 +42,6 @@ public:
   }
   void testNoCR( void )
   {
-    SerialBuffer s(log);
-
     s.put('t');
     s.put('e');
     s.put('s');
@@ -55,13 +51,10 @@ public:
   }
   void testAvailable( void )
   {
-    SerialBuffer s(log);
-    
     TS_ASSERT_EQUALS( s.available(), false );
   }
   void testSetInputBuffer( void )
   {
-    SerialBuffer s(log);
     s.setInput(string("hi"));
     
     TS_ASSERT_EQUALS( s.available(), true );
@@ -71,8 +64,6 @@ public:
   }
   void testSendCommand( void )
   {
-    SerialBuffer s(log);
-    Dispatcher dispatch;
     s.addCommandsTo(dispatch);
 
     bool ok = dispatch.execute(Parser("send hi"));
@@ -85,8 +76,6 @@ public:
   }
   void testSendLongString( void )
   {
-    SerialBuffer s(log);
-    Dispatcher dispatch;
     s.addCommandsTo(dispatch);
 
     dispatch.execute(Parser("send this is a test of a really long test string, isn't it??"));
@@ -99,8 +88,6 @@ public:
   }
   void testSendExceptions(void)
   {
-    SerialBuffer s(log);
-    Dispatcher dispatch;
     s.addCommandsTo(dispatch);
 
     TS_ASSERT_THROWS_ANYTHING( dispatch.execute(Parser("send")) );
