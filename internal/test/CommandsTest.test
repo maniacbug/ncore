@@ -65,5 +65,13 @@ public:
 
     TS_ASSERT_EQUALS( result, true );
   }
+  void testWorkerDispatchStringOk( void )
+  {
+    commands.add("test",return_true);
+
+    bool result = commands.execute("test");
+
+    TS_ASSERT_EQUALS( result, true );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

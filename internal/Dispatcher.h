@@ -28,6 +28,7 @@ public:
    * @retval false Worker function not found or returned false
    */
   bool execute(const std::vector<std::string>& commands) const;
+  bool execute(const std::string& commands) const;
 
   /**
    * Adds a worker

@@ -1,7 +1,9 @@
-#include <Dispatcher.h>
 #include <vector>
 #include <string>
 #include <iostream>
+
+#include <Parser.h>
+#include <Dispatcher.h>
 
 using namespace std;
 
@@ -16,6 +18,11 @@ bool Dispatcher::execute(const std::vector<std::string>& _commands) const
   }
 
   return result;
+}
+
+bool Dispatcher::execute(const std::string& _str) const
+{
+  return execute(Parser(_str));
 }
 
 bool Dispatcher::add(const std::string& _command, worker _fn)
