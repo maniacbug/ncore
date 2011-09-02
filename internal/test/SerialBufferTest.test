@@ -53,5 +53,11 @@ public:
 
     TS_ASSERT_EQUALS( log.size(), 0 );
   }
+  void testAvailable( void )
+  {
+    SerialBuffer s(log);
+    
+    TS_ASSERT_EQUALS( s.available(), false );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

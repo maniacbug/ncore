@@ -13,6 +13,7 @@ public:
   SerialBuffer(Logger& _log): log(_log) {}
   void put(const std::string &);
   void put(char);
+  bool available(void) const;
 };
 
 #endif // __SERIAL_BUFFER_H__

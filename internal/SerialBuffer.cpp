@@ -19,4 +19,9 @@ void SerialBuffer::put(char c)
   else
     outstream << c;
 }
+
+bool SerialBuffer::available(void) const
+{
+  return false;
+}
 // vim:cin:ai:sts=2 sw=2 ft=cpp
