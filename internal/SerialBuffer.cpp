@@ -3,14 +3,20 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
+#include <iomanip>
+
+#include <inttypes.h>
 
 #include <Logger.h>
 #include <Dispatcher.h>
 #include <SerialBuffer.h>
+#include <Clock.h>
 
 using namespace std;
 
 static SerialBuffer* global_object = NULL;
+static Clock internalClock;
+static unsigned long last_logged_at = 0;
 
 //
 // Public interface
@@ -20,6 +26,7 @@ void SerialBuffer::flush(void)
 {
   log.add(outstream.str());
   outstream.str(string());
+  last_logged_at = internalClock.millis();
 }
 
 void SerialBuffer::put(const string& str)
@@ -28,12 +35,19 @@ void SerialBuffer::put(const string& str)
 }
 void SerialBuffer::put(char c)
 {
-  if ( c == '\n' )
+  if ( c == '\n' ) 
   {
     flush();
   }
+  else if ( c < ' ' || c > 'z' )
+  {
+    outstream << "[0x" << setbase(16) << (unsigned int)(unsigned char)c << "]" ;
+  }
   else
     outstream << c;
+
+  if ( internalClock.millis() - last_logged_at > 1000 )
+    flush();
 }
 
 bool SerialBuffer::available(void) const
