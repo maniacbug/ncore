@@ -59,5 +59,15 @@ public:
     
     TS_ASSERT_EQUALS( s.available(), false );
   }
+  void testSetInputBuffer( void )
+  {
+    SerialBuffer s(log);
+    s.setInput(string("hi"));
+    
+    TS_ASSERT_EQUALS( s.available(), true );
+    TS_ASSERT_EQUALS( s.get(), 'h' );
+    TS_ASSERT_EQUALS( s.get(), 'i' );
+    TS_ASSERT_EQUALS( s.available(), false );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

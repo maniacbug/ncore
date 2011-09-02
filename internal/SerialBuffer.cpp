@@ -22,6 +22,18 @@ void SerialBuffer::put(char c)
 
 bool SerialBuffer::available(void) const
 {
-  return false;
+  return instream.rdbuf()->in_avail(); 
+}
+  
+void SerialBuffer::setInput(const std::string& instr)
+{
+  instream.str(instr);
+}
+
+char SerialBuffer::get(void)
+{
+  char result;
+  instream.readsome(&result,1);
+  return result;
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp
