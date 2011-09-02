@@ -20,5 +20,14 @@ public:
 
     TS_ASSERT_EQUALS( log.size(), 0 );
   }
+  void testOutput( void )
+  {
+    SerialBuffer s(log);
+
+    s.put("test\n");
+
+    TS_ASSERT_EQUALS( log.size(), 1 );
+    TS_ASSERT( log.at(0).find("test") != string::npos );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

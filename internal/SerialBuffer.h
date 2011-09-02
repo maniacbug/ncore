@@ -1,12 +1,17 @@
 #ifndef __SERIAL_BUFFER_H__
 #define __SERIAL_BUFFER_H__
 
+#include <sstream>
+
 class Logger;
 
 class SerialBuffer
 {
+  Logger& log;
+  std::ostringstream outstream;
 public:
-  SerialBuffer(Logger&) {}
+  SerialBuffer(Logger& _log): log(_log) {}
+  void put(const std::string &);
 };
 
 #endif // __SERIAL_BUFFER_H__
