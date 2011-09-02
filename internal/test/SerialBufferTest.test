@@ -69,5 +69,41 @@ public:
     TS_ASSERT_EQUALS( s.get(), 'i' );
     TS_ASSERT_EQUALS( s.available(), false );
   }
+  void testSendCommand( void )
+  {
+    SerialBuffer s(log);
+    Dispatcher dispatch;
+    s.addCommandsTo(dispatch);
+
+    bool ok = dispatch.execute(Parser("send hi"));
+   
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( s.available(), true );
+    TS_ASSERT_EQUALS( s.get(), 'h' );
+    TS_ASSERT_EQUALS( s.get(), 'i' );
+    TS_ASSERT_EQUALS( s.available(), false );
+  }
+  void testSendLongString( void )
+  {
+    SerialBuffer s(log);
+    Dispatcher dispatch;
+    s.addCommandsTo(dispatch);
+
+    dispatch.execute(Parser("send this is a test of a really long test string, isn't it??"));
+  
+    ostringstream result;
+    while ( s.available() )
+      result << s.get();
+
+    TS_ASSERT_EQUALS( result.str(), "this is a test of a really long test string, isn't it??" );
+  }
+  void testSendExceptions(void)
+  {
+    SerialBuffer s(log);
+    Dispatcher dispatch;
+    s.addCommandsTo(dispatch);
+
+    TS_ASSERT_THROWS_ANYTHING( dispatch.execute(Parser("send")) );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

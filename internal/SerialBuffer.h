@@ -10,13 +10,20 @@ class SerialBuffer
   Logger& log;
   std::ostringstream outstream;
   std::istringstream instream;
+
+protected:
+  static bool static_command_send(const std::vector<std::string>&);
+  bool command_send(const std::vector<std::string>&);
+
 public:
   SerialBuffer(Logger& _log): log(_log) {}
   void put(const std::string &);
   void put(char);
   bool available(void) const;
-  void setInput(const std::string&);
   char get(void);
+  
+  void setInput(const std::string&);
+  void addCommandsTo(Dispatcher&);
 };
 
 #endif // __SERIAL_BUFFER_H__
