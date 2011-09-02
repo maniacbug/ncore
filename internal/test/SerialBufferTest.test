@@ -1,0 +1,24 @@
+#include <cxxtest/TestSuite.h>
+
+#include <SerialBuffer.h>
+#include <Logger.h>
+
+using namespace std;
+
+class SerialBufferTestSuite: public CxxTest::TestSuite
+{
+  Logger log;
+public:
+  void setUp()
+  {
+    log.clear();
+  }
+
+  void testEmpty( void )
+  {
+    SerialBuffer s(log);
+
+    TS_ASSERT_EQUALS( log.size(), 0 );
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
