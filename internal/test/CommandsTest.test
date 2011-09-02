@@ -73,5 +73,11 @@ public:
 
     TS_ASSERT_EQUALS( result, true );
   }
+  void testWorkerDispatchBlankString( void )
+  {
+    commands.add("test",return_true);
+
+    TS_ASSERT_EQUALS( commands.execute(""), false );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
