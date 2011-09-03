@@ -12,6 +12,7 @@
 extern "C"
 {
 #include <readline/readline.h>
+#include <readline/history.h>
 }
 
 using namespace::std;
@@ -39,5 +40,9 @@ char* readline(const char* prompt)
     inqueue.pop();
     return const_cast<char*>(result.c_str());
   }
+}
+
+extern "C" void add_history(const char*)
+{
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp

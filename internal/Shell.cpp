@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include <readline/readline.h>
+#include <readline/history.h>
 
 #include <Shell.h>
 #include <Dispatcher.h>
@@ -24,7 +25,10 @@ void Shell::run(const Dispatcher& _commands) //, const Clock& _clock)
     prompt << "ncore " << _clock.millis() << "$ ";
     char* input = readline(prompt.str().c_str());
     if (input)
+    {
+      add_history(input);
       command = string(input);
+    }
     else
       command = "quit";
    
