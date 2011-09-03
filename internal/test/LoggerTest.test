@@ -39,7 +39,6 @@ public:
     commands.clear();
     
     commands.add(&log);
-    log.addCommandsTo(commands);
   }
   void tearDown()
   {
@@ -80,16 +79,6 @@ public:
     log.add("Test %02i",1);
     TS_ASSERT( log.at(0).find("Test 01") != string::npos );
   }
-  void testListCommandOk( void )
-  {
-    parser.parse("list");
-
-    cap.start();
-    bool ok = commands.execute(parser);
-    cap.stop();
-
-    TS_ASSERT_EQUALS( ok, true );
-  }
   void testListCommandOkNew( void )
   {
     cap.start();
@@ -98,29 +87,10 @@ public:
 
     TS_ASSERT_EQUALS( ok, true );
   }
-  void testListExceptions( void )
-  {
-    cap.start();
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("list 1000")) );
-  }
   void testListExceptionsNew( void )
   {
     cap.start();
     TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("list 1000")) );
-  }
-  void testListCommandWorks( void )
-  {
-    log.add("Test1");
-    log.add("Test12");
-    log.add("Test123");
-
-    parser.parse("list");
-
-    cap.start();
-    commands.execute(parser);
-    cap.stop();
-
-    TS_ASSERT_EQUALS( cap.contains("NCORE"), 3 );
   }
   void testListCommandWorksNew( void )
   {
@@ -158,22 +128,6 @@ public:
 
     return NULL;
   }
-  void testThreadSafe( void )
-  {
-    pthread_t bg_thread;
-    int err = pthread_create( &bg_thread, NULL, write_logs, this );
-    TS_ASSERT_EQUALS( err, 0 );
-    int i = 50;
-    while (i--)
-      log.add("Foreground thread");
-    pthread_join( bg_thread, NULL );
-
-    cap.start();
-    commands.execute(Parser("list"));
-    cap.stop();
-    TS_ASSERT_EQUALS( cap.contains("Background"), 50 );
-    TS_ASSERT_EQUALS( cap.contains("Foreground"), 50 );
-  }
   void testThreadSafeNew( void )
   {
     pthread_t bg_thread;
@@ -200,7 +154,7 @@ public:
     while (i--)
     {
       cout << i << endl;
-      commands.execute(Parser("list"));
+      commands.execute_new(Parser("list"));
     }
     pthread_join( bg_thread, NULL );
     cap.stop();
