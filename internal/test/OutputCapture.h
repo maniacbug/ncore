@@ -2,31 +2,31 @@
 #define __OUTPUT_CAPTURE_H__
 class OutputCapture
 {
-  stringstream test_buffer;
-  streambuf* cout_sbuf;
+  std::stringstream test_buffer;
+  std::streambuf* cout_sbuf;
 public:
   void clear(void)
   {
-    test_buffer.str(string());
+    test_buffer.str(std::string());
     cout_sbuf = std::cout.rdbuf(); // save original sbuf
   }
   void start( void )
   {
     // Capture the input to a test buffer
-    cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
+    std::cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
   }
   void stop( void )
   {
     // Restore the output stream
-    cout.rdbuf(cout_sbuf); // restore the original stream buffer
+    std::cout.rdbuf(cout_sbuf); // restore the original stream buffer
   }
-  string buffer(void) const
+  std::string buffer(void) const
   {
     return test_buffer.str();
   }
-  int contains(const string& partial)
+  int contains(const std::string& partial)
   {
-    string whole = buffer();
+    std::string whole = buffer();
     size_t skip_count = partial.size();
 
     std::string::size_type and_pos( 0 );

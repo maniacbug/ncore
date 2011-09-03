@@ -14,6 +14,7 @@
 #include <Dispatcher.h>
 #include <Parser.h>
 #include <Pins.h>
+#include <OutputCapture.h>
 
 using namespace std;
 
@@ -24,34 +25,20 @@ class ShellTestSuite: public CxxTest::TestSuite
   Pins pins;
   Dispatcher commands;
   Logger log;
-  stringstream test_buffer;
-  streambuf* cout_sbuf;
+  OutputCapture cap;
 public:
   void setUp()
   {
     pins.clear();
     commands.clear();
     log.clear();
+    cap.clear();
     commands.add(&pins);
     commands.add(&log);
-    test_buffer.str(string());
-    cout_sbuf = std::cout.rdbuf(); // save original sbuf
   }
   void teardown()
   {
-    // Restore the output stream
-    cout.rdbuf(cout_sbuf); // restore the original stream buffer
-  }
-  void startCoutCapture( void )
-  {
-    // Capture the input to a test buffer
-    cout_sbuf = std::cout.rdbuf(); // save original sbuf
-    cout.rdbuf(test_buffer.rdbuf()); // redirect 'cout' to a 'fout'
-  }
-  void endCoutCapture( void )
-  {
-    // Restore the output stream
-    cout.rdbuf(cout_sbuf); // restore the original stream buffer
+    cap.stop();
   }
   int countSubStrings( const string& whole, const string& partial )
   {
@@ -73,71 +60,71 @@ public:
 
   void testRuns( void )
   {
-    startCoutCapture();
+    cap.start();
     Shell().run(Dispatcher());
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT( test_buffer.str().size() > 0 );
+    TS_ASSERT( cap.buffer().size() > 0 );
   }
   void testEmpty( void )
   {
-    startCoutCapture();
+    cap.start();
     Shell().run(Dispatcher());
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("ncore") , 1 );
   }
   void testQuit( void )
   {
     mock_readline_add("quit");
 
-    startCoutCapture();
+    cap.start();
     Shell().run(Dispatcher());
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"quit") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("quit") , 1 );
   }
   void testTwoCommands( void )
   {
     mock_readline_add("something");
     mock_readline_add("quit");
 
-    startCoutCapture();
+    cap.start();
     Shell().run(Dispatcher());
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore") , 2 );
+    TS_ASSERT_EQUALS( cap.contains("ncore") , 2 );
   }
   void testNotFound( void )
   {
     mock_readline_add("something");
     mock_readline_add("quit");
 
-    startCoutCapture();
+    cap.start();
     Shell().run(Dispatcher());
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"not found") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("not found") , 1 );
   }
   void testRealCommand( void )
   {
     mock_readline_add("pins");
 
-    startCoutCapture();
+    cap.start();
     Shell().run(commands);
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"13:0") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("13:0") , 1 );
   }
   void testBadCommand( void )
   {
     mock_readline_add("pin something");
 
-    startCoutCapture();
+    cap.start();
     Shell().run(commands);
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"Error: ") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("Error: ") , 1 );
   }
   void testCommandSequence( void )
   {
@@ -147,20 +134,20 @@ public:
     mock_readline_add("pin a5 1000");
     mock_readline_add("pins");
 
-    startCoutCapture();
+    cap.start();
     Shell().run(commands);
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"13:1") , 1 );
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"12:1") , 1 );
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"10:1") , 1 );
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"5:1000") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("13:1") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("12:1") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("10:1") , 1 );
+    TS_ASSERT_EQUALS( cap.contains("5:1000") , 1 );
   }
   void testCR( void )
   {
     mock_readline_add(" ");
 
-    startCoutCapture();
+    cap.start();
     try
     {
       Shell().run(commands);
@@ -168,11 +155,11 @@ public:
     catch(...)
     {
       TS_FAIL( "Exception thrown" );
-      endCoutCapture();
+      cap.stop();
     }
-    endCoutCapture();
+    cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(test_buffer.str(),"ncore") , 2 );
+    TS_ASSERT_EQUALS( cap.contains("ncore") , 2 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
