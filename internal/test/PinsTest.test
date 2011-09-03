@@ -35,10 +35,8 @@ public:
     cap.clear();
 
     commands.add(&pins);
-    pins.addCommandsTo(commands);
+    commands.add(&log);
     isr_called_count = 0;
-    
-    log.addCommandsTo(commands);
   }
   static void isr(void)
   {
@@ -277,7 +275,7 @@ public:
     pthread_join( sketch_thread, NULL );
     
     cap.start();
-    commands.execute(Parser("list"));
+    commands.execute_new(Parser("list"));
     cap.stop();
     TS_ASSERT_EQUALS( cap.contains("PIN 13") , 5 );
     TS_ASSERT_EQUALS( cap.contains("HIGH") , 3 );
