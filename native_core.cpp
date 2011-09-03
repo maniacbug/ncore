@@ -14,13 +14,17 @@
 
 using namespace std;
 
-extern "C" void __cxa_pure_virtual() { while (1); }
-
 extern Logger theLogger;
 extern Pins thePins;
 extern Clock theClock;
 
 extern "C" {
+
+void __cxa_pure_virtual() 
+{
+  theLogger.add("SYSTEM HALT -- cxa_pure_virtual");
+  while (1); 
+}
 
 //
 // Clock
@@ -52,18 +56,14 @@ void digitalWrite(uint8_t pin,uint8_t level)
 
 int digitalRead(uint8_t pin)
 {
-  int level = LOW;
-  level = thePins.digitalRead(pin);
-
-  return level;
+  return thePins.digitalRead(pin);
 }
 
 int analogRead(uint8_t pin)
 {
   if ( pin >= A0 )
     pin -= A0;
-  int level = thePins.analogRead(pin);
-  return level;
+  return thePins.analogRead(pin);
 }
 
 void pinMode(uint8_t pin,uint8_t mode)

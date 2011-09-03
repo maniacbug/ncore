@@ -16,8 +16,6 @@ void Shell::run(const Dispatcher& _commands) //, const Clock& _clock)
 {
   Clock _clock;
 
-  cout << "NCORE command shell" << endl;
-  
   string command;
   do
   {
