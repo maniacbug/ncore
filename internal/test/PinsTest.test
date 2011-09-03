@@ -27,6 +27,9 @@ class PinsTestSuite: public CxxTest::TestSuite
 
   static int isr_called_count;
 public:
+  PinsTestSuite(void): pins(log)
+  {
+  }
   void setUp()
   {
     pins.clear();
@@ -254,7 +257,6 @@ public:
     {
       state ^= HIGH;
       p->pins.digitalWrite(toggle_pin,state);
-      p->log.add("PIN %i %s",toggle_pin,state?"HIGH":"LOW");
     }
     p->pins.digitalWrite(done_pin,HIGH);
     while (1)
@@ -277,8 +279,8 @@ public:
     cap.start();
     commands.execute_new(Parser("list"));
     cap.stop();
-    TS_ASSERT_EQUALS( cap.contains("PIN 13") , 5 );
-    TS_ASSERT_EQUALS( cap.contains("HIGH") , 3 );
+    TS_ASSERT_EQUALS( cap.contains("pin 13") , 6 );
+    TS_ASSERT_EQUALS( cap.contains("pin 13 HIGH") , 3 );
   }
 };
 

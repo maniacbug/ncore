@@ -33,6 +33,9 @@ class ShellTestSuite: public CxxTest::TestSuite
   Logger log;
   OutputCapture cap;
 public:
+  ShellTestSuite(void): pins(log)
+  {
+  }
   void setUp()
   {
     pins.clear();

@@ -4,7 +4,7 @@
 #include <vector>
 #include <IDispatchable.h>
 
-class Dispatcher;
+class Logger;
 
 #ifndef OUTPUT
 const int OUTPUT = 1;
@@ -15,7 +15,7 @@ const int INPUT = 0;
 
 class Pins: public IDispatchable
 {
-protected:
+private:
   static const int num_pins = 20;
   static const int num_channels = 8;
   static const int num_interrupts = 2;
@@ -24,6 +24,9 @@ protected:
   std::vector<int> analog_states;
   std::vector<void (*)(void)> isr_table;
 
+  Logger& log;
+
+protected:
   bool command_pins(const std::vector<std::string>&) const;
 
   bool command_pin(const std::vector<std::string>&);
@@ -32,7 +35,7 @@ protected:
  
   bool command_irq(const std::vector<std::string>&) const;
 public:
-  Pins(void);
+  Pins(Logger&);
   void clear(void);
   int digitalRead(int pin) const;
   void hwSetDigital(int pin,int level);

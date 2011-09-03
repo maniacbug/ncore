@@ -17,7 +17,7 @@ using namespace std;
 
 Dispatcher theDispatcher;
 Logger theLogger;
-Pins thePins;
+Pins thePins(theLogger);
 Clock theClock;
 SerialBuffer theSerialBuffer(theLogger);
 

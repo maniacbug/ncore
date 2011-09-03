@@ -53,7 +53,6 @@ void delayMicroseconds(unsigned int us)
 
 void digitalWrite(uint8_t pin,uint8_t level)
 {
-  theLogger.add("pin %i: %s",pin,level?"HIGH":"LOW");
   thePins.digitalWrite(pin,level);
 }
 
@@ -61,7 +60,6 @@ int digitalRead(uint8_t pin)
 {
   int level = LOW;
   level = thePins.digitalRead(pin);
-  //theLogger.add("read pin %i: it's %s",pin,level?"HIGH":"LOW");
 
   return level;
 }
@@ -71,24 +69,20 @@ int analogRead(uint8_t pin)
   if ( pin >= A0 )
     pin -= A0;
   int level = thePins.analogRead(pin);
-  theLogger.add("read pin A%i: it's %i",pin,level);
   return level;
 }
 
 void pinMode(uint8_t pin,uint8_t mode)
 {
-  theLogger.add("pin %i: mode %s",pin,mode?"OUTPUT":"INPUT");
   thePins.pinMode(pin,mode);
 }
 
 void attachInterrupt(uint8_t num, void (*fn)(void), int)
 {
-  theLogger.add("attach irq %u",num);
   thePins.attachInterrupt(num,fn);
 }
 void detachInterrupt(uint8_t num)
 {
-  theLogger.add("detach irq %u",num);
   thePins.detachInterrupt(num);
 }
 
