@@ -113,7 +113,7 @@ public:
     parser.parse("list /T.*12/");
 
     cap.start();
-    commands.execute(parser);
+    commands.execute_new(parser);
     cap.stop();
 
     TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"NCORE"), 2 );

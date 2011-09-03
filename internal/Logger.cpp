@@ -16,12 +16,11 @@
 #include <Parser.h>
 
 using namespace std;
+
 extern "C" unsigned long millis(void);
 
-static Logger* global_logger = NULL;
-
 //
-// Static rate throttler
+// Rate throttler
 //
 
 static const unsigned long min_interval = 500; // ms
@@ -107,14 +106,6 @@ bool Logger::runCommand( const Parser& parser )
   return result; 
 }
 
-bool Logger::static_command_list(const vector<string>& _commands)
-{
-  if ( ! global_logger )
-    throw new runtime_error("No logger registered to receive commands");
-
-  return global_logger->command_list(_commands);
-}
-
 bool Logger::command_list(const vector<string>& _commands) const
 {
   if ( _commands.size() != 1 )
@@ -127,34 +118,4 @@ bool Logger::command_list(const vector<string>& _commands) const
   return true;
 }
 
-void Logger::addCommandsTo(Dispatcher& _commands)
-{
-  global_logger = this;
-  _commands.add("list",Logger::static_command_list);
-}
-
-void Logger::reset(void)
-{
-  global_logger = NULL;
-}
-#if 0
-
-void logger::add(const char* format,...)
-{
-  static header[100];
-  snprintf(header,sizeof(header),"NCORE: %lu ",millis());
-  static buffer[500];
-  vsnprintf(buffer,sizeof(buffer),format,va_args);
-  add(string(header)+string(buffer));
-}
-
-void logger::add(unsigned long ms, const char* format,...)
-{
-  static header[100];
-  snprintf(header,sizeof(header),"NCORE: %lu ",ms);
-  static buffer[500];
-  vsnprintf(buffer,sizeof(buffer),format,va_args);
-  add(string(header)+string(buffer));
-}
-#endif
 // vim:cin:ai:sts=2 sw=2 ft=cpp

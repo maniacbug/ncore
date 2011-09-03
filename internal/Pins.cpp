@@ -8,8 +8,6 @@
 
 using namespace std;
 
-static Pins* global_pins = NULL;
-
 const int LOW = 0;
 const int HIGH = 1;
 
@@ -97,30 +95,6 @@ bool Pins::runCommand( const Parser& parser )
   }
 
   return result; 
-}
-
-bool Pins::static_command_pin(const vector<string>& _commands)
-{
-  if ( ! global_pins )
-    throw new runtime_error("No pins registered to receive commands");
-
-  return global_pins->command_pin(_commands);
-}
-
-bool Pins::static_command_pins(const vector<string>& _commands)
-{
-  if ( ! global_pins )
-    throw new runtime_error("No pins registered to receive commands");
-
-  return global_pins->command_pins(_commands);
-}
-
-bool Pins::static_command_irq(const vector<string>& _commands)
-{
-  if ( ! global_pins )
-    throw new runtime_error("No pins registered to receive commands");
-
-  return global_pins->command_irq(_commands);
 }
 
 bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<string>::const_iterator end)
@@ -269,15 +243,4 @@ bool Pins::command_irq(const vector<string>& _commands) const
   return result;
 }
 
-void Pins::addCommandsTo(Dispatcher& _commands)
-{
-  global_pins = this;
-  _commands.add("pins",Pins::static_command_pins);
-  _commands.add("pin",Pins::static_command_pin);
-  _commands.add("irq",Pins::static_command_irq);
-}
-void Pins::reset(void)
-{
-  global_pins = NULL;
-}
 // vim:cin:ai:sts=2 sw=2 ft=cpp

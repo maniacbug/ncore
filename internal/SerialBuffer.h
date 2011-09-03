@@ -16,7 +16,6 @@ class SerialBuffer: public IDispatchable
   bool outstream_has_data;
 
 protected:
-  static bool static_command_send(const std::vector<std::string>&);
   bool command_send(const std::vector<std::string>&);
 
 public:
@@ -28,7 +27,6 @@ public:
   void flush(void);
   
   void setInput(const std::string&);
-  void addCommandsTo(Dispatcher&);
 
   std::string& getCommands(void) const { static std::string commands = "send"; return commands; }
   bool runCommand( const Parser& );

@@ -7,7 +7,6 @@
 
 class Clock;
 class Parser;
-class Dispatcher;
 
 class Logger: public std::vector<std::string>, public IDispatchable
 {
@@ -17,10 +16,7 @@ private:
   unsigned long last_check;
   int lines_remaining;
 protected:
-  static void reset(void); /**< Reset state of statics. Only for testing! */
   void throttle_output_rate(void);
-  
-  static bool static_command_list(const std::vector<std::string>& _commands);
   bool command_list(const std::vector<std::string>&) const;
 public:
   Logger(void);
@@ -31,8 +27,6 @@ public:
   
   std::string& getCommands(void) const { static std::string commands = "list"; return commands; }
   bool runCommand( const Parser& );
-
-  void addCommandsTo(Dispatcher&);
 };
 
 #endif // __LOGGER_H__

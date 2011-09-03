@@ -24,17 +24,12 @@ protected:
   std::vector<int> analog_states;
   std::vector<void (*)(void)> isr_table;
 
-  static void reset(void); /**< Reset state of statics. Only for testing! */
-
-  static bool static_command_pins(const std::vector<std::string>&);
   bool command_pins(const std::vector<std::string>&) const;
 
-  static bool static_command_pin(const std::vector<std::string>&);
   bool command_pin(const std::vector<std::string>&);
   bool command_pin_digital(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );
   bool command_pin_analog(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );
-  
-  static bool static_command_irq(const std::vector<std::string>&);
+ 
   bool command_irq(const std::vector<std::string>&) const;
 public:
   Pins(void);
@@ -49,8 +44,7 @@ public:
   void digitalWrite(int pin,int level);
   int hwGetDigital(int pin) const;
   void pinMode(int pin, int dir);
-  
-  void addCommandsTo(Dispatcher&);
+ 
   std::string& getCommands() const { static std::string commands = "pins pin irq"; return commands; }
   bool runCommand( const Parser& );
 };

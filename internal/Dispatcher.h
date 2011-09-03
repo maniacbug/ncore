@@ -9,18 +9,14 @@ class IDispatchable;
 class Parser;
 
 /**
- * Dispatches commands to workers
+ * Dispatches commands to registered objects
  */
 class Dispatcher
 {
-public:
-  typedef bool (*worker)(const std::vector<std::string>&);
 protected:
   /**
-   * Map of commands to workers
+   * Map of commands to dispatchable objects 
    */
-  std::map<std::string,worker> commandmap;
-
   std::map<std::string,IDispatchable*> objectmap;
 
 public:
@@ -32,22 +28,9 @@ public:
    * @retval true Worker function found and returned true
    * @retval false Worker function not found or returned false
    */
-  bool execute(const std::vector<std::string>& commands) const;
   bool execute(const std::string& commands) const;
-
-  // Uses new objectmap
   bool execute_new(const Parser& commands) const;
 
-  /**
-   * Adds a worker
-   *
-   * @param command Single token for the command
-   * @param fn Worked function to execute for the command
-   *
-   * @retval true Worker added successfully
-   * @retval false Problema adding worker, not added
-   */
-  bool add(const std::string& command,worker fn);
   bool add(IDispatchable*);
 
   /**
@@ -57,7 +40,7 @@ public:
 
   size_t size(void) const
   {
-    return commandmap.size();
+    return objectmap.size();
   }
 };
 

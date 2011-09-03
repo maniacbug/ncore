@@ -15,7 +15,6 @@
 
 using namespace std;
 
-static SerialBuffer* global_object = NULL;
 static Clock internalClock;
 static unsigned long last_logged_at = 0;
 
@@ -80,12 +79,6 @@ char SerialBuffer::get(void)
   return result;
 }
 
-void SerialBuffer::addCommandsTo(Dispatcher& _commands)
-{
-  global_object = this;
-  _commands.add("send",SerialBuffer::static_command_send);
-}
-
 bool SerialBuffer::runCommand( const Parser& parser ) 
 { 
   bool result = false;
@@ -98,14 +91,6 @@ bool SerialBuffer::runCommand( const Parser& parser )
   }
 
   return result; 
-}
-
-bool SerialBuffer::static_command_send(const vector<string>& _commands)
-{
-  if ( ! global_object )
-    throw new runtime_error("No serial buffer registered to receive commands");
-
-  return global_object->command_send(_commands);
 }
 
 bool SerialBuffer::command_send(const vector<string>& _commands)
