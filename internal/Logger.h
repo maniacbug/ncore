@@ -3,11 +3,13 @@
 
 #include <string>
 #include <vector>
+#include <IDispatchable.h>
 
-class Dispatcher;
 class Clock;
+class Parser;
+class Dispatcher;
 
-class Logger: public std::vector<std::string>
+class Logger: public std::vector<std::string>, public IDispatchable
 {
 private:
   pthread_mutex_t mutex;
@@ -26,6 +28,9 @@ public:
   void add(const std::string&,...);
   void setClock(const Clock&);
   void clear(void);
+  
+  std::string& getCommands(void) const { static std::string commands = "list"; return commands; }
+  bool runCommand( const Parser& );
 
   void addCommandsTo(Dispatcher&);
 };

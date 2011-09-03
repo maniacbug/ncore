@@ -13,6 +13,7 @@
 #include <Logger.h>
 #include <Dispatcher.h>
 #include <Clock.h>
+#include <Parser.h>
 
 using namespace std;
 extern "C" unsigned long millis(void);
@@ -90,6 +91,20 @@ void Logger::add(const std::string& format,...)
 void Logger::setClock(const Clock& _clock)
 {
   clock = &_clock;
+}
+
+bool Logger::runCommand( const Parser& parser ) 
+{ 
+  bool result = false;
+  
+  const string& command = parser.at(0);
+
+  if ( command == "list" )
+  {
+    result = command_list(parser);
+  }
+
+  return result; 
 }
 
 bool Logger::static_command_list(const vector<string>& _commands)

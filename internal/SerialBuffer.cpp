@@ -11,6 +11,7 @@
 #include <Dispatcher.h>
 #include <SerialBuffer.h>
 #include <Clock.h>
+#include <Parser.h>
 
 using namespace std;
 
@@ -83,6 +84,20 @@ void SerialBuffer::addCommandsTo(Dispatcher& _commands)
 {
   global_object = this;
   _commands.add("send",SerialBuffer::static_command_send);
+}
+
+bool SerialBuffer::runCommand( const Parser& parser ) 
+{ 
+  bool result = false;
+  
+  const string& command = parser.at(0);
+
+  if ( command == "send" )
+  {
+    result = command_send(parser);
+  }
+
+  return result; 
 }
 
 bool SerialBuffer::static_command_send(const vector<string>& _commands)

@@ -36,6 +36,9 @@ public:
     cap.clear();
     log.clear();
     parser.clear();
+    commands.clear();
+    
+    commands.add(&log);
     log.addCommandsTo(commands);
   }
   void tearDown()
@@ -87,10 +90,23 @@ public:
 
     TS_ASSERT_EQUALS( ok, true );
   }
-  void testListExceptions_1( void )
+  void testListCommandOkNew( void )
+  {
+    cap.start();
+    bool ok = commands.execute_new(Parser("list"));
+    cap.stop();
+
+    TS_ASSERT_EQUALS( ok, true );
+  }
+  void testListExceptions( void )
   {
     cap.start();
     TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("list 1000")) );
+  }
+  void testListExceptionsNew( void )
+  {
+    cap.start();
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("list 1000")) );
   }
   void testListCommandWorks( void )
   {
@@ -104,7 +120,19 @@ public:
     commands.execute(parser);
     cap.stop();
 
-    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"NCORE"), 3 );
+    TS_ASSERT_EQUALS( cap.contains("NCORE"), 3 );
+  }
+  void testListCommandWorksNew( void )
+  {
+    log.add("Test1");
+    log.add("Test12");
+    log.add("Test123");
+
+    cap.start();
+    commands.execute_new(Parser("list"));
+    cap.stop();
+
+    TS_ASSERT_EQUALS( cap.contains("NCORE"), 3 );
   }
   void todo_testListCommandRegexp( void )
   {
@@ -143,8 +171,24 @@ public:
     cap.start();
     commands.execute(Parser("list"));
     cap.stop();
-    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"Background"), 50 );
-    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"Foreground"), 50 );
+    TS_ASSERT_EQUALS( cap.contains("Background"), 50 );
+    TS_ASSERT_EQUALS( cap.contains("Foreground"), 50 );
+  }
+  void testThreadSafeNew( void )
+  {
+    pthread_t bg_thread;
+    int err = pthread_create( &bg_thread, NULL, write_logs, this );
+    TS_ASSERT_EQUALS( err, 0 );
+    int i = 50;
+    while (i--)
+      log.add("Foreground thread");
+    pthread_join( bg_thread, NULL );
+
+    cap.start();
+    commands.execute_new(Parser("list"));
+    cap.stop();
+    TS_ASSERT_EQUALS( cap.contains("Background"), 50 );
+    TS_ASSERT_EQUALS( cap.contains("Foreground"), 50 );
   }
   void testThreadSafeListing( void )
   {
@@ -208,27 +252,6 @@ public:
 
     TS_ASSERT_EQUALS( log.size(), 13 );
     TS_ASSERT_EQUALS( countSubStrings(log.at(10),"limit"), 1 );
-  }
-};
-
-// Extra tests to dig deep into the unexposed internals of Logger
-// in pursuit of 100% code coverage
-class LoggerInternalTestSuite: public CxxTest::TestSuite
-{
-  class LoggerInternal: Logger
-  {
-  public:
-    void bad_static_list(void)
-    {
-      // This is bad.  Don't do this in real life.
-      Logger::reset();
-      Logger::static_command_list(vector<string>());
-    }
-  };
-public:
-  void testBadStaticList(void)
-  {
-    TS_ASSERT_THROWS_ANYTHING( LoggerInternal().bad_static_list() );
   }
 };
 

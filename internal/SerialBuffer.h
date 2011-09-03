@@ -3,9 +3,12 @@
 
 #include <sstream>
 
-class Logger;
+#include <IDispatchable.h>
 
-class SerialBuffer
+class Logger;
+class Parser;
+
+class SerialBuffer: public IDispatchable
 {
   Logger& log;
   std::ostringstream outstream;
@@ -26,6 +29,9 @@ public:
   
   void setInput(const std::string&);
   void addCommandsTo(Dispatcher&);
+
+  std::string& getCommands(void) const { static std::string commands = "send"; return commands; }
+  bool runCommand( const Parser& );
 };
 
 #endif // __SERIAL_BUFFER_H__
