@@ -16,23 +16,30 @@
 using namespace std;
 
 Dispatcher theDispatcher;
-Logger theLogger;
-Pins thePins(theLogger);
 Clock theClock;
+Logger theLogger(theClock);
+Pins thePins(theLogger);
 SerialBuffer theSerialBuffer(theLogger);
 
 extern "C" void init(void);
 
 int main(void)
 {
+  // Announce
+  cerr << "NCORE: Arduino Native Core" << endl << "Copyright (C) 2011 maniacbug@ymail.com GPLv2" << endl << endl;
+
+  // Add commands for all of the objects that can dispatch commands
   theDispatcher.add(&theLogger);
   theDispatcher.add(&thePins);
   theDispatcher.add(&theSerialBuffer);
-  
-  init();
+ 
+  // Announce to the log
+  theLogger.add("started");
 
+  // Launch the sketch in its own thread
   SketchThread thread;
 
+  // Operate the shell
   Shell().run(theDispatcher);
 
   return 0;

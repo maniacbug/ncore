@@ -22,12 +22,6 @@ extern Clock theClock;
 
 extern "C" {
 
-void init(void)
-{
-  theLogger.setClock(theClock);
-  theLogger.add("started");
-}
-
 //
 // Clock
 //

@@ -20,9 +20,9 @@ protected:
   bool command_list(const std::vector<std::string>&) const;
 public:
   Logger(void);
+  Logger(Clock&);
   ~Logger();
   void add(const std::string&,...);
-  void setClock(const Clock&);
   void clear(void);
   
   std::string& getCommands(void) const { static std::string commands = "list"; return commands; }

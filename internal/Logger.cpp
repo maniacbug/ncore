@@ -53,6 +53,11 @@ Logger::Logger(void): clock(NULL), last_check(0), lines_remaining(lines_per_chec
   pthread_mutex_init(&mutex,NULL);
 }
 
+Logger::Logger(Clock& _clock): clock(&_clock), last_check(0), lines_remaining(lines_per_check)
+{
+  pthread_mutex_init(&mutex,NULL);
+}
+
 Logger::~Logger()
 {
   pthread_mutex_destroy(&mutex);
@@ -85,11 +90,6 @@ void Logger::add(const std::string& format,...)
   pthread_mutex_unlock( &mutex );
 
   throttle_output_rate();
-}
-
-void Logger::setClock(const Clock& _clock)
-{
-  clock = &_clock;
 }
 
 bool Logger::runCommand( const Parser& parser ) 

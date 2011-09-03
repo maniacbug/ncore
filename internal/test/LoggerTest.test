@@ -170,7 +170,7 @@ public:
   void testWithClock( void )
   {
     Clock clock;
-    log.setClock(clock);
+    Logger log(clock);
 
     log.add("test");
     TS_ASSERT_EQUALS( countSubStrings(log[0],"0000"),1 );
@@ -178,7 +178,7 @@ public:
   void testClockMultipleEntries( void )
   {
     Clock clock;
-    log.setClock(clock);
+    Logger log(clock);
 
     log.add("test");
     clock.delay(100);
@@ -195,7 +195,7 @@ public:
   void testRateLimiter( void )
   {
     Clock clock;
-    log.setClock(clock);
+    Logger log(clock);
 
     int i = 12;
     while(i--)
