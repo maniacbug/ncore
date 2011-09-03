@@ -32,8 +32,8 @@ public:
     pins.clear();
     commands.clear();
     log.clear();
-    pins.addCommandsTo(commands);
-    log.addCommandsTo(commands);
+    commands.add(&pins);
+    commands.add(&log);
     test_buffer.str(string());
     cout_sbuf = std::cout.rdbuf(); // save original sbuf
   }

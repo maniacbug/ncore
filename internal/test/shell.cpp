@@ -25,9 +25,9 @@ extern "C" void init(void);
 
 int main(void)
 {
-  theLogger.addCommandsTo(theDispatcher);
-  thePins.addCommandsTo(theDispatcher);
-  theSerialBuffer.addCommandsTo(theDispatcher);
+  theDispatcher.add(&theLogger);
+  theDispatcher.add(&thePins);
+  theDispatcher.add(&theSerialBuffer);
   
   init();
 
