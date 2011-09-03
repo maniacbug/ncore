@@ -12,10 +12,13 @@
 
 using namespace std;
 
-void Shell::run(const Dispatcher& _commands) //, const Clock& _clock)
+void Shell::run(const Dispatcher& _commands)
 {
-  Clock _clock;
+  run(_commands,Clock());
+}
 
+void Shell::run(const Dispatcher& _commands, const Clock& _clock)
+{
   string command;
   do
   {

@@ -40,7 +40,7 @@ int main(void)
   SketchThread thread;
 
   // Operate the shell
-  Shell().run(theDispatcher);
+  Shell().run(theDispatcher,theClock);
 
   return 0;
 }

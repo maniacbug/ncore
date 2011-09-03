@@ -8,6 +8,7 @@ class Shell
 {
 public:
   void run(const Dispatcher& commands);
+  void run(const Dispatcher& commands, const Clock& clock);
 };
 
 #endif // __SHELL_H__
