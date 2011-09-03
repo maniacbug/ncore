@@ -33,7 +33,7 @@ void Shell::run(const Dispatcher& _commands) //, const Clock& _clock)
       try
       {
 	if (!_commands.execute_new(Parser(command)))
-	  cout << "Command not found: " << command << endl;
+	  cout << "Command failed: " << command << endl;
       }
       catch (runtime_error* e)
       {

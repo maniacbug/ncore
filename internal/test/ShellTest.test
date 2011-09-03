@@ -20,6 +20,12 @@ using namespace std;
 
 extern void mock_readline_add(const string& _str);
 
+class FailDispatchable: public IDispatchable
+{
+  std::string& getCommands(void) const { static std::string commands = "fail"; return commands; }
+  bool runCommand( const Parser& ) { return false; }
+};
+
 class ShellTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
@@ -125,6 +131,19 @@ public:
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("Error: ") , 1 );
+  }
+  void testCommandFail( void )
+  {
+    FailDispatchable fail;
+    commands.add(&fail);
+    mock_readline_add("fail");
+    mock_readline_add("quit");
+    
+    cap.start();
+    Shell().run(commands);
+    cap.stop();
+    
+    TS_ASSERT_EQUALS( cap.contains("failed") , 1 );
   }
   void testCommandSequence( void )
   {

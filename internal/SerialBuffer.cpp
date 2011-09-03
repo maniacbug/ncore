@@ -35,6 +35,12 @@ void SerialBuffer::put(const string& str)
 }
 void SerialBuffer::put(char c)
 {
+  if ( outstream_has_data && internalClock.millis() - last_logged_at > 1000 )
+  {
+    outstream << "[nocr]";
+    flush();
+  }
+
   if ( c == '\n' ) 
   {
     flush();
@@ -58,8 +64,6 @@ void SerialBuffer::put(char c)
     outstream_has_data = true;
   }
 
-  if ( outstream_has_data && internalClock.millis() - last_logged_at > 1000 )
-    flush();
 }
 
 bool SerialBuffer::available(void) const

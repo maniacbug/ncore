@@ -1,9 +1,13 @@
+#include <iostream>
+
 #include <cxxtest/TestSuite.h>
 
 #include <SerialBuffer.h>
 #include <Logger.h>
 
 using namespace std;
+
+extern ostream& operator<<(ostream& os, const Logger& log);
 
 class SerialBufferTestSuite: public CxxTest::TestSuite
 {
@@ -14,6 +18,7 @@ public:
   SerialBufferTestSuite(void): s(log) {}
   void setUp()
   {
+    s.flush();
     log.clear();
     dispatch.clear();
     dispatch.add(&s);
@@ -49,6 +54,25 @@ public:
     s.put('t');
 
     TS_ASSERT_EQUALS( log.size(), 0 );
+  }
+  void testNonPrintable( void )
+  {
+    s.put(1);
+    s.put('\n');
+
+    TS_ASSERT( log.at(0).find("0x1") != string::npos );
+  }
+  void testAutoLog( void )
+  {
+    s.put('A');
+    usleep(2000000L);
+    s.put('B');
+    s.put('C');
+    s.put('D');
+    s.put('\n');
+
+    TS_ASSERT( log.at(1).find("A") == string::npos );
+    TS_ASSERT( log.at(1).find("B") != string::npos );
   }
   void testAvailable( void )
   {
