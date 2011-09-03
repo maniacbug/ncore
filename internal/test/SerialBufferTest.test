@@ -108,6 +108,16 @@ public:
 
     TS_ASSERT_EQUALS( result.str(), "this is a test of a really long test string, isn't it??" );
   }
+  void testSendCommandWCRNew( void )
+  {
+    dispatch.execute_new(Parser("send hi cr"));
+
+    TS_ASSERT( log.at(0).find("CR") != std::string::npos );
+    TS_ASSERT_EQUALS( s.get(), 'h' );
+    TS_ASSERT_EQUALS( s.get(), 'i' );
+    TS_ASSERT_EQUALS( s.get(), '\n' );
+    TS_ASSERT_EQUALS( s.available(), false );
+  }
   void testSendExceptions_New(void)
   {
     TS_ASSERT_THROWS_ANYTHING( dispatch.execute_new(Parser("send")) );

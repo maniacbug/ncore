@@ -102,14 +102,27 @@ bool SerialBuffer::command_send(const vector<string>& _commands)
   if ( _commands.size() < 2 )
     throw new runtime_error("Usage: send <message>");
 
+  // If ends in 'cr', we want to send an \n at the end.
+  int hascr = 0;
+  if ( _commands.at(_commands.size()-1) == "cr" )
+    hascr = 1;
+
   ostringstream composite;
-  copy(_commands.begin() + 1, _commands.end(),ostream_iterator<string>(composite," "));
+  copy(_commands.begin() + 1, _commands.end() - hascr,ostream_iterator<string>(composite," "));
   string composite_str = composite.str();
+  
   // Trim off the trailing " " from the last ostream iterator
-  setInput(composite_str.substr(0,composite_str.size()-1));
+  composite_str.resize(composite_str.size()-1);
 
   // Also log the command
-  log.add("send %s",composite_str.c_str());
+  log.add("send %s %s",composite_str.c_str(),hascr?"(with CR)":"(no CR)");
+  
+  // Add the trailing cr if needed
+  if ( hascr )
+    composite_str.push_back('\n');
+
+  // set as input
+  setInput(composite_str);
   
   return true;
 }
