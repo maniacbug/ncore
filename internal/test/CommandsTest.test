@@ -43,22 +43,11 @@ public:
 
   void testEmptyBlank( void )
   {
-    bool result = commands.execute(vector<string>());
-
-    TS_ASSERT_EQUALS( result, false );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser()) );
   }
   void testEmptyWithCommand( void )
   {
-    parser.parse("test");
-    bool result = commands.execute(parser);
-
-    TS_ASSERT_EQUALS( result, false );
-  }
-  void testAddWorker( void )
-  {
-    bool ok = commands.add("cantfindme",return_true);
-
-    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("test")) );
   }
   void testAddWorkerNew( void )
   {
@@ -67,13 +56,6 @@ public:
 
     TS_ASSERT_EQUALS( ok, true );
   }
-  void testAddDuplicateWorker( void )
-  {
-    commands.add("cantfindme",return_true);
-    bool ok = commands.add("cantfindme",return_true);
-
-    TS_ASSERT_EQUALS( ok, false );
-  }
   void testAddDuplicateWorkerNew( void )
   {
     TestDispatchable obj;
@@ -81,30 +63,12 @@ public:
     
     TS_ASSERT_THROWS_ANYTHING( commands.add(&obj) );
   }
-  void testWorkerNotFound( void )
-  {
-    commands.add("cantfindme",return_true);
-
-    parser.parse("test");
-    bool result = Dispatcher().execute(parser);
-
-    TS_ASSERT_EQUALS( result, false );
-  }
   void testWorkerNotFoundNew( void )
   {
     TestDispatchable obj;
     commands.add(&obj);
 
     TS_ASSERT_THROWS_ANYTHING( Dispatcher().execute_new(Parser("cantfindme")) );
-  }
-  void testWorkerDispatchOk( void )
-  {
-    commands.add("test",return_true);
-
-    parser.parse("test");
-    bool result = commands.execute(parser);
-
-    TS_ASSERT_EQUALS( result, true );
   }
   void testWorkerDispatchOkNew( void )
   {
@@ -117,7 +81,8 @@ public:
   }
   void testWorkerDispatchStringOk( void )
   {
-    commands.add("test",return_true);
+    TestDispatchable obj;
+    commands.add(&obj);
 
     bool result = commands.execute("test");
 
@@ -125,9 +90,10 @@ public:
   }
   void testWorkerDispatchBlankString( void )
   {
-    commands.add("test",return_true);
+    TestDispatchable obj;
+    commands.add(&obj);
 
-    TS_ASSERT_EQUALS( commands.execute(""), false );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("") );
   }
   void testExceptionsNew( void )
   {

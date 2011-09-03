@@ -37,7 +37,7 @@ bool Dispatcher::execute_new(const Parser& _commands) const
 
 bool Dispatcher::execute(const std::string& _str) const
 {
-  return execute(Parser(_str));
+  return execute_new(Parser(_str));
 }
 
 bool Dispatcher::add(const std::string& _command, worker _fn)
