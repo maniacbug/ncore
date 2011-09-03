@@ -5,6 +5,9 @@
 #include <string>
 #include <map>
 
+class IDispatchable;
+class Parser;
+
 /**
  * Dispatches commands to workers
  */
@@ -18,6 +21,8 @@ protected:
    */
   std::map<std::string,worker> commandmap;
 
+  std::map<std::string,IDispatchable*> objectmap;
+
 public:
   /**
    * Executes the worker associated with the first token in @p commands
@@ -30,6 +35,9 @@ public:
   bool execute(const std::vector<std::string>& commands) const;
   bool execute(const std::string& commands) const;
 
+  // Uses new objectmap
+  bool execute_new(const Parser& commands) const;
+
   /**
    * Adds a worker
    *
@@ -40,6 +48,7 @@ public:
    * @retval false Problema adding worker, not added
    */
   bool add(const std::string& command,worker fn);
+  bool add(IDispatchable*);
 
   /**
    * Empties the entire map

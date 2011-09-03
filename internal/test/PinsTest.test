@@ -34,6 +34,7 @@ public:
     log.clear();
     cap.clear();
 
+    commands.add(&pins);
     pins.addCommandsTo(commands);
     isr_called_count = 0;
     
@@ -148,16 +149,10 @@ public:
 
     TS_ASSERT_THROWS_ANYTHING( pins.hwTriggerInterrupt( 0 ) );
   }
-  void testAddCommands( void )
-  {
-    int numcommands = commands.size();
-
-    TS_ASSERT( numcommands > 0 );
-  }
   void testRunCommand( void )
   {
     cap.start();
-    bool ok = commands.execute(Parser("pins"));
+    bool ok = commands.execute_new(Parser("pins"));
     cap.stop();
 
     TS_ASSERT_EQUALS( ok, true );
@@ -165,11 +160,10 @@ public:
   void testRunCommandPinsEmpty( void )
   {
     cap.start();
-    commands.execute(Parser("pins"));
+    commands.execute_new(Parser("pins"));
     cap.stop();
-    int num_zeroes = countSubStrings(cap.buffer(),":0");
 
-    TS_ASSERT_EQUALS( num_zeroes, 28 );
+    TS_ASSERT_EQUALS( cap.contains(":0"), 28 );
   }
   void testRunCommandPinsSomeSet( void )
   {
@@ -177,69 +171,68 @@ public:
     pins.hwSetAnalog(0,512);
 
     cap.start();
-    commands.execute(Parser("pins"));
+    commands.execute_new(Parser("pins"));
     cap.stop();
-    int num_zeroes = countSubStrings(cap.buffer(),":0");
 
-    TS_ASSERT_EQUALS( num_zeroes, 26 );
+    TS_ASSERT_EQUALS( cap.contains(":0"), 26 );
   }
   void testCommandPinSet( void )
   {
-    commands.execute(Parser("pin 5 high"));
+    commands.execute_new(Parser("pin 5 high"));
 
     TS_ASSERT_EQUALS( pins.digitalRead(5), HIGH );
   }
   void testCommandPinSetAndBack( void )
   {
-    commands.execute(Parser("pin 5 high"));
-    commands.execute(Parser("pin 5 low"));
+    commands.execute_new(Parser("pin 5 high"));
+    commands.execute_new(Parser("pin 5 low"));
 
     TS_ASSERT_EQUALS( pins.digitalRead(5), LOW );
   }
   void testCommandPinSetExceptions( void )
   {
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 100 high")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5 something")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin 5 high something")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin something high")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin 100 high")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin 5")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin 5 something")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin 5 high something")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin something high")) );
   }
   void testCommandAnalogSet( void )
   {
-    commands.execute(Parser("pin a5 512"));
+    commands.execute_new(Parser("pin a5 512"));
 
     TS_ASSERT_EQUALS( pins.analogRead(5), 512 );
   }
   void testCommandAnalogSetTwice( void )
   {
-    commands.execute(Parser("pin a0 512"));
-    commands.execute(Parser("pin a0 1"));
+    commands.execute_new(Parser("pin a0 512"));
+    commands.execute_new(Parser("pin a0 1"));
 
     TS_ASSERT_EQUALS( pins.analogRead(0), 1 );
   }
   void testCommandAnalogPinSetExceptions( void )
   {
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 high")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 1000 something")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a1000 1000")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("pin a5 2000")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin a5")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin a5 high")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin a5 1000 something")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin a1000 1000")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin a5 2000")) );
   }
   void testCommandIrq( void )
   {
     pins.attachInterrupt( 1, isr );
-    commands.execute(Parser("irq 1"));
+    commands.execute_new(Parser("irq 1"));
 
     TS_ASSERT_EQUALS( isr_called_count, 1 );
   }
   void testCommandIrqExceptions( void )
   {
     pins.attachInterrupt( 1, isr );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq 1 more")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq 100")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq something")) );
-    TS_ASSERT_THROWS_ANYTHING( commands.execute(Parser("irq")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("irq 1 more")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("irq 100")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("irq something")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("irq")) );
   }
   static void* sketch_blink(void* pv)
   {
@@ -286,47 +279,11 @@ public:
     cap.start();
     commands.execute(Parser("list"));
     cap.stop();
-    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"PIN 13") , 5 );
-    TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"HIGH") , 3 );
-  }
-};
-
-// Extra tests to dig deep into the unexposed internals of Logger
-// in pursuit of 100% code coverage
-class PinsInternalTestSuite: public CxxTest::TestSuite
-{
-  class PinsInternal: Pins
-  {
-  public:
-    void bad_static_pins(void)
-    {
-      // This is bad.  Don't do this in real life.
-      Pins::reset();
-      Pins::static_command_pins(vector<string>());
-    }
-    void bad_static_pin(void)
-    {
-      // This is bad.  Don't do this in real life.
-      Pins::reset();
-      Pins::static_command_pin(vector<string>());
-    }
-    void bad_static_irq(void)
-    {
-      // This is bad.  Don't do this in real life.
-      Pins::reset();
-      Pins::static_command_irq(vector<string>());
-    }
-  };
-public:
-  void testBadStaticCommands(void)
-  {
-    TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_pins() );
-    TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_pin() );
-    TS_ASSERT_THROWS_ANYTHING( PinsInternal().bad_static_irq() );
+    TS_ASSERT_EQUALS( cap.contains("PIN 13") , 5 );
+    TS_ASSERT_EQUALS( cap.contains("HIGH") , 3 );
   }
 };
 
 int PinsTestSuite::isr_called_count;
-
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

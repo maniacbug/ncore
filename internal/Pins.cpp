@@ -4,6 +4,7 @@
 
 #include <Pins.h>
 #include <Dispatcher.h>
+#include <Parser.h>
 
 using namespace std;
 
@@ -74,6 +75,28 @@ void Pins::hwTriggerInterrupt(int irq) const
     throw new runtime_error("No handler assigned for this interrupt");
 
   isr_table[irq]();
+}
+
+bool Pins::runCommand( const Parser& parser ) 
+{ 
+  bool result = false;
+  
+  const string& command = parser.at(0);
+
+  if ( command == "pins" )
+  {
+    result = command_pins(parser);
+  }
+  else if ( command == "pin" )
+  {
+    result = command_pin(parser);
+  }
+  else if ( command == "irq" )
+  {
+    result = command_irq(parser);
+  }
+
+  return result; 
 }
 
 bool Pins::static_command_pin(const vector<string>& _commands)

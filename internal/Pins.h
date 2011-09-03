@@ -2,6 +2,7 @@
 #define __PINS_H__
 
 #include <vector>
+#include <IDispatchable.h>
 
 class Dispatcher;
 
@@ -12,7 +13,7 @@ const int OUTPUT = 1;
 const int INPUT = 0; 
 #endif
 
-class Pins
+class Pins: public IDispatchable
 {
 protected:
   static const int num_pins = 20;
@@ -50,6 +51,8 @@ public:
   void pinMode(int pin, int dir);
   
   void addCommandsTo(Dispatcher&);
+  std::string& getCommands() const { static std::string commands = "pins pin irq"; return commands; }
+  bool runCommand( const Parser& );
 };
 
 #endif // __PINS_H__

@@ -1,6 +1,10 @@
+#include <iostream>
+#include <stdexcept>
+
 #include <cxxtest/TestSuite.h>
 #include <Dispatcher.h>
 #include <Parser.h>
+#include <IDispatchable.h>
 
 using std::string;
 using std::vector;
@@ -9,6 +13,22 @@ bool return_true(const vector<string>&)
 {
   return true;
 }
+
+class TestDispatchable: public IDispatchable
+{
+  std::string& getCommands(void) const { static std::string commands = "test"; return commands; }
+  bool runCommand( const Parser& p )
+  {
+    return p.at(0) == "test";
+  }
+};
+
+class NoCommandsDispatchable: public IDispatchable
+{
+  std::string& getCommands(void) const { static std::string commands = ""; return commands; }
+  bool runCommand( const Parser& ) { return false; }
+};
+
 
 class DispatcherTestSuite: public CxxTest::TestSuite
 {
@@ -40,12 +60,26 @@ public:
 
     TS_ASSERT_EQUALS( ok, true );
   }
+  void testAddWorkerNew( void )
+  {
+    TestDispatchable obj;
+    bool ok = commands.add(&obj);
+
+    TS_ASSERT_EQUALS( ok, true );
+  }
   void testAddDuplicateWorker( void )
   {
     commands.add("cantfindme",return_true);
     bool ok = commands.add("cantfindme",return_true);
 
     TS_ASSERT_EQUALS( ok, false );
+  }
+  void testAddDuplicateWorkerNew( void )
+  {
+    TestDispatchable obj;
+    commands.add(&obj);
+    
+    TS_ASSERT_THROWS_ANYTHING( commands.add(&obj) );
   }
   void testWorkerNotFound( void )
   {
@@ -56,12 +90,28 @@ public:
 
     TS_ASSERT_EQUALS( result, false );
   }
+  void testWorkerNotFoundNew( void )
+  {
+    TestDispatchable obj;
+    commands.add(&obj);
+
+    TS_ASSERT_THROWS_ANYTHING( Dispatcher().execute_new(Parser("cantfindme")) );
+  }
   void testWorkerDispatchOk( void )
   {
     commands.add("test",return_true);
 
     parser.parse("test");
     bool result = commands.execute(parser);
+
+    TS_ASSERT_EQUALS( result, true );
+  }
+  void testWorkerDispatchOkNew( void )
+  {
+    TestDispatchable obj;
+    commands.add(&obj);
+
+    bool result = commands.execute_new(Parser("test"));
 
     TS_ASSERT_EQUALS( result, true );
   }
@@ -78,6 +128,14 @@ public:
     commands.add("test",return_true);
 
     TS_ASSERT_EQUALS( commands.execute(""), false );
+  }
+  void testExceptionsNew( void )
+  {
+    NoCommandsDispatchable badobj;
+    
+    TS_ASSERT_THROWS_ANYTHING( commands.add(NULL) );
+    TS_ASSERT_THROWS_ANYTHING( commands.add(&badobj) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser()) );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
