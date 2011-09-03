@@ -90,7 +90,8 @@ public:
   void testSendCommandNew( void )
   {
     bool ok = dispatch.execute_new(Parser("send hi"));
-   
+
+    TS_ASSERT( log.at(0).find("send hi") != std::string::npos );
     TS_ASSERT_EQUALS( ok, true );
     TS_ASSERT_EQUALS( s.available(), true );
     TS_ASSERT_EQUALS( s.get(), 'h' );

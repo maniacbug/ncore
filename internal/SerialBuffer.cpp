@@ -107,6 +107,9 @@ bool SerialBuffer::command_send(const vector<string>& _commands)
   string composite_str = composite.str();
   // Trim off the trailing " " from the last ostream iterator
   setInput(composite_str.substr(0,composite_str.size()-1));
+
+  // Also log the command
+  log.add("send %s",composite_str.c_str());
   
   return true;
 }
