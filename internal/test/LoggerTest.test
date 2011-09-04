@@ -207,6 +207,15 @@ public:
     TS_ASSERT_EQUALS( log.size(), 13 );
     TS_ASSERT_EQUALS( countSubStrings(log.at(10),"limit"), 1 );
   }
+  void testCommandHelp( void )
+  {
+    cap.start();
+    bool ok = commands.execute("help");
+    cap.stop();
+
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( (bool)cap.contains("list"), true );
+  }
 };
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

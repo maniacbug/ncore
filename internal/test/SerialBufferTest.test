@@ -4,6 +4,7 @@
 
 #include <SerialBuffer.h>
 #include <Logger.h>
+#include <OutputCapture.h>
 
 using namespace std;
 
@@ -14,6 +15,7 @@ class SerialBufferTestSuite: public CxxTest::TestSuite
   Logger log;
   SerialBuffer s;
   Dispatcher dispatch;
+  OutputCapture cap;
 public:
   SerialBufferTestSuite(void): s(log) {}
   void setUp()
@@ -22,6 +24,7 @@ public:
     log.clear();
     dispatch.clear();
     dispatch.add(&s);
+    cap.clear();
   }
 
   void testEmpty( void )
@@ -133,5 +136,15 @@ public:
     TS_ASSERT_THROWS_ANYTHING( dispatch.execute_new(Parser("send")) );
     TS_ASSERT_THROWS_ANYTHING( dispatch.execute_new(Parser("send-hex")) );
   }
+  void testCommandHelp( void )
+  {
+    cap.start();
+    bool ok = dispatch.execute("help");
+    cap.stop();
+
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( (bool)cap.contains("send"), true );
+  }
+
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

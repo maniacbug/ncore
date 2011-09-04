@@ -283,6 +283,15 @@ public:
     TS_ASSERT_EQUALS( cap.contains("pin 13") , 6 );
     TS_ASSERT_EQUALS( cap.contains("pin 13 HIGH") , 3 );
   }
+  void testCommandHelp( void )
+  {
+    cap.start();
+    bool ok = commands.execute("help");
+    cap.stop();
+
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( (bool)cap.contains("pins"), true );
+  }
 };
 
 int PinsTestSuite::isr_called_count;
