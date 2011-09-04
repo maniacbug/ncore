@@ -1,5 +1,9 @@
+#include <string>
+
 #include <cxxtest/TestSuite.h>
 #include <Eeprom.h>
+
+using namespace std;
 
 class EepromTestSuite: public CxxTest::TestSuite
 {
@@ -12,6 +16,39 @@ public:
   void testEmpty( void )
   {
     TS_ASSERT( ee.size() > 0 );
+  }
+  void testReadWriteByte( void )
+  {
+    ee.writeByte(1,128);
+    TS_ASSERT_EQUALS( ee.readByte(1), 128 );
+  }
+  void testReadWriteString( void )
+  {
+    string test = "This is a test of writing stuff to EEPROM.";
+    int addr = 100;
+
+    // Write a string out
+    string::const_iterator it = test.begin();
+    while (it != test.end())
+    {
+      ee.writeByte(addr++,*it++);
+    }
+    ee.writeByte(addr,0);
+
+    // Read a string back
+    string result;
+    addr = 100;
+    char c = ee.readByte(addr++);
+    while (c)
+    {
+      result.push_back(c);
+      c = ee.readByte(addr++);
+    }
+
+    TS_ASSERT_EQUALS( test, result );
+  }
+  void todo_testWritePastEnd( void )
+  {
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

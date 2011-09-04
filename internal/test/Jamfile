@@ -3,6 +3,7 @@ CXXTEST_GEN = $(CXXTEST_DIR)/python/scripts/cxxtestgen --error-printer ;
 CODE_DIR = .. ;
 CORE_DIR = ../.. ;
 HDRS = $(CXXTEST_DIR) $(PWD) $(CODE_DIR) $(CORE_DIR) ;
+DEFINES = NATIVE=1 ;
 CORE_MODULES = [ GLOB $(CORE_DIR) : *.cpp ] ; 
 CODE_MODULES = [ GLOB $(CODE_DIR) : *.cpp ] ;
 TEST_MODULES = [ GLOB $(PWD) : *.test ] ;
