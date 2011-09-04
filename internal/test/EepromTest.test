@@ -2,15 +2,23 @@
 
 #include <cxxtest/TestSuite.h>
 #include <Eeprom.h>
+#include <Logger.h>
 
 using namespace std;
+
+extern ostream& operator<<(ostream& os, const Logger& log);
 
 class EepromTestSuite: public CxxTest::TestSuite
 {
   Eeprom ee;
+  Logger log;
 public:
+  EepromTestSuite(void): ee(log)
+  {
+  }
   void setUp()
   {
+    log.clear();
   }
 
   void testEmpty( void )
@@ -49,6 +57,26 @@ public:
   }
   void todo_testWritePastEnd( void )
   {
+  }
+  void testLogging( void )
+  {
+    string test = "This is a test of writing stuff to EEPROM.";
+    int addr = 100;
+
+    // Write a string out
+    string::const_iterator it = test.begin();
+    while (it != test.end())
+    {
+      ee.writeByte(addr++,*it++);
+    }
+
+    TS_ASSERT_EQUALS( log.size(), test.size() );
+  }
+  void testCommands( void )
+  {
+    // eeprom <addr> -- read one byte
+    // eeprom <addr> len <len> -- read <len> bytes
+    // eeprom <addr> write <xx> ... <xx> - write hex bytes to eeprom
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
