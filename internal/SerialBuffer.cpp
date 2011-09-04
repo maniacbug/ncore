@@ -82,6 +82,12 @@ char SerialBuffer::get(void)
   instream.readsome(&result,1);
   return result;
 }
+  
+string& SerialBuffer::getCommands(void) const 
+{ 
+  static std::string commands = "send send-hex"; 
+  return commands; 
+}
 
 bool SerialBuffer::runCommand( const Parser& parser ) 
 { 
@@ -93,8 +99,36 @@ bool SerialBuffer::runCommand( const Parser& parser )
   {
     result = command_send(parser);
   }
+  else if ( command == "send-hex" )
+  {
+    result = command_sendhex(parser);
+  }
 
   return result; 
+}
+
+bool SerialBuffer::command_sendhex(const vector<string>& _commands)
+{
+  if ( _commands.size() < 2 )
+    throw new runtime_error("Usage: send-hex <message>");
+
+  string composite_str;
+  vector<string>::const_iterator it = _commands.begin() + 1;
+  while (it != _commands.end())
+  {
+    int i;
+    istringstream convert(*it++);
+    convert >> hex >> i;
+    composite_str.push_back(i);
+  }
+
+  // Also log the command
+  log.add("send-hex %i chars",composite_str.size());
+  
+  // set as input
+  setInput(composite_str);
+  
+  return true;
 }
 
 bool SerialBuffer::command_send(const vector<string>& _commands)

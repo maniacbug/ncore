@@ -118,9 +118,20 @@ public:
     TS_ASSERT_EQUALS( s.get(), '\n' );
     TS_ASSERT_EQUALS( s.available(), false );
   }
+  void testSendHexCommand( void )
+  {
+    dispatch.execute_new(Parser("send-hex 1 d fe"));
+
+    TS_ASSERT( log.at(0).find("3 chars") != std::string::npos );
+    TS_ASSERT_EQUALS( s.get(), 1 );
+    TS_ASSERT_EQUALS( s.get(), 0xd );
+    TS_ASSERT_EQUALS( s.get(), '\xFE' );
+    TS_ASSERT_EQUALS( s.available(), false );
+  }
   void testSendExceptions_New(void)
   {
     TS_ASSERT_THROWS_ANYTHING( dispatch.execute_new(Parser("send")) );
+    TS_ASSERT_THROWS_ANYTHING( dispatch.execute_new(Parser("send-hex")) );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
