@@ -36,8 +36,8 @@ void Logger::throttle_output_rate(void)
     {
       unsigned long wait = min_interval - (now - last_check); 
       ostringstream warning;
-      warning << "Rate limiter: delay " << wait << "ms" << endl;
-      push_back(warning.str());
+      warning << "delay " << wait << " (rate limit)";
+      add_message(string("IN LOG "),warning.str());
       clock->delay(wait);
     }
     last_check = clock->millis();
@@ -70,23 +70,69 @@ void Logger::clear(void)
   lines_remaining = lines_per_check;
 }
 
-void Logger::add(const std::string& format,...)
+void Logger::internal(const std::string& module, const std::string& format,...)
 {
   pthread_mutex_lock( &mutex );
 
-  static char buffer[500];
   va_list ap;
   va_start(ap,format);
   vsnprintf(buffer,sizeof(buffer),format.c_str(),ap);
   va_end(ap);
 
+  string preamble = string("IN ") + module + "    ";
+  preamble.resize(7);
+  add_buffer(preamble);
+
+  pthread_mutex_unlock( &mutex );
+}
+
+void Logger::sketch(const std::string& module, const std::string& format,...)
+{
+  pthread_mutex_lock( &mutex );
+
+  va_list ap;
+  va_start(ap,format);
+  vsnprintf(buffer,sizeof(buffer),format.c_str(),ap);
+  va_end(ap);
+ 
+  string preamble = string("SK ") + module + "    ";
+  preamble.resize(7);
+  add_buffer(preamble);
+
+  pthread_mutex_unlock( &mutex );
+
+  throttle_output_rate();
+}
+
+void Logger::add_message(const std::string& preamble,const std::string& message)
+{
   ostringstream ss;
   ss << "NCORE: ";
   if (clock)
     ss << setfill('0') << setw(6) << clock->millis() << " ";
-  ss << buffer << endl;
+  if (preamble.size())
+    ss << preamble << " ";
+  ss << message << endl;
 
   push_back(ss.str());
+}
+
+void Logger::add_buffer(const std::string& preamble)
+{
+  add_message(preamble,string(buffer));
+}
+
+void Logger::add(const std::string& format,...)
+{
+  pthread_mutex_lock( &mutex );
+
+  va_list ap;
+  va_start(ap,format);
+  vsnprintf(buffer,sizeof(buffer),format.c_str(),ap);
+  va_end(ap);
+  
+  add_buffer(string());
+
   pthread_mutex_unlock( &mutex );
 
   throttle_output_rate();

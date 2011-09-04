@@ -36,7 +36,7 @@ int Pins::digitalRead(int pin) const
 void Pins::hwSetDigital(int pin,int level)
 {
   digital_states.at(pin) = level;
-  log.add("pin %i %s (internal)",pin,level?"HIGH":"LOW");
+  log.internal("PINS","%i %s",pin,level?"HIGH":"LOW");
 }
 int Pins::analogRead(int pin) const
 {
@@ -45,14 +45,14 @@ int Pins::analogRead(int pin) const
 void Pins::hwSetAnalog(int pin,int level)
 {
   analog_states.at(pin) = level;
-  log.add("pin A%i %i (internal)",pin,level);
+  log.internal("PINS", "A%i %i",pin,level);
 }
 void Pins::digitalWrite(int pin,int level)
 {
   if ( pin_modes.at(pin) == OUTPUT )
   {
     digital_states.at(pin) = level;
-    log.add("pin %i %s",pin,level?"HIGH":"LOW");
+    log.sketch("PINS","%i %s",pin,level?"HIGH":"LOW");
   }
 }
 int Pins::hwGetDigital(int pin) const
@@ -62,19 +62,19 @@ int Pins::hwGetDigital(int pin) const
 void Pins::pinMode(int pin, int dir)
 {
   pin_modes.at(pin) = dir;
-  log.add("pin %i %s",pin,dir?"OUTPUT":"INPUT");
+  log.sketch("PINS","%i %s",pin,dir?"OUTPUT":"INPUT");
 }
 
 void Pins::attachInterrupt(int irq, void (*isr)(void))
 {
   isr_table.at(irq) = isr;
-  log.add("irq %i attached",irq);
+  log.sketch("IRQ","%i attached",irq);
 }
 
 void Pins::detachInterrupt(int irq)
 {
   attachInterrupt(irq,NULL);
-  log.add("irq %i detached",irq);
+  log.sketch("IRQ","%i detached",irq);
 }
 
 void Pins::hwTriggerInterrupt(int irq) const
@@ -82,7 +82,7 @@ void Pins::hwTriggerInterrupt(int irq) const
   if ( ! isr_table.at(irq) )
     throw new runtime_error("No handler assigned for this interrupt");
 
-  log.add("irq %i triggered",irq);
+  log.internal("IRQ","%i triggered",irq);
   isr_table[irq]();
 }
 

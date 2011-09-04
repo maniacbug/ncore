@@ -22,7 +22,7 @@ extern "C" {
 
 void __cxa_pure_virtual() 
 {
-  theLogger.add("SYSTEM HALT -- cxa_pure_virtual");
+  theLogger.sketch("CORE","SYSTEM HALT -- cxa_pure_virtual");
   while (1); 
 }
 
@@ -32,7 +32,7 @@ void __cxa_pure_virtual()
 
 void delay(unsigned long ms)
 {
-  theLogger.add("delay %lu",ms);
+  theLogger.sketch("CLOK","delay %lu",ms);
   theClock.delay(ms);
 }
 unsigned long millis(void)
@@ -41,7 +41,7 @@ unsigned long millis(void)
 }
 void delayMicroseconds(unsigned int us)
 {
-  theLogger.add("delay %u us",us);
+  theLogger.sketch("CLOK","delay %u us",us);
   theClock.delayMicroseconds(us);
 }
 
@@ -108,14 +108,14 @@ void printf_P(const char* format,...)
 
 unsigned long pulseIn(uint8_t pin, uint8_t /*state*/, unsigned long /*timeout*/ )
 {
-  theLogger.add("pin %i: pulseIn 1000",pin);
+  theLogger.sketch("PINS","%i: pulseIn 1000",pin);
   
   return 1000LU;
 }
 
 void analogWrite(uint8_t pin,int level)
 {
-  theLogger.add("pin %i: %i",pin,level);
+  theLogger.sketch("PINS","%i: %i",pin,level);
 }
 
 void fdevopen(int (*)(char, FILE*),int)
