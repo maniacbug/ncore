@@ -34,6 +34,7 @@ int main(void)
   theDispatcher.add(&theLogger);
   theDispatcher.add(&thePins);
   theDispatcher.add(&theSerialBuffer);
+  theDispatcher.add(&theEeprom);
  
   // Announce to the log
   theLogger.internal("CORE","Started");

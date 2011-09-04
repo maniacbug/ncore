@@ -3,14 +3,19 @@
 
 #include <vector>
 #include <inttypes.h>
+#include <IDispatchable.h>
 
 class Logger;
 
-class Eeprom
+class Eeprom: public IDispatchable
 {
 private:
   std::vector<uint8_t> values;
   Logger& log;
+protected:  
+  std::string& getCommands(void) const;
+  bool runCommand( const Parser& );
+  bool command_eeprom(const std::vector<std::string>&);
 public:
   Eeprom(Logger&);
   size_t size(void);
@@ -19,3 +24,4 @@ public:
 };
 
 #endif // __EEPROM_H__
+// vim:cin:ai:sts=2 sw=2 ft=cpp

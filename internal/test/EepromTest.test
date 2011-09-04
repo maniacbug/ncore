@@ -3,6 +3,8 @@
 #include <cxxtest/TestSuite.h>
 #include <Eeprom.h>
 #include <Logger.h>
+#include <Dispatcher.h>
+#include <OutputCapture.h>
 
 using namespace std;
 
@@ -12,6 +14,8 @@ class EepromTestSuite: public CxxTest::TestSuite
 {
   Eeprom ee;
   Logger log;
+  Dispatcher commands;
+  OutputCapture cap;
 public:
   EepromTestSuite(void): ee(log)
   {
@@ -19,6 +23,10 @@ public:
   void setUp()
   {
     log.clear();
+    commands.clear();
+    cap.clear();
+
+    commands.add(&ee);
   }
 
   void testEmpty( void )
@@ -85,11 +93,60 @@ public:
 
     TS_ASSERT_EQUALS( log.size(), reads );
   }
-  void testCommands( void )
+  void testCommandRead( void )
   {
+    ee.writeByte(10,0xfa);
+    
+    cap.start();
+    commands.execute_new(Parser("eeprom 10"));
+    cap.stop();
+
+    TS_ASSERT_EQUALS( cap.contains("fa"), 1 );
+  }
+  void testCommandReadMultiple( void )
+  {
+    int i = 10;
+    while (i--)
+      ee.writeByte(10+i,0xd0+i);
+    
+    cap.start();
+    commands.execute_new(Parser("eeprom 10 len 10"));
+    cap.stop();
+    
+    TS_ASSERT_EQUALS( cap.contains(" d"), 10 );
+    TS_ASSERT_EQUALS( cap.contains("d9"), 1 );
+  }
+  void testCommandWrite( void )
+  {
+    cap.start();
+    commands.execute_new(Parser("eeprom 20 write 1 2 3 4 5 6 7 8 9 a b c d e f 10"));
+    cap.stop();
+    
+    TS_ASSERT_EQUALS( cap.contains("write"), 1 );
+    TS_ASSERT_EQUALS( ee.readByte(30), 0xb );
+  }
+  void testCommandExceptions( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("eeprom") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("eeprom something") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("eeprom 1 len") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("eeprom 1 len something") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("eeprom 1 write") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("eeprom 1 write something") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("eeprom 1000000") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("eeprom 1 something") );
+  }
+  void testCommandHelp( void )
+  {
+    cap.start();
+    bool ok = commands.execute("help");
+    cap.stop();
+
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( (bool)cap.contains("eeprom"), true );
+  }
+};
     // eeprom <addr> -- read one byte
     // eeprom <addr> len <len> -- read <len> bytes
     // eeprom <addr> write <xx> ... <xx> - write hex bytes to eeprom
-  }
-};
 // vim:cin:ai:sts=2 sw=2 ft=cpp
