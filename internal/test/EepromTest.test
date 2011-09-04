@@ -1,0 +1,17 @@
+#include <cxxtest/TestSuite.h>
+#include <Eeprom.h>
+
+class EepromTestSuite: public CxxTest::TestSuite
+{
+  Eeprom ee;
+public:
+  void setUp()
+  {
+  }
+
+  void testEmpty( void )
+  {
+    TS_ASSERT( ee.size() > 0 );
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
