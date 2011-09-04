@@ -235,12 +235,15 @@ public:
     TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("irq something")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("irq")) );
   }
+  pthread_mutex_t sketch_mutex; /**< Cannot kill thread while it has this mutex */
   static void* sketch_blink(void* pv)
   {
     PinsTestSuite* p = reinterpret_cast<PinsTestSuite*>(pv);
    
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL);
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL); 
+    
+    pthread_mutex_lock(&(p->sketch_mutex));
     
     int state = LOW;
     const int toggle_pin = 13;
@@ -259,29 +262,43 @@ public:
       p->pins.digitalWrite(toggle_pin,state);
     }
     p->pins.digitalWrite(done_pin,HIGH);
+    pthread_mutex_unlock(&(p->sketch_mutex));
     while (1)
     {
     }
     return NULL;
   }
   // This test is still unpredictable :(
-  void fails_testConcurrency( void )
+  void testConcurrency( void )
   {
     pthread_t sketch_thread;
+    pthread_mutex_init(&sketch_mutex,NULL);
+    pthread_mutex_lock(&sketch_mutex);
     int err = pthread_create( &sketch_thread, NULL, sketch_blink, this );
     TS_ASSERT_EQUALS( err, 0 );
+    pthread_mutex_unlock(&sketch_mutex);
+
+    // Tell sketch to start
     pins.hwSetDigital(10,HIGH);
+
+    // Wait for sketch to finish
     while ( pins.hwGetDigital(11) == LOW )
     {
     }
+    
+    // Note that the mutex is doing the same thing I'm trying to do
+    // with the pins, but it's more reliable :)
+    pthread_mutex_lock(&sketch_mutex);
     pthread_cancel( sketch_thread );
     pthread_join( sketch_thread, NULL );
-    
+    pthread_mutex_unlock(&sketch_mutex);
+    pthread_mutex_destroy(&sketch_mutex);
+
     cap.start();
     commands.execute_new(Parser("list"));
     cap.stop();
-    TS_ASSERT_EQUALS( cap.contains("pin 13") , 6 );
-    TS_ASSERT_EQUALS( cap.contains("pin 13 HIGH") , 3 );
+    TS_ASSERT_EQUALS( cap.contains("PINS 13") , 6 );
+    TS_ASSERT_EQUALS( cap.contains("PINS 13 HIGH") , 3 );
   }
   void testCommandHelp( void )
   {
