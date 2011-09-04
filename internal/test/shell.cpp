@@ -12,6 +12,7 @@
 #include <SketchThread.h>
 #include <SerialBuffer.h>
 #include <Clock.h>
+#include <Eeprom.h>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ Clock theClock;
 Logger theLogger(theClock);
 Pins thePins(theLogger);
 SerialBuffer theSerialBuffer(theLogger);
+Eeprom theEeprom(theLogger);
 
 extern "C" void init(void);
 
