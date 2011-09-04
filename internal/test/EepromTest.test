@@ -58,7 +58,7 @@ public:
   void todo_testWritePastEnd( void )
   {
   }
-  void testLogging( void )
+  void testLoggingWrites( void )
   {
     string test = "This is a test of writing stuff to EEPROM.";
     int addr = 100;
@@ -71,6 +71,19 @@ public:
     }
 
     TS_ASSERT_EQUALS( log.size(), test.size() );
+  }
+  void testLoggingReads( void )
+  {
+    int addr = 100;
+    const int reads = 10;
+
+    int n = reads;
+    while(n--)
+    {
+      ee.readByte(addr++);
+    }
+
+    TS_ASSERT_EQUALS( log.size(), reads );
   }
   void testCommands( void )
   {
