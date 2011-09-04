@@ -25,12 +25,12 @@ size_t Eeprom::size(void)
 uint8_t Eeprom::readByte(int addr) const
 {
   uint8_t result = values.at(addr);
-  log.sketch("EEPR","read %i = %u",addr,result);
+  log.sketch("EEPR","%i read %u",addr,result);
   return result;
 }
 void Eeprom::writeByte(int addr, uint8_t value)
 {
-  log.sketch("EEPR","write %i = %u",addr,value);
+  log.sketch("EEPR","%i write %u",addr,value);
   values.at(addr) = value;
 }
 
