@@ -34,7 +34,7 @@ int main(void)
   theDispatcher.add(&theSerialBuffer);
  
   // Announce to the log
-  theLogger.add("started");
+  theLogger.internal("CORE","Started");
 
   // Launch the sketch in its own thread
   SketchThread thread;

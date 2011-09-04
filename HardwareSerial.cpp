@@ -16,7 +16,7 @@ extern SerialBuffer theSerialBuffer;
 
 void HardwareSerial::begin(long)
 {
-  theLogger.add("Serial started.");
+  theLogger.sketch("CORE","Serial started.");
 }
 
 void HardwareSerial::end()

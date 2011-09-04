@@ -108,7 +108,7 @@ void printf_P(const char* format,...)
 
 unsigned long pulseIn(uint8_t pin, uint8_t /*state*/, unsigned long /*timeout*/ )
 {
-  theLogger.sketch("PINS","%i: pulseIn 1000",pin);
+  theLogger.sketch("CORE","%i: pulseIn 1000",pin);
   
   return 1000LU;
 }

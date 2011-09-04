@@ -24,14 +24,15 @@ static unsigned long last_logged_at = 0;
 
 void SerialBuffer::flush(void)
 {
-  log.add(outstream.str());
+  log.sketch("SERL",outstream.str());
   outstream.str(string());
   outstream_has_data = false;
 }
 
 void SerialBuffer::put(const string& str)
 {
-  log.add(str); 
+  // WTF is this for??!!
+  log.sketch("SERL",str); 
 }
 void SerialBuffer::put(char c)
 {
@@ -123,7 +124,7 @@ bool SerialBuffer::command_sendhex(const vector<string>& _commands)
   }
 
   // Also log the command
-  log.add("send-hex %i chars",composite_str.size());
+  log.internal("SERL","send-hex %i chars",composite_str.size());
   
   // set as input
   setInput(composite_str);
@@ -149,7 +150,7 @@ bool SerialBuffer::command_send(const vector<string>& _commands)
   composite_str.resize(composite_str.size()-1);
 
   // Also log the command
-  log.add("send %s %s",composite_str.c_str(),hascr?"(with CR)":"(no CR)");
+  log.internal("SERL","send %s %s",composite_str.c_str(),hascr?"(with CR)":"(no CR)");
   
   // Add the trailing cr if needed
   if ( hascr )
