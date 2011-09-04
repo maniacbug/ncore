@@ -5,6 +5,7 @@
 #include <Dispatcher.h>
 #include <Parser.h>
 #include <IDispatchable.h>
+#include <OutputCapture.h>
 
 using std::string;
 using std::vector;
@@ -19,7 +20,15 @@ class TestDispatchable: public IDispatchable
   std::string& getCommands(void) const { static std::string commands = "test"; return commands; }
   bool runCommand( const Parser& p )
   {
-    return p.at(0) == "test";
+    bool result = false;
+    if ( p.at(0) == "test" )
+      result = true;
+    else if ( p.at(0) == "help" && p.at(1) == "test" )
+    {
+      cout << "test -- do nothing and return true" << endl;
+      result = true;
+    }
+    return result;
   }
 };
 
@@ -34,11 +43,13 @@ class DispatcherTestSuite: public CxxTest::TestSuite
 {
   Parser parser;
   Dispatcher commands;
+  OutputCapture cap;
 public:
   void setUp()
   {
     parser.clear();
     commands.clear();
+    cap.clear();
   }
 
   void testEmptyBlank( void )
@@ -102,6 +113,29 @@ public:
     TS_ASSERT_THROWS_ANYTHING( commands.add(NULL) );
     TS_ASSERT_THROWS_ANYTHING( commands.add(&badobj) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser()) );
+  }
+  void testHelpAll( void )
+  {
+    TestDispatchable obj;
+    commands.add(&obj);
+
+    cap.start();
+    bool result = commands.execute("help");
+    cap.stop();
+    
+    TS_ASSERT_EQUALS( result, true );
+  }
+  void testHelpOne( void )
+  {
+    TestDispatchable obj;
+    commands.add(&obj);
+
+    cap.start();
+    bool result = commands.execute("help test");
+    cap.stop();
+    
+    TS_ASSERT_EQUALS( result, true );
+    TS_ASSERT_EQUALS( cap.contains("\n"), 1 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

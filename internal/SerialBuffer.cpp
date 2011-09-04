@@ -104,6 +104,18 @@ bool SerialBuffer::runCommand( const Parser& parser )
   {
     result = command_sendhex(parser);
   }
+  else if ( command == "help" )
+  {
+    const string& command = parser.at(1);
+    if ( command == "send" )
+    {
+      cout << "send <data> [cr] -- send arbitrary data via Serial, optional 'cr' at end." << endl;
+    }
+    else if ( command == "send-hex" )
+    {
+      cout << "send-hex <xx> .. <xx> -- send hex digits, separate them by spaces." << endl;
+    }
+  }
 
   return result; 
 }

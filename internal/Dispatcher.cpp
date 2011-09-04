@@ -14,7 +14,30 @@ bool Dispatcher::execute_new(const Parser& _commands) const
   if ( ! _commands.size() )
     throw new runtime_error("Command string empty");
 
-  const string& command = _commands.at(0);
+  string command = _commands.at(0);
+
+  // Redirect 'help <xxx>' to the appropriate command handler.
+  if ( command == "help" )
+  {
+    if ( _commands.size() < 2 )
+    {
+      // Send a 'help' to every single command on the list
+      Parser help;
+      help.resize(2);
+      help.at(0) = "help";
+
+      objectmap_t::const_iterator it = objectmap.begin();
+      while (it != objectmap.end())
+      {
+	help.at(1) = (*it).first;
+	((*it).second)->runCommand(help);
+	++it;
+      }
+      return true;
+    }
+
+    command = _commands.at(1);
+  }
 
   if ( ! objectmap.count( command ) )
     throw new runtime_error("Command not found");

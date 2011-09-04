@@ -17,7 +17,8 @@ protected:
   /**
    * Map of commands to dispatchable objects 
    */
-  std::map<std::string,IDispatchable*> objectmap;
+  typedef std::map<std::string,IDispatchable*> objectmap_t;
+  objectmap_t objectmap;
 
 public:
   /**

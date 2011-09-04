@@ -104,6 +104,25 @@ bool Pins::runCommand( const Parser& parser )
   {
     result = command_irq(parser);
   }
+  else if ( command == "help" )
+  {
+    const string& helpcommand = parser.at(1);
+
+    if ( helpcommand == "pins" )
+    {
+      cout << "pins -- list current state of all pins" << endl;
+    }
+    else if ( helpcommand == "pin" )
+    {
+      cout << "pin <#> HIGH|LOW -- set digital pin high or low" << endl;
+      cout << "pin A<#> <value> -- set analog pin to value" << endl;
+    }
+    else if ( helpcommand == "irq" )
+    {
+      cout << "irq <#> -- trigger irq <#>" << endl;
+    }
+    result = true;
+  }
 
   return result; 
 }

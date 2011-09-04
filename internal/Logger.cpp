@@ -148,6 +148,16 @@ bool Logger::runCommand( const Parser& parser )
   {
     result = command_list(parser);
   }
+  else if ( command == "help" )
+  {
+    const string& command = parser.at(1);
+
+    if ( command == "list" )
+    {
+      cout << "list -- list all log entries from beginning" << endl;
+    }
+    result = true;
+  }
 
   return result; 
 }
