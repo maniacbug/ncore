@@ -1,14 +1,23 @@
-#include <pthread.h>
+#include <stdexcept>
+#include <iostream>
 
+#include <pthread.h>
 #include <SketchThread.h>
 
 extern "C" void setup(void);
 extern "C" void loop(void);
 
-SketchThread::SketchThread(void)
+SketchThread::SketchThread(int mode): pthread(NULL)
 {
-  pthread = new pthread_t;
-  pthread_create( pthread, NULL, sketch_thread_main, NULL );
+
+  // Regular operation, controlling setup() and loop()
+  if ( mode == 0)
+  {
+    pthread = new pthread_t;
+    pthread_create( pthread, NULL, sketch_thread_main, NULL );
+  }
+  else
+    throw new std::runtime_error("Unknown thread mode");
 }
 
 void* SketchThread::sketch_thread_main(void*)

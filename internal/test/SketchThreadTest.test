@@ -39,6 +39,10 @@ public:
     TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("setup")), 1 );
     TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("loop")), 10 );
   }
+  void testExceptions( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( SketchThread(-1) );
+  }
 };
 
 static volatile int i;

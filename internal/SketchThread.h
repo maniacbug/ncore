@@ -10,7 +10,7 @@ protected:
   static void* sketch_thread_main(void*);
 
 public:
-  SketchThread(void);
+  SketchThread(int mode=0);
   void waitToFinish(void);
   virtual ~SketchThread();
 };
