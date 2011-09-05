@@ -2,8 +2,10 @@
 #include <algorithm>
 #include <numeric>
 #include <iostream>
+#include <queue>
 
 #include <pthread.h>
+#include <semaphore.h>
 #include <time.h>
 #include <cxxtest/TestSuite.h>
 
@@ -14,6 +16,55 @@
 using namespace std;
 
 static Logger logger;
+
+// Threadsafe blocking queue.  "Pop" will block if the queue is empty.
+
+class QueueTS
+{
+private:
+  queue<string> q;
+  pthread_mutex_t mutex;
+  sem_t sem;
+public:
+  QueueTS(void);
+  virtual ~QueueTS();
+  void push(const string&);
+  string pop(void);
+};
+  
+QueueTS::QueueTS(void)
+{
+  pthread_mutex_init(&mutex,NULL);
+  sem_init(&sem,0,0);
+}
+  
+QueueTS::~QueueTS()
+{
+  pthread_mutex_destroy(&mutex);
+  sem_destroy(&sem);
+}
+
+void QueueTS::push(const string& _str)
+{
+  pthread_mutex_lock(&mutex);
+  q.push(_str);
+  sem_post(&sem);
+  pthread_mutex_unlock(&mutex);
+}
+
+string QueueTS::pop(void)
+{
+  sem_wait(&sem);
+  pthread_mutex_lock(&mutex);
+  string s = q.front();
+  q.pop();
+  pthread_mutex_unlock(&mutex);
+
+  return s;
+}
+
+static QueueTS q;
+
 extern ostream& operator<<(ostream& os, const Logger& log);
   
 struct count_contains
@@ -27,6 +78,7 @@ struct count_contains
 };
 
 void custom_thread_main(void);
+void semaphores_test_main(void);
 
 class SketchThreadTestSuite: public CxxTest::TestSuite
 {
@@ -55,6 +107,31 @@ public:
   {
     TS_ASSERT_THROWS_ANYTHING( SketchThread(-1) );
   }
+  void testSemaphores( void )
+  {
+    SketchThread t(1);
+    t.startCustom(semaphores_test_main);
+
+    logger.internal("QPUS","first");
+    q.push("first");
+    logger.internal("QPUS","second");
+    q.push("second");
+    logger.internal("QPUS","third");
+    q.push("third");
+
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = 500000L;
+    nanosleep(&tv,NULL);
+
+    q.push("quit");
+    logger.internal("QPUS","quit");
+    
+    t.waitToFinish();
+    
+    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("first")), 2 );
+    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("quit")), 2 );
+  }
 };
 
 static volatile int i;
@@ -78,6 +155,18 @@ void custom_thread_main(void)
   int i=5;
   while(i--)
     logger.add("custom");
+}
+
+void semaphores_test_main(void)
+{
+  bool done = false;
+  while(!done)
+  {
+    string s = q.pop();
+    logger.sketch("QPOP",s.c_str());
+
+    done = ( s == "quit" );
+  }
 }
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp
