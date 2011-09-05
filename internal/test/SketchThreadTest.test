@@ -54,6 +54,10 @@ void QueueTS::push(const string& _str)
 
 string QueueTS::pop(void)
 {
+  int n;
+  sem_getvalue(&sem,&n);
+  if ( ! n )
+    logger.sketch("QPOP","Blocking...");
   sem_wait(&sem);
   pthread_mutex_lock(&mutex);
   string s = q.front();
@@ -111,6 +115,11 @@ public:
   {
     SketchThread t(1);
     t.startCustom(semaphores_test_main);
+    
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = 500000L;
+    nanosleep(&tv,NULL);
 
     logger.internal("QPUS","first");
     q.push("first");
@@ -119,7 +128,6 @@ public:
     logger.internal("QPUS","third");
     q.push("third");
 
-    timespec tv;
     tv.tv_sec = 0;
     tv.tv_nsec = 500000L;
     nanosleep(&tv,NULL);
@@ -128,6 +136,8 @@ public:
     logger.internal("QPUS","quit");
     
     t.waitToFinish();
+
+    cerr << logger;
     
     TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("first")), 2 );
     TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("quit")), 2 );
