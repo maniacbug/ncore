@@ -36,7 +36,7 @@ public:
   }
   void setUp()
   {
-    logger.clear();
+    mylogger.clear();
     q.clear();
     //spiq.clear();
   }
@@ -102,8 +102,8 @@ public:
 
     //cerr << logger;
      
-    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("first")), 2 );
-    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("quit")), 2 );
+    TS_ASSERT_EQUALS( logger.lines_contain("first"), 2 );
+    TS_ASSERT_EQUALS( logger.lines_contain("quit"), 2 );
     cerr << ":OUT]" << endl; 
   }
   void testSpiTransferRead( void )
@@ -112,6 +112,13 @@ public:
     uint8_t in = spiq.transfer(-1);
 
     TS_ASSERT_EQUALS( in, 0xfe );
+  }
+  void testSpiTransferLogging( void )
+  {
+    spiq.hwEnqueue(0xfe);
+    spiq.transfer(-1);
+
+    TS_ASSERT_EQUALS( mylogger.lines_contain("fe"), 1 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
