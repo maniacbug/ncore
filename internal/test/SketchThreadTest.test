@@ -1,6 +1,7 @@
 #include <iterator>
 #include <algorithm>
 #include <numeric>
+#include <iostream>
 
 #include <pthread.h>
 #include <time.h>
@@ -13,6 +14,7 @@
 using namespace std;
 
 static Logger logger;
+extern ostream& operator<<(ostream& os, const Logger& log);
   
 struct count_contains
 {
@@ -23,6 +25,8 @@ struct count_contains
     return sum + ( (whole.find(key) != std::string::npos )?1:0 );
   }
 };
+
+void custom_thread_main(void);
 
 class SketchThreadTestSuite: public CxxTest::TestSuite
 {
@@ -38,6 +42,14 @@ public:
     
     TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("setup")), 1 );
     TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("loop")), 10 );
+  }
+  void testCustom( void )
+  {
+    SketchThread t(1);
+    t.startCustom(custom_thread_main);
+    t.waitToFinish();
+
+    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("custom")), 5 );
   }
   void testExceptions( void )
   {
@@ -59,6 +71,13 @@ extern "C" void loop(void)
     logger.add("loop");
   else
     pthread_exit(NULL);
+}
+
+void custom_thread_main(void)
+{
+  int i=5;
+  while(i--)
+    logger.add("custom");
 }
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp
