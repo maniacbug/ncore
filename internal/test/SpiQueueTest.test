@@ -35,8 +35,37 @@ public:
 
   void testEmpty( void )
   {
+    TS_ASSERT_EQUALS( q.available(), false );
   }
-  void testQueue( void )
+
+  void testQueueSimple( void )
+  {
+    q.push("test");
+
+    TS_ASSERT_EQUALS( q.pop(), "test" );
+  }
+  void testQueueAvailable( void )
+  {
+    q.push("test");
+  
+    TS_ASSERT_EQUALS( q.available(), true );
+  }
+  void testQueueEmptyThenAvailable( void )
+  {
+    q.push("test");
+    q.pop();
+  
+    TS_ASSERT_EQUALS( q.available(), false );
+  }
+  void testQueueDouble( void )
+  {
+    q.push("first");
+    q.push("second");
+
+    TS_ASSERT_EQUALS( q.pop(), "first" );
+    TS_ASSERT_EQUALS( q.pop(), "second" );
+  }
+  void testQueueConcurrent( void )
   {
     cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t(1);

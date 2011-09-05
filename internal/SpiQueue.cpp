@@ -47,6 +47,16 @@ string QueueTS::pop(void)
 void QueueTS::clear(void)
 {
   while ( q.size() )
+  {
+    sem_wait(&sem);
     q.pop();
+  }
+}
+
+bool QueueTS::available(void) const
+{
+  int n;
+  sem_getvalue(const_cast<sem_t*>(&sem),&n);
+  return n > 0 ; 
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp

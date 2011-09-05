@@ -23,6 +23,7 @@ public:
   void push(const std::string&);
   std::string pop(void);
   void clear(void);
+  bool available(void) const;
 };
 #endif // __SPI_QUEUE_H__
 // vim:cin:ai:sts=2 sw=2 ft=cpp
