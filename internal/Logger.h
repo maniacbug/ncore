@@ -31,6 +31,7 @@ public:
   void internal(const std::string& module, const std::string& format,...);
   void sketch(const std::string& module, const std::string& format,...);
   void clear(void);
+  int lines_contain(const std::string&) const;
   
   std::string& getCommands(void) const { static std::string commands = "list"; return commands; }
   bool runCommand( const Parser& );

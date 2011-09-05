@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iterator>
 #include <sstream>
+#include <numeric>
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -44,6 +45,16 @@ void Logger::throttle_output_rate(void)
   }
 }
 
+struct count_contains
+{
+  string key;
+  count_contains(const string& _key): key(_key) {}
+  int operator()(int sum,const string& whole)
+  {
+    return sum + ( (whole.find(key) != std::string::npos )?1:0 );
+  }
+};
+
 //
 // Public interface
 //
@@ -70,6 +81,11 @@ void Logger::clear(void)
   lines_remaining = lines_per_check;
   pthread_mutex_destroy(&mutex);
   pthread_mutex_init(&mutex,NULL);
+}
+
+int Logger::lines_contain(const std::string& value) const
+{
+  return accumulate(begin(),end(),0,count_contains(value));
 }
 
 void Logger::internal(const std::string& module, const std::string& format,...)
