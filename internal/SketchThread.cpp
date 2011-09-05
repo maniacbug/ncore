@@ -69,9 +69,12 @@ void SketchThread::waitToFinish(void)
 
 SketchThread::~SketchThread(void)
 {
-  pthread_cancel( *pthread );
-  pthread_join( *pthread, NULL );
-  delete pthread;
+  if (pthread)
+  {
+    pthread_cancel( *pthread );
+    pthread_join( *pthread, NULL );
+    delete pthread;
+  }
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp
 
