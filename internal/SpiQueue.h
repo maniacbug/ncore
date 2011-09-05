@@ -3,6 +3,8 @@
 
 #include <queue>
 #include <string>
+
+#include <inttypes.h>
 #include <pthread.h>
 #include <semaphore.h>
 
@@ -76,16 +78,19 @@ bool QueueTS<T>::available(void) const
   sem_getvalue(const_cast<sem_t*>(&sem),&n);
   return n > 0 ; 
 }
-#if 0
+
+class Logger;
+
 class SpiQueue
 {
 private:
-  QueueTS qts;
+  QueueTS<uint8_t> qts;
+  Logger& logger;
 public:
   SpiQueue(Logger&);
-  hwEnqueue(uint8_t)
-}
-#endif
+  void hwEnqueue(uint8_t);
+  uint8_t transfer(uint8_t);
+};
 
 #endif // __SPI_QUEUE_H__
 // vim:cin:ai:sts=2 sw=2 ft=cpp

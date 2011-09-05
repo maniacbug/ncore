@@ -28,12 +28,17 @@ void semaphores_test_main(void)
 
 class SpiQueueTestSuite: public CxxTest::TestSuite
 {
-  //SpiQueue spiq;
+  SpiQueue spiq;
+  Logger mylogger;
 public:
+  SpiQueueTestSuite(void): spiq(mylogger)
+  {
+  }
   void setUp()
   {
     logger.clear();
     q.clear();
+    //spiq.clear();
   }
 
   void testEmpty( void )
@@ -101,14 +106,12 @@ public:
     TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("quit")), 2 );
     cerr << ":OUT]" << endl; 
   }
-  void if0_testSpiTransferRead( void )
+  void testSpiTransferRead( void )
   {
-#if 0
     spiq.hwEnqueue(0xfe);
     uint8_t in = spiq.transfer(-1);
 
     TS_ASSERT_EQUALS( in, 0xfe );
-#endif
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
