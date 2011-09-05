@@ -19,16 +19,6 @@ static Logger logger;
 
 extern ostream& operator<<(ostream& os, const Logger& log);
   
-struct count_contains
-{
-  string key;
-  count_contains(const string& _key): key(_key) {}
-  int operator()(int sum,const string& whole)
-  {
-    return sum + ( (whole.find(key) != std::string::npos )?1:0 );
-  }
-};
-
 void custom_thread_main(void);
 
 class SketchThreadTestSuite: public CxxTest::TestSuite
@@ -44,8 +34,8 @@ public:
     SketchThread t;
     t.waitToFinish();
     
-    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("setup")), 1 );
-    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("loop")), 10 );
+    TS_ASSERT_EQUALS( logger.lines_contain("setup"), 1 );
+    TS_ASSERT_EQUALS( logger.lines_contain("loop"), 10 );
     cerr << ":OUT]" << endl;
   }
   void testCustom( void )
@@ -55,7 +45,7 @@ public:
     t.startCustom(custom_thread_main);
     t.waitToFinish();
 
-    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("custom")), 5 );
+    TS_ASSERT_EQUALS( logger.lines_contain("custom"), 5 );
     cerr << ":OUT]" << endl;
   }
   void testExceptions1( void )
