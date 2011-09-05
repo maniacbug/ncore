@@ -1,0 +1,73 @@
+#include <vector>
+#include <string>
+
+#include <cxxtest/TestSuite.h>
+
+#include <SketchThread.h>
+#include <SpiQueue.h>
+
+using namespace std;
+
+static QueueTS q(logger);
+
+extern ostream& operator<<(ostream& os, const Logger& log);
+  
+void semaphores_test_main(void)
+{
+  bool done = false;
+  while(!done)
+  {
+    string s = q.pop();
+    logger.sketch("QPOP",s.c_str());
+
+    done = ( s == "quit" );
+  }
+}
+
+class SpiQueueTestSuite: public CxxTest::TestSuite
+{
+public:
+  void setUp()
+  {
+    logger.clear();
+    q.clear();
+  }
+
+  void testEmpty( void )
+  {
+  }
+  void testQueue( void )
+  {
+    cerr << "[IN:" << __FUNCTION__ ;
+    SketchThread t(1);
+    t.startCustom(semaphores_test_main);
+    
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = 500000L;
+    nanosleep(&tv,NULL);
+
+    logger.internal("QPUS","first");
+    q.push("first");
+    logger.internal("QPUS","second");
+    q.push("second");
+    logger.internal("QPUS","third");
+    q.push("third");
+
+    tv.tv_sec = 0;
+    tv.tv_nsec = 500000L;
+    nanosleep(&tv,NULL);
+
+    q.push("quit");
+    logger.internal("QPUS","quit");
+    
+    t.waitToFinish();
+
+    //cerr << logger;
+     
+    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("first")), 2 );
+    TS_ASSERT_EQUALS( accumulate(logger.begin(),logger.end(),0,count_contains("quit")), 2 );
+    cerr << ":OUT]" << endl; 
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp

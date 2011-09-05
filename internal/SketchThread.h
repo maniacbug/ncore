@@ -1,6 +1,5 @@
 #ifndef __SKETCH_THREAD_H__
 #define __SKETCH_THREAD_H__
-#endif // __SKETCH_THREAD_H__
 
 class SketchThread
 {
@@ -18,4 +17,5 @@ public:
   virtual ~SketchThread();
 };
 
+#endif // __SKETCH_THREAD_H__
 // vim:cin:ai:sts=2 sw=2 ft=cpp

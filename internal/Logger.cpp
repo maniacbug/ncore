@@ -68,6 +68,8 @@ void Logger::clear(void)
   vector<string>::clear();
   last_check = 0;
   lines_remaining = lines_per_check;
+  pthread_mutex_destroy(&mutex);
+  pthread_mutex_init(&mutex,NULL);
 }
 
 void Logger::internal(const std::string& module, const std::string& format,...)
