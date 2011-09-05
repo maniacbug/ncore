@@ -18,9 +18,9 @@ void semaphores_test_main(void)
   while(!done)
   {
     if ( ! q.available() )
-      logger.sketch("QPOP","Blocking...");
+      global_logger.sketch("QPOP","Blocking...");
     string s = q.pop();
-    logger.sketch("QPOP",s.c_str());
+    global_logger.sketch("QPOP",s.c_str());
 
     done = ( s == "quit" );
   }
@@ -29,14 +29,14 @@ void semaphores_test_main(void)
 class SpiQueueTestSuite: public CxxTest::TestSuite
 {
   SpiQueue spiq;
-  Logger mylogger;
+  Logger logger;
 public:
-  SpiQueueTestSuite(void): spiq(mylogger)
+  SpiQueueTestSuite(void): spiq(logger)
   {
   }
   void setUp()
   {
-    mylogger.clear();
+    logger.clear();
     q.clear();
     //spiq.clear();
   }
@@ -84,11 +84,11 @@ public:
     tv.tv_nsec = 500000L;
     nanosleep(&tv,NULL);
 
-    logger.internal("QPUS","first");
+    global_logger.internal("QPUS","first");
     q.push("first");
-    logger.internal("QPUS","second");
+    global_logger.internal("QPUS","second");
     q.push("second");
-    logger.internal("QPUS","third");
+    global_logger.internal("QPUS","third");
     q.push("third");
 
     tv.tv_sec = 0;
@@ -96,14 +96,14 @@ public:
     nanosleep(&tv,NULL);
 
     q.push("quit");
-    logger.internal("QPUS","quit");
+    global_logger.internal("QPUS","quit");
     
     t.waitToFinish();
 
     //cerr << logger;
      
-    TS_ASSERT_EQUALS( logger.lines_contain("first"), 2 );
-    TS_ASSERT_EQUALS( logger.lines_contain("quit"), 2 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("first"), 2 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("quit"), 2 );
     cerr << ":OUT]" << endl; 
   }
   void testSpiTransferRead( void )
@@ -118,7 +118,7 @@ public:
     spiq.hwEnqueue(0xfe);
     spiq.transfer(-1);
 
-    TS_ASSERT_EQUALS( mylogger.lines_contain("fe"), 1 );
+    TS_ASSERT_EQUALS( logger.lines_contain("fe"), 1 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

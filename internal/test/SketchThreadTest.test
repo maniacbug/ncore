@@ -15,7 +15,7 @@
 
 using namespace std;
 
-static Logger logger;
+Logger global_logger;
 
 extern ostream& operator<<(ostream& os, const Logger& log);
   
@@ -26,7 +26,7 @@ class SketchThreadTestSuite: public CxxTest::TestSuite
 public:
   void setUp()
   {
-    logger.clear();
+    global_logger.clear();
   }
   void testThread( void )
   {
@@ -34,8 +34,8 @@ public:
     SketchThread t;
     t.waitToFinish();
     
-    TS_ASSERT_EQUALS( logger.lines_contain("setup"), 1 );
-    TS_ASSERT_EQUALS( logger.lines_contain("loop"), 10 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("setup"), 1 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("loop"), 10 );
     cerr << ":OUT]" << endl;
   }
   void testCustom( void )
@@ -45,7 +45,7 @@ public:
     t.startCustom(custom_thread_main);
     t.waitToFinish();
 
-    TS_ASSERT_EQUALS( logger.lines_contain("custom"), 5 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("custom"), 5 );
     cerr << ":OUT]" << endl;
   }
   void testExceptions1( void )
@@ -75,13 +75,13 @@ static volatile int i;
 extern "C" void setup(void)
 {
   i = 10;
-  logger.add("setup");
+  global_logger.add("setup");
 }
 
 extern "C" void loop(void)
 {
   if (i--)
-    logger.add("loop");
+    global_logger.add("loop");
   else
     pthread_exit(NULL);
 }
@@ -90,7 +90,7 @@ void custom_thread_main(void)
 {
   int i=5;
   while(i--)
-    logger.add("custom");
+    global_logger.add("custom");
 }
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp
