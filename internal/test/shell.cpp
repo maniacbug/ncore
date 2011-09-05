@@ -13,6 +13,7 @@
 #include <SerialBuffer.h>
 #include <Clock.h>
 #include <Eeprom.h>
+#include <SpiQueue.h>
 
 using namespace std;
 
@@ -22,6 +23,7 @@ Logger theLogger(theClock);
 Pins thePins(theLogger);
 SerialBuffer theSerialBuffer(theLogger);
 Eeprom theEeprom(theLogger);
+SpiQueue theSpiQueue(theLogger);
 
 extern "C" void init(void);
 
@@ -35,6 +37,7 @@ int main(void)
   theDispatcher.add(&thePins);
   theDispatcher.add(&theSerialBuffer);
   theDispatcher.add(&theEeprom);
+  theDispatcher.add(&theSpiQueue);
  
   // Announce to the log
   theLogger.internal("CORE","Started");

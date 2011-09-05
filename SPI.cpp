@@ -8,11 +8,14 @@
  * published by the Free Software Foundation.
  */
 
+#include <SpiQueue.h>
 #include <WProgram.h>
 #include "pins_arduino.h"
 #include "SPI.h"
 
 SPIClass SPI;
+
+extern SpiQueue theSpiQueue;
 
 void SPIClass::begin() {
 }
@@ -20,21 +23,18 @@ void SPIClass::begin() {
 void SPIClass::end() {
 }
 
-void SPIClass::setBitOrder(uint8_t bitOrder)
+void SPIClass::setBitOrder(uint8_t)
 {
 }
 
-void SPIClass::setDataMode(uint8_t mode)
+void SPIClass::setDataMode(uint8_t)
 {
 }
 
-void SPIClass::setClockDivider(uint8_t rate)
+void SPIClass::setClockDivider(uint8_t)
 {
 }
 
 byte SPIClass::transfer(byte _data) {
-  printf("NCORE: %06lu ",millis());
-  printf("SPI transfer %02x\n",_data);
-
-  return 0;
+  return theSpiQueue.transfer(_data);
 }
