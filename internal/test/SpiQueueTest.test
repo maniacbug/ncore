@@ -8,7 +8,7 @@
 
 using namespace std;
 
-static QueueTS<string> q(logger);
+static QueueTS<string> q;
 
 extern ostream& operator<<(ostream& os, const Logger& log);
   
@@ -17,6 +17,8 @@ void semaphores_test_main(void)
   bool done = false;
   while(!done)
   {
+    if ( ! q.available() )
+      logger.sketch("QPOP","Blocking...");
     string s = q.pop();
     logger.sketch("QPOP",s.c_str());
 

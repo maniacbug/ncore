@@ -6,8 +6,6 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-class Logger;
-
 // Threadsafe blocking queue.  "Pop" will block if the queue is empty.
 
 template <class T> 
@@ -17,9 +15,8 @@ private:
   std::queue<T> q;
   pthread_mutex_t mutex;
   sem_t sem;
-  Logger& logger;
 public:
-  QueueTS(Logger&);
+  QueueTS(void);
   virtual ~QueueTS();
   void push(const T&);
   T pop(void);
@@ -28,7 +25,7 @@ public:
 };
 
 template <class T> 
-QueueTS<T>::QueueTS(Logger& _logger): logger(_logger)
+QueueTS<T>::QueueTS(void)
 {
   pthread_mutex_init(&mutex,NULL);
   sem_init(&sem,0,0);
@@ -53,10 +50,6 @@ void QueueTS<T>::push(const T& item)
 template <class T> 
 T QueueTS<T>::pop(void)
 {
-  int n;
-  sem_getvalue(&sem,&n);
-  if ( ! n )
-    logger.sketch("QPOP","Blocking...");
   sem_wait(&sem);
   pthread_mutex_lock(&mutex);
   T item = q.front();
