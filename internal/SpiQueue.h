@@ -8,6 +8,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+#include <IDispatchable.h>
+
 // Threadsafe blocking queue.  "Pop" will block if the queue is empty.
 
 template <class T> 
@@ -81,15 +83,21 @@ bool QueueTS<T>::available(void) const
 
 class Logger;
 
-class SpiQueue
+class SpiQueue: public IDispatchable
 {
 private:
   QueueTS<uint8_t> qts;
   Logger& logger;
+protected:
+  bool command_spi(const std::vector<std::string>&);
 public:
   SpiQueue(Logger&);
   void hwEnqueue(uint8_t);
   uint8_t transfer(uint8_t);
+  void clear(void) { qts.clear(); }
+  
+  std::string& getCommands(void) const;
+  bool runCommand( const Parser& );
 };
 
 #endif // __SPI_QUEUE_H__

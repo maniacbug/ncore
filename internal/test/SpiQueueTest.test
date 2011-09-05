@@ -5,6 +5,8 @@
 
 #include <SketchThread.h>
 #include <SpiQueue.h>
+#include <Dispatcher.h>
+#include <OutputCapture.h>
 
 using namespace std;
 
@@ -30,15 +32,20 @@ class SpiQueueTestSuite: public CxxTest::TestSuite
 {
   SpiQueue spiq;
   Logger logger;
+  Dispatcher dispatch;
+  OutputCapture cap;
 public:
   SpiQueueTestSuite(void): spiq(logger)
   {
   }
   void setUp()
   {
-    logger.clear();
     q.clear();
-    //spiq.clear();
+    spiq.clear();
+    logger.clear();
+    dispatch.clear();
+    dispatch.add(&spiq);
+    cap.clear();
   }
 
   void testEmpty( void )
@@ -113,12 +120,58 @@ public:
 
     TS_ASSERT_EQUALS( in, 0xfe );
   }
+  void testSpiTransferMultiple( void )
+  {
+    spiq.hwEnqueue(0x20);
+    spiq.hwEnqueue(0x80);
+    spiq.hwEnqueue(0x90);
+    spiq.hwEnqueue(0xA0);
+
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0x20 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0x80 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0x90 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xA0 );
+  }
   void testSpiTransferLogging( void )
   {
     spiq.hwEnqueue(0xfe);
     spiq.transfer(-1);
 
     TS_ASSERT_EQUALS( logger.lines_contain("fe"), 1 );
+  }
+  void testSpiCommand( void )
+  {
+    bool ok = dispatch.execute("spi 1");
+    TS_ASSERT_EQUALS( ok, true );
+  }
+  void testSpiCommandReceived( void )
+  {
+    dispatch.execute("spi d0");
+    uint8_t in = spiq.transfer(-1);
+
+    TS_ASSERT_EQUALS( in, 0xd0 );
+  }
+  void testSpiCommandReceivedMultiple( void )
+  {
+    dispatch.execute("spi 0 f1 f2 f3 f4");
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf1 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf2 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf3 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf4 );
+  }
+  void testSpiCommandExceptions( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( dispatch.execute("spi") );
+  }
+  void testCommandHelp( void )
+  {
+    cap.start();
+    bool ok = dispatch.execute("help");
+    cap.stop();
+
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( (bool)cap.contains("spi"), true );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
