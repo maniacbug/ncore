@@ -24,7 +24,6 @@ extern "C" unsigned long millis(void);
 // Rate throttler
 //
 
-static const unsigned long min_interval = 500; // ms
 static const int lines_per_check = 10;
 
 void Logger::throttle_output_rate(void)
@@ -33,9 +32,9 @@ void Logger::throttle_output_rate(void)
   {
     lines_remaining += lines_per_check;
     unsigned long now = clock->millis();
-    if ( now - last_check < min_interval )
+    if ( now - last_check < rate_limit )
     {
-      unsigned long wait = min_interval - (now - last_check); 
+      unsigned long wait = rate_limit - (now - last_check); 
       ostringstream warning;
       warning << "delay " << wait << " (rate limit)";
       add_message(string("IN LOG "),warning.str());
@@ -59,12 +58,12 @@ struct count_contains
 // Public interface
 //
 
-Logger::Logger(void): clock(NULL), last_check(0), lines_remaining(lines_per_check)
+Logger::Logger(void): clock(NULL), last_check(0), rate_limit(default_rate_limit), lines_remaining(lines_per_check)
 {
   pthread_mutex_init(&mutex,NULL);
 }
 
-Logger::Logger(Clock& _clock): clock(&_clock), last_check(0), lines_remaining(lines_per_check)
+Logger::Logger(Clock& _clock): clock(&_clock), last_check(0), rate_limit(default_rate_limit), lines_remaining(lines_per_check)
 {
   pthread_mutex_init(&mutex,NULL);
 }
@@ -81,6 +80,7 @@ void Logger::clear(void)
   lines_remaining = lines_per_check;
   pthread_mutex_destroy(&mutex);
   pthread_mutex_init(&mutex,NULL);
+  rate_limit = default_rate_limit;
 }
 
 int Logger::lines_contain(const std::string& value) const
@@ -166,6 +166,10 @@ bool Logger::runCommand( const Parser& parser )
   {
     result = command_list(parser);
   }
+  else if ( command == "log" )
+  {
+    result = command_log(parser);
+  }
   else if ( command == "help" )
   {
     const string& command = parser.at(1);
@@ -173,6 +177,7 @@ bool Logger::runCommand( const Parser& parser )
     if ( command == "list" )
     {
       cout << "list -- list all log entries from beginning" << endl;
+      cout << "log rate <xxx> -- set minimim time elapsed between 10 log entries" << endl;
     }
     result = true;
   }
@@ -191,5 +196,36 @@ bool Logger::command_list(const vector<string>& _commands) const
 
   return true;
 }
+
+bool Logger::command_log(const vector<string>& _commands)
+{
+  vector<string>::const_iterator current = _commands.begin() + 1;
+
+  if ( current == _commands.end() )
+    throw new runtime_error("Expecting operand");
+
+  const string& operand = *current++;
+  if ( operand == "rate" )
+  {
+  
+    if ( current == _commands.end() )
+      throw new runtime_error("Expecting rate value");
+
+    istringstream ss(*current++);
+    unsigned long rate;
+    ss >> rate;
+
+    internal("LOG","set rate limit to %ims",rate);
+
+    pthread_mutex_lock( const_cast<pthread_mutex_t*>(&mutex) );
+    rate_limit = rate;
+    pthread_mutex_unlock( const_cast<pthread_mutex_t*>(&mutex) );
+  }
+  else
+    throw new runtime_error("Unknown operand");
+
+  return true;
+}
+
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -226,6 +226,33 @@ public:
     TS_ASSERT_EQUALS( log.lines_contain("test"), 4 );
     TS_ASSERT_EQUALS( log.lines_contain("something else"), 0 );
   }
+  void testRateControl( void )
+  {
+    Clock clock;
+    Logger log(clock);
+    commands.clear();
+    commands.add(&log);
+
+    bool ok;
+    
+    try
+    {
+      ok = commands.execute("log rate 100");
+    }
+    catch (runtime_error* e)
+    {
+      cerr << e->what();
+    }
+    int i = 21;
+    while(i--)
+    {
+      log.add("test");
+      clock.delay(5);
+    }
+
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( log.lines_contain(" 0001"), 11 );
+  }
 };
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp
