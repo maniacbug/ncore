@@ -243,7 +243,6 @@ bool Pins::command_pins(const vector<string>&) const
 
 bool Pins::command_irq(const vector<string>& _commands) const
 {
-  bool result = false;
   vector<string>::const_iterator current = _commands.begin();
 
   // Skip over 'irq' command
@@ -270,7 +269,7 @@ bool Pins::command_irq(const vector<string>& _commands) const
   
   hwTriggerInterrupt( irq );
 
-  return result;
+  return true;
 }
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

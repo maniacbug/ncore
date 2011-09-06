@@ -223,8 +223,9 @@ public:
   void testCommandIrq( void )
   {
     pins.attachInterrupt( 1, isr );
-    commands.execute_new(Parser("irq 1"));
+    bool ok = commands.execute_new(Parser("irq 1"));
 
+    TS_ASSERT_EQUALS( ok, true );
     TS_ASSERT_EQUALS( isr_called_count, 1 );
   }
   void testCommandIrqExceptions( void )
