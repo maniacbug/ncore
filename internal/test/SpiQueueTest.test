@@ -173,5 +173,21 @@ public:
     TS_ASSERT_EQUALS( ok, true );
     TS_ASSERT_EQUALS( (bool)cap.contains("spi"), true );
   }
+  void testCommandDefault( void )
+  {
+    dispatch.execute("spi default f0");
+    spiq.transfer(-1);
+
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf0 );
+  }
+  void todo_testMoreCommands( void )
+  {
+    dispatch.execute("spi 5x 0");
+    dispatch.execute("spi nodefault");
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

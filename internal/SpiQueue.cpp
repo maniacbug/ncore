@@ -8,7 +8,7 @@
 
 using namespace std;
   
-SpiQueue::SpiQueue(Logger& _logger): logger(_logger)
+SpiQueue::SpiQueue(Logger& _logger): logger(_logger), has_default(false), default_value(0)
 {
 }
 
@@ -19,10 +19,18 @@ void SpiQueue::hwEnqueue(uint8_t _byte)
   
 uint8_t SpiQueue::transfer(uint8_t _in)
 {
-  if ( ! qts.available() )
-    logger.sketch("SPI","in %02x Waiting for output values",_in);
-  uint8_t out = qts.pop();
-  logger.sketch("SPI","in %02x out %02x",_in,out);
+  uint8_t out = default_value;
+  if ( ! qts.available() && has_default )
+  {
+    logger.sketch("SPI","in %02x out %02x (default)",_in,out);
+  }
+  else
+  {
+    if ( qts.available() )
+      logger.sketch("SPI","in %02x Waiting for output values",_in);
+    out = qts.pop();
+    logger.sketch("SPI","in %02x out %02x",_in,out);
+  }
   return out;
 }
 
@@ -48,6 +56,7 @@ bool SpiQueue::runCommand( const Parser& parser )
     if ( command == "spi" )
     {
       cout << "spi <xx> .. <xx> -- add data to spi output queue." << endl;
+      cout << "spi default <xx> -- set output value when queue is empty." << endl;
     }
   }
 
@@ -59,24 +68,40 @@ bool SpiQueue::command_spi(const vector<string>& _commands)
   if ( _commands.size() < 2 )
     throw new runtime_error("Usage: spi <xx> .. <xx>");
 
-  vector<uint8_t> composite;
-  vector<string>::const_iterator it = _commands.begin() + 1;
-  while (it != _commands.end())
+  if ( _commands.at(1) == "default" )
   {
+    if ( _commands.size() != 3 )
+      throw new runtime_error("Usage: spi default <xx>");
+    
     int i;
-    istringstream convert(*it++);
+    istringstream convert(_commands.at(2));
     convert >> hex >> i;
-    composite.push_back(i);
-  }
 
-  // Also log the command
-  logger.internal("SPI","queued %i bytes for output",composite.size());
-  
-  // set as input
-  vector<uint8_t>::const_iterator curbyte = composite.begin();
-  while (curbyte != composite.end())
-    qts.push(*curbyte++);
-  
+    default_value = i;
+    has_default = true;
+    
+    logger.internal("SPI","set %02x as default",i);
+  }
+  else
+  {
+    vector<uint8_t> composite;
+    vector<string>::const_iterator it = _commands.begin() + 1;
+    while (it != _commands.end())
+    {
+      int i;
+      istringstream convert(*it++);
+      convert >> hex >> i;
+      composite.push_back(i);
+    }
+
+    // Also log the command
+    logger.internal("SPI","queued %i bytes for output",composite.size());
+    
+    // set as input
+    vector<uint8_t>::const_iterator curbyte = composite.begin();
+    while (curbyte != composite.end())
+      qts.push(*curbyte++);
+  }
   return true;
 }
 

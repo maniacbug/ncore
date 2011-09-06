@@ -88,6 +88,8 @@ class SpiQueue: public IDispatchable
 private:
   QueueTS<uint8_t> qts;
   Logger& logger;
+  bool has_default;
+  uint8_t default_value;
 protected:
   bool command_spi(const std::vector<std::string>&);
 public:
