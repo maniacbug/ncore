@@ -59,7 +59,7 @@ String::String( const unsigned char value )
   }
 }
 
-String::String( const int value, const int base )
+String::String( const int value, const int /*base*/ )
 {
   char buf[33];
   //itoa((signed long)value, buf, base);
@@ -69,7 +69,7 @@ String::String( const int value, const int base )
     strcpy( _buffer, buf );
 }
 
-String::String( const unsigned int value, const int base )
+String::String( const unsigned int value, const int /*base*/ )
 {
   char buf[33];   
   //ultoa((unsigned long)value, buf, base);
@@ -79,7 +79,7 @@ String::String( const unsigned int value, const int base )
     strcpy( _buffer, buf );
 }
 
-String::String( const long value, const int base )
+String::String( const long value, const int /*base*/ )
 {
   char buf[33];   
   //ltoa(value, buf, base);
@@ -89,7 +89,7 @@ String::String( const long value, const int base )
     strcpy( _buffer, buf );
 }
 
-String::String( const unsigned long value, const int base )
+String::String( const unsigned long value, const int /*base*/ )
 {
   char buf[33];   
   //ultoa(value, buf, 10);
