@@ -123,5 +123,17 @@ void fdevopen(int (*)(char, FILE*),int)
 }
 
 }
+
+void tone(uint8_t pin, unsigned int what, unsigned long wait)
+{
+  theLogger.sketch("PINS","%i: tone %u",pin,what);
+  delay(wait);
+}
+
+void noTone(uint8_t pin)
+{
+  theLogger.sketch("PINS","%i: noTone",pin);
+}
+
 // vim:cin:ai:sts=2 sw=2
 
