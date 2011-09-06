@@ -12,6 +12,13 @@ SpiQueue::SpiQueue(Logger& _logger): logger(_logger), has_default(false), defaul
 {
 }
 
+void SpiQueue::clear(void) 
+{ 
+  qts.clear(); 
+  has_default = false;
+  default_value = 0;
+}
+
 void SpiQueue::hwEnqueue(uint8_t _byte)
 {
   qts.push(_byte);
@@ -26,7 +33,7 @@ uint8_t SpiQueue::transfer(uint8_t _in)
   }
   else
   {
-    if ( qts.available() )
+    if ( ! qts.available() )
       logger.sketch("SPI","in %02x Waiting for output values",_in);
     out = qts.pop();
     logger.sketch("SPI","in %02x out %02x",_in,out);
@@ -57,6 +64,7 @@ bool SpiQueue::runCommand( const Parser& parser )
     {
       cout << "spi <xx> .. <xx> -- add data to spi output queue." << endl;
       cout << "spi default <xx> -- set output value when queue is empty." << endl;
+      cout << "spi <count>x <xx> -- add <xx> for <count> times to queue." << endl;
     }
   }
 
@@ -68,7 +76,8 @@ bool SpiQueue::command_spi(const vector<string>& _commands)
   if ( _commands.size() < 2 )
     throw new runtime_error("Usage: spi <xx> .. <xx>");
 
-  if ( _commands.at(1) == "default" )
+  string operand = _commands.at(1);
+  if ( operand == "default" )
   {
     if ( _commands.size() != 3 )
       throw new runtime_error("Usage: spi default <xx>");
@@ -81,6 +90,26 @@ bool SpiQueue::command_spi(const vector<string>& _commands)
     has_default = true;
     
     logger.internal("SPI","set %02x as default",i);
+  }
+  else if ( operand.at(operand.size()-1) == 'x' )
+  {
+    if ( _commands.size() != 3 )
+      throw new runtime_error("Usage: spi <count>x <xx>");
+    
+    operand.resize(operand.size()-1);
+    
+    int count;
+    stringstream convert(operand);
+    convert >> dec >> count;
+    
+    int i;
+    stringstream convert2(_commands.at(2));
+    convert2 >> hex >> i;
+    
+    logger.internal("SPI","queued %02i for output %i times",i,count);
+
+    while(count--)
+      qts.push(i);
   }
   else
   {

@@ -96,7 +96,7 @@ public:
   SpiQueue(Logger&);
   void hwEnqueue(uint8_t);
   uint8_t transfer(uint8_t);
-  void clear(void) { qts.clear(); }
+  void clear(void);
   
   std::string& getCommands(void) const;
   bool runCommand( const Parser& );

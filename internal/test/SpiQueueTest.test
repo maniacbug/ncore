@@ -184,9 +184,17 @@ public:
     TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf0 );
     TS_ASSERT_EQUALS( spiq.transfer(-1), 0xf0 );
   }
-  void todo_testMoreCommands( void )
+  void testCommandX( void )
   {
     dispatch.execute("spi 5x 0");
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0x0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0x0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0x0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0x0 );
+    TS_ASSERT_EQUALS( spiq.transfer(-1), 0x0 );
+  }
+  void todo_testMoreCommands( void )
+  {
     dispatch.execute("spi nodefault");
   }
 };
