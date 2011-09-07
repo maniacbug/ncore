@@ -30,46 +30,12 @@ private:
   Clock clock; // TODO: Need to pass this in!!
 public:
 //protected:
-  void runonce(void)
-  {
-    //if ( object_q.empty() )
-    //  wait();
-    if ( ! object_q.empty() )
-    {
-      unsigned long top_trigger_at = object_q.top().trigger_at;
-      unsigned long now = clock.millis();
-      if ( now >= top_trigger_at )
-      {
-	// TODO: object_q_mutex
-	SchedulableObject o = object_q.top();
-	object_q.pop();
-
-	dispatch.execute(o.commands);
-      }
-      //else
-      //{
-	//wait(top_trigger_at - time);
-      //}
-    }
-  }
+  void runonce(void);
 public:
   Scheduler(Dispatcher& _d): dispatch(_d) {}
-  void add(unsigned long trigger_at ,const std::string& commands )
-  {
-    // TODO: object_q_mutex
-    object_q.push(SchedulableObject(trigger_at,commands));
-    //post();
-  }
-  size_t size(void) const
-  {
-    return object_q.size();
-  }
-  void clear(void)
-  {
-    clock = Clock();
-    while ( ! object_q.empty() )
-      object_q.pop();
-  }
+  void add(unsigned long trigger_at, const std::string& commands );
+  size_t size(void) const;
+  void clear(void);
 };
 
 #endif // __SCHEDULER_H__
