@@ -122,6 +122,21 @@ void Logger::sketch(const std::string& module, const std::string& format,...)
   throttle_output_rate();
 }
 
+void Logger::sketch_v(const std::string& module, const std::string& format, va_list ap)
+{
+  pthread_mutex_lock( &mutex );
+
+  vsnprintf(buffer,sizeof(buffer),format.c_str(),ap);
+ 
+  string preamble = string("SK ") + module + "    ";
+  preamble.resize(7);
+  add_buffer(preamble);
+
+  pthread_mutex_unlock( &mutex );
+
+  throttle_output_rate();
+}
+
 void Logger::add_message(const std::string& preamble,const std::string& message)
 {
   ostringstream ss;

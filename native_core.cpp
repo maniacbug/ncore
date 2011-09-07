@@ -98,7 +98,9 @@ void printf_P(const char* format,...)
 
   va_list args;
   va_start (args, format);
-  vprintf (formatstr.c_str(), args);
+  //vprintf (formatstr.c_str(), args);
+  theLogger.sketch_v("PRTF",formatstr.c_str(),args);
+  
   va_end (args); 
 }
 

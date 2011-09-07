@@ -3,9 +3,10 @@
 
 #include <string>
 #include <vector>
-#include <IDispatchable.h>
 
 #include <stdarg.h>
+
+#include <IDispatchable.h>
 
 class Clock;
 class Parser;
@@ -33,6 +34,7 @@ public:
   void add(const std::string&,...);
   void internal(const std::string& module, const std::string& format,...);
   void sketch(const std::string& module, const std::string& format,...);
+  void sketch_v(const std::string& module, const std::string& format, va_list ap);
   void clear(void);
   int lines_contain(const std::string&) const;
   
