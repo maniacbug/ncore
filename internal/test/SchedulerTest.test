@@ -9,24 +9,91 @@
 
 // Project includes
 #include <Parser.h>
+#include <Dispatcher.h>
+#include <Clock.h>
+#include <IDispatchable.h>
 #include <Scheduler.h>
 
 using namespace std;
 
+extern "C" void mock_time_reset(void);
+
+struct TestAction: public IDispatchable
+{
+  int called;
+  TestAction(void): called(0) {}
+  std::string& getCommands(void) const { static std::string commands = "test"; return commands; }
+  bool runCommand( const Parser& p )
+  {
+    bool result = false;
+    if ( p.at(0) == "test" )
+    {
+      ++called;
+      if ( p.size() > 1 && p.at(1) == "more" )
+	called += 4;
+      result = true;
+    }
+    else if ( p.at(0) == "help" && p.at(1) == "test" )
+    {
+      cout << "test -- do nothing and return true" << endl;
+      result = true;
+    }
+    return result;
+  }
+};
+
 class SchedulerTestSuite: public CxxTest::TestSuite
 {
   Scheduler sched;
+  Dispatcher dispatch;
+  Clock clock;
+  TestAction action;
 public:
+  SchedulerTestSuite(void): sched(dispatch)
+  {
+  }
   void setUp()
   {
+    mock_time_reset();
+    clock = Clock();
+    dispatch.clear();
+    sched.clear();
+    action = TestAction();
+    dispatch.add(&action);
   }
 
   void testEmpty( void )
   {
+    TS_ASSERT_EQUALS( sched.size(), 0 );
   }
   void testAdd( void )
   {
-    sched.add(1000,Parser("test"));
+    sched.add(1000,string("test")) ;
+    TS_ASSERT_EQUALS( sched.size(), 1 );
+  }
+  void testNotRun( void )
+  {
+    sched.add(1000,string("test"));
+    sched.runonce(); // protected!!
+    TS_ASSERT_EQUALS( action.called, 0 );
+  }
+  void testRun( void )
+  {
+    sched.add(1000,string("test"));
+    clock.delay(1100);
+    sched.runonce(); // protected!!
+    TS_ASSERT_EQUALS( action.called, 1 );
+  }
+  void testRunTwice( void )
+  {
+    sched.add(1000,string("test"));
+    sched.add(2000,string("test more"));
+    clock.delay(1100);
+    sched.runonce(); // protected!!
+    TS_ASSERT_EQUALS( action.called, 1 );
+    clock.delay(1100);
+    sched.runonce(); // protected!!
+    TS_ASSERT_EQUALS( action.called, 6 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
