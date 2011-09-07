@@ -1,0 +1,27 @@
+// STL includes
+#include <vector>
+#include <string>
+
+// C includes
+
+// Library includes
+#include <cxxtest/TestSuite.h>
+
+// Project includes
+#include <Template.h>
+
+using namespace std;
+
+class TemplateTestSuite: public CxxTest::TestSuite
+{
+  Template sched;
+public:
+  void setUp()
+  {
+  }
+
+  void testEmpty( void )
+  {
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
