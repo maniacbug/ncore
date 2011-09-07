@@ -82,6 +82,7 @@ void Scheduler::runonce(void)
 void Scheduler::add(unsigned long trigger_at, const std::string& commands )
 {
   // TODO: object_q_mutex
+  logger.sketch("AT","%lu %s",trigger_at,commands.c_str());
   object_q.push(SchedulableObject(trigger_at,commands));
   cerr << "posting..." << endl;
   sem_post(&sem);

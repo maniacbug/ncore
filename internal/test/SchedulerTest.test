@@ -139,42 +139,32 @@ public:
     tv.tv_nsec = 60000000L;
 
     cerr << "adding..." << endl;
-    global_logger.internal("AT","100 test");
     global_sched.add(100,string("test"));
     nanosleep(&tv,NULL);
     cerr << "adding..." << endl;
-    global_logger.internal("AT","200 test more");
     global_sched.add(200,string("test more"));
     cerr << "adding..." << endl;
-    global_logger.internal("AT","300 test more");
     global_sched.add(300,string("test more"));
 
     cerr << "delay..." << endl;
-    global_logger.internal("TEST","delay 60");
     clock.delay(60);
     nanosleep(&tv,NULL);
     cerr << "delay..." << endl;
-    global_logger.internal("TEST","delay 60");
     clock.delay(60);
     nanosleep(&tv,NULL);
     cerr << "delay..." << endl;
-    global_logger.internal("TEST","delay 60");
     clock.delay(60);
     nanosleep(&tv,NULL);
     cerr << "delay..." << endl;
-    global_logger.internal("TEST","delay 60");
     clock.delay(60);
     nanosleep(&tv,NULL);
     cerr << "delay..." << endl;
-    global_logger.internal("TEST","delay 60");
     clock.delay(60);
     nanosleep(&tv,NULL);
     cerr << "delay..." << endl;
-    global_logger.internal("TEST","delay 60");
     clock.delay(60);
     nanosleep(&tv,NULL);
     cerr << "delay..." << endl;
-    global_logger.internal("TEST","delay 60");
     clock.delay(60);
     nanosleep(&tv,NULL);
 
@@ -186,8 +176,7 @@ public:
 
     cerr << global_logger;
      
-    //TS_ASSERT_EQUALS( global_logger.lines_contain("first"), 2 );
-    //TS_ASSERT_EQUALS( global_logger.lines_contain("quit"), 2 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction"), 3 );
     cerr << ":OUT]" << endl; 
   }
 };
