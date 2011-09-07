@@ -233,7 +233,7 @@ public:
     commands.clear();
     commands.add(&log);
 
-    bool ok;
+    bool ok = false;
     
     try
     {
