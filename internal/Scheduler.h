@@ -6,7 +6,10 @@
 #include <string>
 
 // C includes
+
 // Library includes
+#include <semaphore.h>
+
 // Project includes
 #include <Clock.h>
 
@@ -19,20 +22,23 @@ struct SchedulableObject
   bool operator<(const SchedulableObject& _rhs) const { return trigger_at > _rhs.trigger_at; }
 };
 
-//class Dispatcher;
-#include <Dispatcher.h>
+class Dispatcher;
+class Logger;
 
 class Scheduler
 {
 private:
   std::priority_queue<SchedulableObject> object_q;
   Dispatcher& dispatch;
+  Logger& logger;
   Clock clock; // TODO: Need to pass this in!!
+  sem_t sem;
 public:
 //protected:
   void runonce(void);
 public:
-  Scheduler(Dispatcher& _d): dispatch(_d) {}
+  Scheduler(Dispatcher& _d, Logger& _l);
+  virtual ~Scheduler();
   void add(unsigned long trigger_at, const std::string& commands );
   size_t size(void) const;
   void clear(void);

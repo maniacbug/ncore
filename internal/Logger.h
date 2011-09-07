@@ -36,6 +36,8 @@ public:
   void sketch(const std::string& module, const std::string& format,...);
   void sketch_v(const std::string& module, const std::string& format, va_list ap);
   void clear(void);
+  void setClock(Clock& _c) { clock = &_c; }
+  void setRate(unsigned long _rate) { rate_limit = _rate; }
   int lines_contain(const std::string&) const;
   
   std::string& getCommands(void) const { static std::string commands = "list log"; return commands; }

@@ -1,6 +1,8 @@
 // STL includes
 #include <vector>
 #include <string>
+#include <iostream>
+#include <stdexcept>
 
 // C includes
 
@@ -8,15 +10,19 @@
 #include <cxxtest/TestSuite.h>
 
 // Project includes
+#include <SketchThread.h>
 #include <Parser.h>
 #include <Dispatcher.h>
 #include <Clock.h>
 #include <IDispatchable.h>
+#include <Logger.h>
 #include <Scheduler.h>
 
 using namespace std;
 
+extern ostream& operator<<(ostream& os, const Logger& log);
 extern "C" void mock_time_reset(void);
+extern Logger global_logger;
 
 struct TestAction: public IDispatchable
 {
@@ -25,6 +31,8 @@ struct TestAction: public IDispatchable
   std::string& getCommands(void) const { static std::string commands = "test"; return commands; }
   bool runCommand( const Parser& p )
   {
+    cerr << "runcommand..." << endl;
+    global_logger.sketch("TEST","TestAction %i",p.size());
     bool result = false;
     if ( p.at(0) == "test" )
     {
@@ -42,6 +50,25 @@ struct TestAction: public IDispatchable
   }
 };
 
+Dispatcher global_dispatch;
+Scheduler global_sched(global_dispatch,global_logger);
+
+void sched_test_main(void)
+{
+  cerr << "starting..." << endl;
+  bool done = false;
+  while(!done)
+  {
+    cerr << "running..." << endl;
+    global_sched.runonce();
+
+    if ( ! global_sched.size() )
+      cerr << "empty" << endl;
+    done = ! global_sched.size();
+  }
+  cerr << "done..." << endl;
+}
+
 class SchedulerTestSuite: public CxxTest::TestSuite
 {
   Scheduler sched;
@@ -49,7 +76,7 @@ class SchedulerTestSuite: public CxxTest::TestSuite
   Clock clock;
   TestAction action;
 public:
-  SchedulerTestSuite(void): sched(dispatch)
+  SchedulerTestSuite(void): sched(dispatch,global_logger)
   {
   }
   void setUp()
@@ -60,6 +87,7 @@ public:
     sched.clear();
     action = TestAction();
     dispatch.add(&action);
+    global_logger.clear();
   }
 
   void testEmpty( void )
@@ -94,6 +122,73 @@ public:
     clock.delay(1100);
     sched.runonce(); // protected!!
     TS_ASSERT_EQUALS( action.called, 6 );
+  }
+  void testConcurrent( void )
+  {
+    cerr << "[IN:" << __FUNCTION__ ;
+    global_dispatch.add(&action);
+    global_logger.setClock(clock);
+    global_logger.setRate(1);
+    SketchThread t(1);
+    t.startCustom(sched_test_main);
+    
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = 500000L;
+    nanosleep(&tv,NULL);
+    tv.tv_nsec = 60000000L;
+
+    cerr << "adding..." << endl;
+    global_logger.internal("AT","100 test");
+    global_sched.add(100,string("test"));
+    nanosleep(&tv,NULL);
+    cerr << "adding..." << endl;
+    global_logger.internal("AT","200 test more");
+    global_sched.add(200,string("test more"));
+    cerr << "adding..." << endl;
+    global_logger.internal("AT","300 test more");
+    global_sched.add(300,string("test more"));
+
+    cerr << "delay..." << endl;
+    global_logger.internal("TEST","delay 60");
+    clock.delay(60);
+    nanosleep(&tv,NULL);
+    cerr << "delay..." << endl;
+    global_logger.internal("TEST","delay 60");
+    clock.delay(60);
+    nanosleep(&tv,NULL);
+    cerr << "delay..." << endl;
+    global_logger.internal("TEST","delay 60");
+    clock.delay(60);
+    nanosleep(&tv,NULL);
+    cerr << "delay..." << endl;
+    global_logger.internal("TEST","delay 60");
+    clock.delay(60);
+    nanosleep(&tv,NULL);
+    cerr << "delay..." << endl;
+    global_logger.internal("TEST","delay 60");
+    clock.delay(60);
+    nanosleep(&tv,NULL);
+    cerr << "delay..." << endl;
+    global_logger.internal("TEST","delay 60");
+    clock.delay(60);
+    nanosleep(&tv,NULL);
+    cerr << "delay..." << endl;
+    global_logger.internal("TEST","delay 60");
+    clock.delay(60);
+    nanosleep(&tv,NULL);
+
+    tv.tv_sec = 0;
+    tv.tv_nsec = 500000L;
+    nanosleep(&tv,NULL);
+
+    t.waitToFinish();
+
+    cerr << global_logger;
+     
+    //TS_ASSERT_EQUALS( global_logger.lines_contain("first"), 2 );
+    //TS_ASSERT_EQUALS( global_logger.lines_contain("quit"), 2 );
+    cerr << ":OUT]" << endl; 
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
