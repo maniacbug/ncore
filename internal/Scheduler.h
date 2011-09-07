@@ -6,8 +6,12 @@
 // Library includes
 // Project includes
 
+class Parser;
+
 class Scheduler
 {
+public:
+  void add(unsigned long ,const Parser& ) {}
 };
 
 #endif // __SCHEDULER_H__

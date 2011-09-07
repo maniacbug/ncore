@@ -8,6 +8,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Project includes
+#include <Parser.h>
 #include <Scheduler.h>
 
 using namespace std;
@@ -22,6 +23,10 @@ public:
 
   void testEmpty( void )
   {
+  }
+  void testAdd( void )
+  {
+    sched.add(1000,Parser("test"));
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
