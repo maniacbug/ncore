@@ -30,43 +30,43 @@ public:
   }
   void testThread( void )
   {
-    cerr << "[IN:" << __FUNCTION__ ;
+    //cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t;
     t.waitToFinish();
     
     TS_ASSERT_EQUALS( global_logger.lines_contain("setup"), 1 );
     TS_ASSERT_EQUALS( global_logger.lines_contain("loop"), 10 );
-    cerr << ":OUT]" << endl;
+    //cerr << ":OUT]" << endl;
   }
   void testCustom( void )
   {
-    cerr << "[IN:" << __FUNCTION__ ;
+    //cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t(1);
     t.startCustom(custom_thread_main);
     t.waitToFinish();
 
     TS_ASSERT_EQUALS( global_logger.lines_contain("custom"), 5 );
-    cerr << ":OUT]" << endl;
+    //cerr << ":OUT]" << endl;
   }
   void testExceptions1( void )
   {
-    cerr << "[IN:" << __FUNCTION__ ;
+    //cerr << "[IN:" << __FUNCTION__ ;
     TS_ASSERT_THROWS_ANYTHING( SketchThread(-1) );
-    cerr << ":OUT]" << endl;
+    //cerr << ":OUT]" << endl;
   }
   void testExceptions2( void )
   {
-    cerr << "[IN:" << __FUNCTION__ ;
+    //cerr << "[IN:" << __FUNCTION__ ;
     TS_ASSERT_THROWS_ANYTHING( SketchThread(1).startCustom(NULL) );
-    cerr << ":OUT]" << endl;
+    //cerr << ":OUT]" << endl;
   }
   void testExceptions3( void )
   {
-    cerr << "[IN:" << __FUNCTION__ ;
+    //cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t(0);
     TS_ASSERT_THROWS_ANYTHING(t.startCustom(custom_thread_main); );
     t.waitToFinish(); 
-    cerr << ":OUT]" << endl;
+    //cerr << ":OUT]" << endl;
   }
 };
 

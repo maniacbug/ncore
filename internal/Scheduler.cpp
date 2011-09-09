@@ -49,7 +49,7 @@ void Scheduler::runonce(void)
       }
       catch (runtime_error* e)
       {
-	cerr << "runtime error " << e->what() << endl;
+	logger.sketch("AT", "Error: %s",e->what());
       }
     }
     else
@@ -68,14 +68,12 @@ void Scheduler::runonce(void)
       }
       int v;
       sem_getvalue(&sem,&v);
-      cerr << "waiting sem=" << v << " wait= " << wait << " timeout=" << tm.tv_sec << "." << tm.tv_nsec << " ..." << endl;
       logger.sketch("AT","Waiting %lu",wait);
       int result = sem_timedwait(&sem,&tm);
       if ( result )
 	logger.sketch("AT","Sem timeout");
       else
 	logger.sketch("AT","Got sem");
-      cerr << "got sem " << result << " ..." << endl;
     }
   }
 }
@@ -86,7 +84,6 @@ void Scheduler::add(unsigned long trigger_at, const std::string& commands )
   // TODO: pthread_mutex_lock object_q_mutex
   object_q.push(SchedulableObject(trigger_at,commands));
   // TODO: pthread_mutex_unlock object_q_mutex
-  cerr << "posting..." << endl;
   sem_post(&sem);
 }
 

@@ -82,7 +82,7 @@ public:
   }
   void testQueueConcurrent( void )
   {
-    cerr << "[IN:" << __FUNCTION__ ;
+    //cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t(1);
     t.startCustom(semaphores_test_main);
     
@@ -111,7 +111,7 @@ public:
      
     TS_ASSERT_EQUALS( global_logger.lines_contain("first"), 2 );
     TS_ASSERT_EQUALS( global_logger.lines_contain("quit"), 2 );
-    cerr << ":OUT]" << endl; 
+    //cerr << ":OUT]" << endl; 
   }
   void testSpiTransferRead( void )
   {

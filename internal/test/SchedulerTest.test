@@ -32,7 +32,6 @@ struct TestAction: public IDispatchable
   std::string& getCommands(void) const { static std::string commands = "test"; return commands; }
   bool runCommand( const Parser& p )
   {
-    cerr << "runcommand..." << endl;
     global_logger.sketch("TEST","TestAction %i",p.size());
     bool result = false;
     if ( p.at(0) == "test" )
@@ -56,18 +55,12 @@ Scheduler global_sched(global_dispatch,global_logger);
 
 void sched_test_main(void)
 {
-  cerr << "starting..." << endl;
   bool done = false;
   while(!done)
   {
-    cerr << "running..." << endl;
     global_sched.runonce();
-
-    if ( ! global_sched.size() )
-      cerr << "empty" << endl;
     done = ! global_sched.size();
   }
-  cerr << "done..." << endl;
 }
 
 class SchedulerTestSuite: public CxxTest::TestSuite
@@ -130,7 +123,7 @@ public:
   }
   void testConcurrent( void )
   {
-    cerr << "[IN:" << __FUNCTION__ ;
+    //cerr << "[IN:" << __FUNCTION__ ;
     global_dispatch.add(&action);
     global_logger.setClock(clock);
     global_logger.setRate(1);
@@ -143,33 +136,23 @@ public:
     nanosleep(&tv,NULL);
     tv.tv_nsec = 60000000L;
 
-    cerr << "adding..." << endl;
     global_sched.add(100,string("test"));
     nanosleep(&tv,NULL);
-    cerr << "adding..." << endl;
     global_sched.add(200,string("test more"));
-    cerr << "adding..." << endl;
     global_sched.add(300,string("test more"));
 
-    cerr << "delay..." << endl;
     clock.delay(60);
     nanosleep(&tv,NULL);
-    cerr << "delay..." << endl;
     clock.delay(60);
     nanosleep(&tv,NULL);
-    cerr << "delay..." << endl;
     clock.delay(60);
     nanosleep(&tv,NULL);
-    cerr << "delay..." << endl;
     clock.delay(60);
     nanosleep(&tv,NULL);
-    cerr << "delay..." << endl;
     clock.delay(60);
     nanosleep(&tv,NULL);
-    cerr << "delay..." << endl;
     clock.delay(60);
     nanosleep(&tv,NULL);
-    cerr << "delay..." << endl;
     clock.delay(60);
     nanosleep(&tv,NULL);
 
@@ -179,10 +162,10 @@ public:
 
     t.waitToFinish();
 
-    cerr << global_logger;
+    //cerr << global_logger;
      
     TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction"), 3 );
-    cerr << ":OUT]" << endl; 
+    //cerr << ":OUT]" << endl; 
   }
   void testAtCommandOk( void )
   {
