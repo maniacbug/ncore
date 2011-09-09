@@ -156,7 +156,5 @@ void Scheduler::handler_thread_main(void* pv)
   
   while(!psched->done)
     psched->runonce();
-
-  cerr << "done" << endl;
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp
