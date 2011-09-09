@@ -38,8 +38,10 @@ public:
 //protected:
   void runonce(void);
   
+protected:
   std::string& getCommands(void) const;
   bool runCommand( const Parser& );
+  bool command_at(const std::vector<std::string>&);
 public:
   Scheduler(Dispatcher& _d, Logger& _l);
   virtual ~Scheduler();

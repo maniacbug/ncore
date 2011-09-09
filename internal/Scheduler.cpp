@@ -1,6 +1,9 @@
 // STL includes
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
+#include <iterator>
+#include <sstream>
 // C includes
 #include <time.h>
 // Library includes
@@ -115,7 +118,7 @@ bool Scheduler::runCommand( const Parser& parser )
 
   if ( command == "at" )
   {
-    result = true;
+    result = command_at(parser); 
   }
   else if ( command == "help" )
   {
@@ -128,5 +131,21 @@ bool Scheduler::runCommand( const Parser& parser )
   }
 
   return result; 
+}
+
+bool Scheduler::command_at(const vector<string>& _commands)
+{
+  if ( _commands.size() < 3 )
+    throw new runtime_error("Usage: at <x> <commands>");
+
+  int trigger_at;
+  istringstream convert(_commands.at(2));
+  convert >> dec >> trigger_at;
+
+  ostringstream commandstr;
+  copy(_commands.begin()+2,_commands.end(),ostream_iterator<string>(commandstr," "));
+  add(trigger_at,commandstr.str());
+  
+  return true;
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp

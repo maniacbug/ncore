@@ -180,10 +180,17 @@ public:
     TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction"), 3 );
     cerr << ":OUT]" << endl; 
   }
-  void testAtCommand( void )
+  void testAtCommandOk( void )
   {
     bool ok = dispatch.execute("at 1 list");
     TS_ASSERT_EQUALS( ok, true );
+  }
+  void testAtCommandWorks( void )
+  {
+    dispatch.execute("at 1 test");
+    clock.delay(2);
+    sched.runonce(); // protected!!
+    TS_ASSERT_EQUALS( action.called, 1 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
