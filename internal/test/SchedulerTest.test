@@ -17,6 +17,7 @@
 #include <IDispatchable.h>
 #include <Logger.h>
 #include <Scheduler.h>
+#include <OutputCapture.h>
 
 using namespace std;
 
@@ -75,6 +76,7 @@ class SchedulerTestSuite: public CxxTest::TestSuite
   Dispatcher dispatch;
   Clock clock;
   TestAction action;
+  OutputCapture cap;
 public:
   SchedulerTestSuite(void): sched(dispatch,global_logger)
   {
@@ -89,6 +91,8 @@ public:
     dispatch.add(&action);
     dispatch.add(&sched);
     global_logger.clear();
+    dispatch.add(&global_logger);
+    cap.clear();
   }
 
   void testEmpty( void )
@@ -191,6 +195,20 @@ public:
     clock.delay(2);
     sched.runonce(); // protected!!
     TS_ASSERT_EQUALS( action.called, 1 );
+  }
+  void testAtCommandTwice( void )
+  {
+    cap.start();
+    dispatch.execute("at 1 test");
+    dispatch.execute("at 2 list");
+    clock.delay(3);
+    sched.runonce(); // protected!!
+    sched.runonce(); // protected!!
+    cap.stop();
+    
+    TS_ASSERT_EQUALS( cap.contains("AT"), 2 );
+    TS_ASSERT_EQUALS( cap.contains("TEST"), 1 );
+
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
