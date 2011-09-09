@@ -136,7 +136,7 @@ bool Scheduler::command_at(const vector<string>& _commands)
     throw new runtime_error("Usage: at <x> <commands>");
 
   int trigger_at;
-  istringstream convert(_commands.at(2));
+  istringstream convert(_commands.at(1));
   convert >> dec >> trigger_at;
 
   ostringstream commandstr;
@@ -144,5 +144,17 @@ bool Scheduler::command_at(const vector<string>& _commands)
   add(trigger_at,commandstr.str());
   
   return true;
+}
+  
+void Scheduler::handler_thread_main(void* pv)
+{
+  Scheduler* psched = reinterpret_cast<Scheduler*>(pv);
+  
+  bool done = false;
+  while(!done)
+  {
+    psched->runonce();
+    done = false; // psched->something .. need a way to end nicely. 
+  }
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -48,6 +48,8 @@ public:
   void add(unsigned long trigger_at, const std::string& commands );
   size_t size(void) const;
   void clear(void);
+
+  static void handler_thread_main(void*);
 };
 
 #endif // __SCHEDULER_H__

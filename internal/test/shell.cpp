@@ -14,6 +14,7 @@
 #include <Clock.h>
 #include <Eeprom.h>
 #include <SpiQueue.h>
+#include <Scheduler.h>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ Pins thePins(theLogger);
 SerialBuffer theSerialBuffer(theLogger);
 Eeprom theEeprom(theLogger);
 SpiQueue theSpiQueue(theLogger);
+Scheduler theScheduler(theDispatcher,theLogger);
 
 extern "C" void init(void);
 
@@ -38,12 +40,17 @@ int main(void)
   theDispatcher.add(&theSerialBuffer);
   theDispatcher.add(&theEeprom);
   theDispatcher.add(&theSpiQueue);
+  theDispatcher.add(&theScheduler);
  
   // Announce to the log
   theLogger.internal("CORE","Started");
 
   // Launch the sketch in its own thread
   SketchThread thread;
+
+  // Launch the scheduler
+  SketchThread scheduler_thread(1);
+  scheduler_thread.startCustom(Scheduler::handler_thread_main,&theScheduler);
 
   // Operate the shell
   Shell().run(theDispatcher,theClock);

@@ -7,7 +7,7 @@
 extern "C" void setup(void);
 extern "C" void loop(void);
 
-SketchThread::SketchThread(int mode): pthread(NULL)
+SketchThread::SketchThread(int mode): pthread(NULL), custom_body(NULL), custom_body_wdata(NULL), custom_data(NULL)
 {
   // Regular operation, controlling setup() and loop()
   if ( mode == 0)
@@ -34,6 +34,36 @@ void SketchThread::startCustom(void (*fn)(void))
   custom_body = fn;
   pthread = new pthread_t;
   pthread_create( pthread, NULL, sketch_thread_custom_main, this );
+}
+
+void SketchThread::startCustom(void (*fn)(void*),void* data)
+{
+  if ( pthread )
+    throw new std::runtime_error("Thread is already running");
+
+  if ( !fn )
+    throw new std::runtime_error("Must send a valid function");
+
+  if ( !data )
+    throw new std::runtime_error("Must send a valid data pointer");
+
+  custom_body_wdata = fn;
+  custom_data = data;
+  pthread = new pthread_t;
+  pthread_create( pthread, NULL, sketch_thread_custom_wdata_main, this );
+}
+
+void* SketchThread::sketch_thread_custom_wdata_main(void* pv)
+{
+  SketchThread* psk = reinterpret_cast<SketchThread*>(pv);
+
+  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL);
+  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL);
+
+  if ( psk && psk->custom_body_wdata )
+    psk->custom_body_wdata(psk->custom_data);
+
+  return NULL;
 }
 
 void* SketchThread::sketch_thread_custom_main(void* pv)
