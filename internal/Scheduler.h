@@ -34,6 +34,7 @@ private:
   Logger& logger;
   Clock clock; // TODO: Need to pass this in!!
   sem_t sem;
+  bool done;
 public:
 //protected:
   void runonce(void);

@@ -15,7 +15,7 @@
 
 using namespace std;
 
-Scheduler::Scheduler(Dispatcher& _d, Logger& _l): dispatch(_d), logger(_l)
+Scheduler::Scheduler(Dispatcher& _d, Logger& _l): dispatch(_d), logger(_l), done(false)
 {
   sem_init(&sem,0,0);
 }
@@ -43,6 +43,9 @@ void Scheduler::runonce(void)
       object_q.pop();
       // TODO: pthread_mutex_unlock object_q_mutex
 
+      if ( o.commands == "quit" )
+	done = true;
+      
       try
       {
 	dispatch.execute(o.commands);
@@ -139,6 +142,7 @@ bool Scheduler::command_at(const vector<string>& _commands)
   istringstream convert(_commands.at(1));
   convert >> dec >> trigger_at;
 
+
   ostringstream commandstr;
   copy(_commands.begin()+2,_commands.end(),ostream_iterator<string>(commandstr," "));
   add(trigger_at,commandstr.str());
@@ -150,11 +154,9 @@ void Scheduler::handler_thread_main(void* pv)
 {
   Scheduler* psched = reinterpret_cast<Scheduler*>(pv);
   
-  bool done = false;
-  while(!done)
-  {
+  while(!psched->done)
     psched->runonce();
-    done = false; // psched->something .. need a way to end nicely. 
-  }
+
+  cerr << "done" << endl;
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp

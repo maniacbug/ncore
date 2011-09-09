@@ -30,43 +30,61 @@ public:
   }
   void testThread( void )
   {
-    //cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t;
     t.waitToFinish();
     
     TS_ASSERT_EQUALS( global_logger.lines_contain("setup"), 1 );
     TS_ASSERT_EQUALS( global_logger.lines_contain("loop"), 10 );
-    //cerr << ":OUT]" << endl;
   }
   void testCustom( void )
   {
-    //cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t(1);
     t.startCustom(custom_thread_main);
     t.waitToFinish();
 
     TS_ASSERT_EQUALS( global_logger.lines_contain("custom"), 5 );
-    //cerr << ":OUT]" << endl;
   }
-  void testExceptions1( void )
+  const char* message(void)
   {
-    //cerr << "[IN:" << __FUNCTION__ ;
+    return "custom data";
+  }
+  static void custom_thread_wdata_main(void* pv)
+  {
+    SketchThreadTestSuite* pts = reinterpret_cast<SketchThreadTestSuite*>(pv);
+    
+    int i=5;
+    while(i--)
+      global_logger.add(pts->message());
+  }
+  void testCustomWithData( void )
+  {
+    SketchThread t(1);
+    t.startCustom(custom_thread_wdata_main,this);
+    t.waitToFinish();
+
+    TS_ASSERT_EQUALS( global_logger.lines_contain("custom data"), 5 );
+  }
+  static void empty(void*)
+  {
+  }
+  void testExceptions( void )
+  {
     TS_ASSERT_THROWS_ANYTHING( SketchThread(-1) );
-    //cerr << ":OUT]" << endl;
-  }
-  void testExceptions2( void )
-  {
-    //cerr << "[IN:" << __FUNCTION__ ;
     TS_ASSERT_THROWS_ANYTHING( SketchThread(1).startCustom(NULL) );
-    //cerr << ":OUT]" << endl;
+    TS_ASSERT_THROWS_ANYTHING( SketchThread(1).startCustom(NULL,NULL) );
+    TS_ASSERT_THROWS_ANYTHING( SketchThread(1).startCustom(SketchThreadTestSuite::empty,NULL) );
   }
   void testExceptions3( void )
   {
-    //cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t(0);
     TS_ASSERT_THROWS_ANYTHING(t.startCustom(custom_thread_main); );
     t.waitToFinish(); 
-    //cerr << ":OUT]" << endl;
+  }
+  void testExceptions4( void )
+  {
+    SketchThread t(0);
+    TS_ASSERT_THROWS_ANYTHING(t.startCustom(empty,this); );
+    t.waitToFinish(); 
   }
 };
 

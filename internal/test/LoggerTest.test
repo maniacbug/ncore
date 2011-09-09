@@ -6,6 +6,8 @@
 #include <iterator>
 #include <algorithm>
 
+#include <stdarg.h>
+
 #include <cxxtest/TestSuite.h>
 #include <pthread.h>
 
@@ -253,6 +255,25 @@ public:
     TS_ASSERT_EQUALS( ok, true );
     TS_ASSERT_EQUALS( log.lines_contain(" 0001"), 11 );
   }
+  void testExceptions( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("log") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("log rate") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("log something") );
+  }
+  void t_printf(const char* format,...)
+  {
+    va_list args;
+    va_start (args, format);
+    log.sketch_v("TEST",format,args);
+    va_end (args); 
+  }
+  void testSketchVargs( void )
+  {
+    t_printf("Hello %s","test");
+    TS_ASSERT_EQUALS( log.lines_contain("Hello test"), 1 );
+  }
+
 };
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

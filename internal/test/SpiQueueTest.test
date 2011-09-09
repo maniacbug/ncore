@@ -28,6 +28,13 @@ void semaphores_test_main(void)
   }
 }
 
+SpiQueue* thespiq;
+
+void spi_test_main(void)
+{
+  while ( thespiq->transfer(-1) != 0xb0 ) {}
+}
+
 class SpiQueueTestSuite: public CxxTest::TestSuite
 {
   SpiQueue spiq;
@@ -45,6 +52,7 @@ public:
     logger.clear();
     dispatch.clear();
     dispatch.add(&spiq);
+    dispatch.add(&logger);
     cap.clear();
   }
 
@@ -163,6 +171,8 @@ public:
   void testSpiCommandExceptions( void )
   {
     TS_ASSERT_THROWS_ANYTHING( dispatch.execute("spi") );
+    TS_ASSERT_THROWS_ANYTHING( dispatch.execute("spi default") );
+    TS_ASSERT_THROWS_ANYTHING( dispatch.execute("spi 5x") );
   }
   void testCommandHelp( void )
   {
@@ -175,6 +185,8 @@ public:
   }
   void testCommandDefault( void )
   {
+    thespiq = &spiq;
+
     dispatch.execute("spi default f0");
     spiq.transfer(-1);
 
@@ -196,6 +208,20 @@ public:
   void todo_testMoreCommands( void )
   {
     dispatch.execute("spi nodefault");
+  }
+  void testCommandConcurrent( void )
+  {
+    SketchThread t(1);
+    t.startCustom(spi_test_main);
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = 500000L;
+    nanosleep(&tv,NULL);
+    spiq.hwEnqueue(0xb0);
+    t.waitToFinish();
+    
+    TS_ASSERT_EQUALS( logger.lines_contain("Waiting"), 1 );
+    TS_ASSERT_EQUALS( logger.lines_contain("in ff"), 2 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

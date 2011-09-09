@@ -121,6 +121,17 @@ public:
     sched.runonce(); // protected!!
     TS_ASSERT_EQUALS( action.called, 6 );
   }
+  void testRunGarbage( void )
+  {
+    cap.start();
+    sched.add(1,string("something"));
+    sched.add(2,string("list"));
+    clock.delay(3);
+    sched.runonce(); // protected!!
+    sched.runonce(); // protected!!
+    cap.stop();
+    TS_ASSERT_EQUALS( global_logger.lines_contain("Error"), 1 );
+  }
   void testConcurrent( void )
   {
     //cerr << "[IN:" << __FUNCTION__ ;
@@ -139,7 +150,7 @@ public:
     global_sched.add(100,string("test"));
     nanosleep(&tv,NULL);
     global_sched.add(200,string("test more"));
-    global_sched.add(300,string("test more"));
+    global_sched.add(3000,string("test more"));
 
     clock.delay(60);
     nanosleep(&tv,NULL);
@@ -153,8 +164,9 @@ public:
     nanosleep(&tv,NULL);
     clock.delay(60);
     nanosleep(&tv,NULL);
-    clock.delay(60);
+    clock.delay(4000);
     nanosleep(&tv,NULL);
+    global_sched.add(4000,string("test"));
 
     tv.tv_sec = 0;
     tv.tv_nsec = 500000L;
@@ -164,7 +176,7 @@ public:
 
     //cerr << global_logger;
      
-    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction"), 3 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction"), 4 );
     //cerr << ":OUT]" << endl; 
   }
   void testAtCommandOk( void )
@@ -191,7 +203,36 @@ public:
     
     TS_ASSERT_EQUALS( cap.contains("AT"), 2 );
     TS_ASSERT_EQUALS( cap.contains("TEST"), 1 );
+  }
+  void testCommandHelp( void )
+  {
+    cap.start();
+    bool ok = dispatch.execute("help");
+    cap.stop();
 
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( (bool)cap.contains("at"), true );
+  }
+  void testCommandExceptions( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( dispatch.execute("at") );
+  }
+  void testHandlerThread( void )
+  {
+    sched.add(1,string("test"));
+    sched.add(2,string("test more"));
+    sched.add(3,string("quit"));
+    clock.delay(4);
+
+    SketchThread scheduler_thread(1);
+    scheduler_thread.startCustom(Scheduler::handler_thread_main,&sched);
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = 500L;
+    nanosleep(&tv,NULL);
+    scheduler_thread.waitToFinish();
+
+    //cerr << global_logger;
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
