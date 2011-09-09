@@ -12,6 +12,7 @@
 
 // Project includes
 #include <Clock.h>
+#include <IDispatchable.h>
 
 struct SchedulableObject
 {
@@ -25,7 +26,7 @@ struct SchedulableObject
 class Dispatcher;
 class Logger;
 
-class Scheduler
+class Scheduler: public IDispatchable
 {
 private:
   std::priority_queue<SchedulableObject> object_q;
@@ -36,6 +37,9 @@ private:
 public:
 //protected:
   void runonce(void);
+  
+  std::string& getCommands(void) const;
+  bool runCommand( const Parser& );
 public:
   Scheduler(Dispatcher& _d, Logger& _l);
   virtual ~Scheduler();

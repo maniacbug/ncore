@@ -8,6 +8,7 @@
 #include <Dispatcher.h>
 #include <Scheduler.h>
 #include <Logger.h>
+#include <Parser.h>
 
 using namespace std;
 
@@ -25,25 +26,20 @@ void Scheduler::runonce(void)
 {
   if ( object_q.empty() )
   {
-    int v;
-    sem_getvalue(&sem,&v);
-    cerr << "waiting sem=" << v <<  "..." << endl;
     sem_wait(&sem);
-    cerr << "got sem..." << endl;
     logger.sketch("AT","Got sem");
   }
   if ( ! object_q.empty() )
   {
+    // TODO: pthread_mutex_lock object_q_mutex
     unsigned long top_trigger_at = object_q.top().trigger_at;
     unsigned long now = clock.millis();
-    cerr << "now " << now << " top " << top_trigger_at << endl;
     if ( now >= top_trigger_at )
     {
-      // TODO: object_q_mutex
       SchedulableObject o = object_q.top();
       object_q.pop();
+      // TODO: pthread_mutex_unlock object_q_mutex
 
-      cerr << "dispatch " << o.commands << "..." << endl;
       try
       {
 	dispatch.execute(o.commands);
@@ -55,6 +51,8 @@ void Scheduler::runonce(void)
     }
     else
     {
+      // TODO: pthread_mutex_unlock object_q_mutex
+      
       timespec tm;
       unsigned long wait = top_trigger_at - now;
       clock_gettime(CLOCK_REALTIME,&tm);
@@ -81,9 +79,10 @@ void Scheduler::runonce(void)
 
 void Scheduler::add(unsigned long trigger_at, const std::string& commands )
 {
-  // TODO: object_q_mutex
   logger.sketch("AT","%lu %s",trigger_at,commands.c_str());
+  // TODO: pthread_mutex_lock object_q_mutex
   object_q.push(SchedulableObject(trigger_at,commands));
+  // TODO: pthread_mutex_unlock object_q_mutex
   cerr << "posting..." << endl;
   sem_post(&sem);
 }
@@ -96,8 +95,38 @@ size_t Scheduler::size(void) const
 void Scheduler::clear(void)
 {
   clock = Clock();
+  // TODO: pthread_mutex_lock object_q_mutex
   while ( ! object_q.empty() )
     object_q.pop();
+  // TODO: pthread_mutex_unlock object_q_mutex
 }
 
+string& Scheduler::getCommands(void) const 
+{ 
+  static std::string commands = "at"; 
+  return commands; 
+}
+
+bool Scheduler::runCommand( const Parser& parser ) 
+{ 
+  bool result = false;
+  
+  const string& command = parser.at(0);
+
+  if ( command == "at" )
+  {
+    result = true;
+  }
+  else if ( command == "help" )
+  {
+    const string& command = parser.at(1);
+    if ( command == "at" )
+    {
+      cout << "at <t> <commands> -- run <commands> at time <t> ms." << endl;
+    }
+    result = true;
+  }
+
+  return result; 
+}
 // vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -87,6 +87,7 @@ public:
     sched.clear();
     action = TestAction();
     dispatch.add(&action);
+    dispatch.add(&sched);
     global_logger.clear();
   }
 
@@ -178,6 +179,11 @@ public:
      
     TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction"), 3 );
     cerr << ":OUT]" << endl; 
+  }
+  void testAtCommand( void )
+  {
+    bool ok = dispatch.execute("at 1 list");
+    TS_ASSERT_EQUALS( ok, true );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
