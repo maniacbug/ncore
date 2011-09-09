@@ -27,6 +27,9 @@ private:
   Logger& log;
 
 protected:
+  std::string& getCommands() const { static std::string commands = "pins pin irq"; return commands; }
+  bool runCommand( const Parser& );
+
   bool command_pins(const std::vector<std::string>&) const;
 
   bool command_pin(const std::vector<std::string>&);
@@ -47,9 +50,6 @@ public:
   void digitalWrite(int pin,int level);
   int hwGetDigital(int pin) const;
   void pinMode(int pin, int dir);
- 
-  std::string& getCommands() const { static std::string commands = "pins pin irq"; return commands; }
-  bool runCommand( const Parser& );
 };
 
 #endif // __PINS_H__

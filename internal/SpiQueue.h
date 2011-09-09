@@ -91,15 +91,14 @@ private:
   bool has_default;
   uint8_t default_value;
 protected:
+  std::string& getCommands(void) const;
+  bool runCommand( const Parser& );
   bool command_spi(const std::vector<std::string>&);
 public:
   SpiQueue(Logger&);
   void hwEnqueue(uint8_t);
   uint8_t transfer(uint8_t);
   void clear(void);
-  
-  std::string& getCommands(void) const;
-  bool runCommand( const Parser& );
 };
 
 #endif // __SPI_QUEUE_H__
