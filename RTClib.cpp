@@ -96,7 +96,12 @@ DateTime::DateTime (const char* date, const char* time)
     switch (date[0])
     {
     case 'J':
-        m = date[1] == 'a' ? 1 : m = date[2] == 'n' ? 6 : 7;
+        if ( date[1] == 'a' )
+	    m = 1;
+	else if ( date[2] == 'n' )
+	    m = 6;
+	else
+	    m = 7;
         break;
     case 'F':
         m = 2;

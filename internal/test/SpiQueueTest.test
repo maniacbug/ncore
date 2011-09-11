@@ -55,6 +55,14 @@ public:
     dispatch.add(&logger);
     cap.clear();
   }
+  void real_delay_us( unsigned long us )
+  {
+    // Avoids the mock clock and inserts true delay. 
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = us * 1000L;
+    nanosleep(&tv,NULL);
+  }
 
   void testEmpty( void )
   {
@@ -93,11 +101,7 @@ public:
     //cerr << "[IN:" << __FUNCTION__ ;
     SketchThread t(1);
     t.startCustom(semaphores_test_main);
-    
-    timespec tv;
-    tv.tv_sec = 0;
-    tv.tv_nsec = 500000L;
-    nanosleep(&tv,NULL);
+    real_delay_us(5);
 
     global_logger.internal("QPUS","first");
     q.push("first");
@@ -106,9 +110,7 @@ public:
     global_logger.internal("QPUS","third");
     q.push("third");
 
-    tv.tv_sec = 0;
-    tv.tv_nsec = 500000L;
-    nanosleep(&tv,NULL);
+    real_delay_us(5);
 
     q.push("quit");
     global_logger.internal("QPUS","quit");
@@ -213,10 +215,10 @@ public:
   {
     SketchThread t(1);
     t.startCustom(spi_test_main);
-    timespec tv;
-    tv.tv_sec = 0;
-    tv.tv_nsec = 500000L;
-    nanosleep(&tv,NULL);
+    
+    // This probably needs a mutex, too timing-dependant.
+    real_delay_us(1);
+    
     spiq.hwEnqueue(0xb0);
     t.waitToFinish();
     

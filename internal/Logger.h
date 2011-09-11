@@ -21,6 +21,7 @@ private:
   static const unsigned long default_rate_limit = 500;
   int lines_remaining;
   char buffer[500];
+  bool verbose; /**< Spew events to cerr as soon as they are logged */
 protected:
   void throttle_output_rate(void);
   void add_buffer(const std::string& preamble);
@@ -42,6 +43,7 @@ public:
   void setClock(Clock& _c) { clock = &_c; }
   void setRate(unsigned long _rate) { rate_limit = _rate; }
   int lines_contain(const std::string&) const;
+  void setVerbose(bool _v) { verbose = _v; }
 };
 
 #endif // __LOGGER_H__

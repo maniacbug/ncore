@@ -58,12 +58,12 @@ struct count_contains
 // Public interface
 //
 
-Logger::Logger(void): clock(NULL), last_check(0), rate_limit(default_rate_limit), lines_remaining(lines_per_check)
+Logger::Logger(void): clock(NULL), last_check(0), rate_limit(default_rate_limit), lines_remaining(lines_per_check), verbose(false)
 {
   pthread_mutex_init(&mutex,NULL);
 }
 
-Logger::Logger(Clock& _clock): clock(&_clock), last_check(0), rate_limit(default_rate_limit), lines_remaining(lines_per_check)
+Logger::Logger(Clock& _clock): clock(&_clock), last_check(0), rate_limit(default_rate_limit), lines_remaining(lines_per_check), verbose(false)
 {
   pthread_mutex_init(&mutex,NULL);
 }
@@ -81,6 +81,7 @@ void Logger::clear(void)
   pthread_mutex_destroy(&mutex);
   pthread_mutex_init(&mutex,NULL);
   rate_limit = default_rate_limit;
+  verbose = false;
 }
 
 int Logger::lines_contain(const std::string& value) const
@@ -147,6 +148,9 @@ void Logger::add_message(const std::string& preamble,const std::string& message)
     ss << preamble << " ";
   ss << message << endl;
 
+  if ( verbose )
+    cerr << ">" << ss.str() ;
+  
   push_back(ss.str());
 }
 

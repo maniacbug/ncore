@@ -43,6 +43,7 @@ class HardwareSerial : public Stream
 };
 
   extern HardwareSerial Serial;
+  extern HardwareSerial Serial1;
 
 #endif
 // vim:cin:ai:sts=2 sw=2

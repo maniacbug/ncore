@@ -74,6 +74,15 @@ public:
   SchedulerTestSuite(void): sched(dispatch,global_logger)
   {
   }
+  void real_delay_us( unsigned long us )
+  {
+    // Avoids the mock clock and inserts true delay. 
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = us * 1000L;
+    nanosleep(&tv,NULL);
+  }
+  
   void setUp()
   {
     mock_time_reset();
@@ -138,45 +147,47 @@ public:
     global_dispatch.add(&action);
     global_logger.setClock(clock);
     global_logger.setRate(1);
+    //global_logger.setVerbose(true);  // Uncomment if it hangs, to watch the action and see where the prob is
     SketchThread t(1);
     t.startCustom(sched_test_main);
-    
-    timespec tv;
-    tv.tv_sec = 0;
-    tv.tv_nsec = 500000L;
-    nanosleep(&tv,NULL);
-    tv.tv_nsec = 60000000L;
+   
+    real_delay_us(5);
 
     global_sched.add(100,string("test"));
-    nanosleep(&tv,NULL);
+    real_delay_us(5L);
     global_sched.add(200,string("test more"));
-    global_sched.add(3000,string("test more"));
+    global_sched.add(300,string("test more"));
 
-    clock.delay(60);
-    nanosleep(&tv,NULL);
-    clock.delay(60);
-    nanosleep(&tv,NULL);
-    clock.delay(60);
-    nanosleep(&tv,NULL);
-    clock.delay(60);
-    nanosleep(&tv,NULL);
-    clock.delay(60);
-    nanosleep(&tv,NULL);
-    clock.delay(60);
-    nanosleep(&tv,NULL);
-    clock.delay(4000);
-    nanosleep(&tv,NULL);
-    global_sched.add(4000,string("test"));
+#if 0
+    clock.delay(8000);
+    real_delay_us(3500);
+#else
+    clock.delay(50);
+    real_delay_us(50000L);
+    clock.delay(50);
+    real_delay_us(50000L);
 
-    tv.tv_sec = 0;
-    tv.tv_nsec = 500000L;
-    nanosleep(&tv,NULL);
+    clock.delay(50);
+    real_delay_us(50000L);
+    clock.delay(50);
+    real_delay_us(50000L);
+
+    clock.delay(50);
+    real_delay_us(50000L);
+    clock.delay(50);
+    real_delay_us(50000L);
+#endif
+
+    real_delay_us(5);
 
     t.waitToFinish();
 
+    global_logger.setVerbose(false);
     //cerr << global_logger;
      
-    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction"), 4 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("100 SK TEST"), 1 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("200 SK TEST"), 1 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("300 SK TEST"), 1 );
     //cerr << ":OUT]" << endl; 
   }
   void testAtCommandOk( void )

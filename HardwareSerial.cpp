@@ -8,6 +8,7 @@
 #include "HardwareSerial.h"
 
 HardwareSerial Serial;
+HardwareSerial Serial1;
 
 extern Logger theLogger;
 extern SerialBuffer theSerialBuffer;
