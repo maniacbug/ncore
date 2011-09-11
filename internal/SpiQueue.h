@@ -12,7 +12,7 @@
 
 // Threadsafe blocking queue.  "Pop" will block if the queue is empty.
 
-template <class T> 
+template <class T>
 class QueueTS
 {
 private:
@@ -28,21 +28,21 @@ public:
   bool available(void) const;
 };
 
-template <class T> 
+template <class T>
 QueueTS<T>::QueueTS(void)
 {
   pthread_mutex_init(&mutex,NULL);
   sem_init(&sem,0,0);
 }
-  
-template <class T> 
+
+template <class T>
 QueueTS<T>::~QueueTS()
 {
   pthread_mutex_destroy(&mutex);
   sem_destroy(&sem);
 }
 
-template <class T> 
+template <class T>
 void QueueTS<T>::push(const T& item)
 {
   pthread_mutex_lock(&mutex);
@@ -51,7 +51,7 @@ void QueueTS<T>::push(const T& item)
   pthread_mutex_unlock(&mutex);
 }
 
-template <class T> 
+template <class T>
 T QueueTS<T>::pop(void)
 {
   sem_wait(&sem);
@@ -62,8 +62,8 @@ T QueueTS<T>::pop(void)
 
   return item;
 }
-  
-template <class T> 
+
+template <class T>
 void QueueTS<T>::clear(void)
 {
   while ( q.size() )
@@ -73,12 +73,12 @@ void QueueTS<T>::clear(void)
   }
 }
 
-template <class T> 
+template <class T>
 bool QueueTS<T>::available(void) const
 {
   int n;
   sem_getvalue(const_cast<sem_t*>(&sem),&n);
-  return n > 0 ; 
+  return n > 0 ;
 }
 
 class Logger;

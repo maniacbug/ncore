@@ -12,7 +12,7 @@ class Eeprom: public IDispatchable
 private:
   std::vector<uint8_t> values;
   Logger& log;
-protected:  
+protected:
   std::string& getCommands(void) const;
   bool runCommand( const Parser& );
   bool command_eeprom(const std::vector<std::string>&);

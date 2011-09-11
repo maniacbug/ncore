@@ -40,7 +40,7 @@ void Logger::throttle_output_rate(void)
     unsigned long now = clock->millis();
     if ( now - last_check < rate_limit )
     {
-      unsigned long wait = rate_limit - (now - last_check); 
+      unsigned long wait = rate_limit - (now - last_check);
       ostringstream warning;
       warning << "delay " << wait << " (rate limit)";
       add_message(string("IN LOG "),warning.str());
@@ -135,7 +135,7 @@ void Logger::sketch(const std::string& module, const std::string& format,...)
   va_start(ap,format);
   vsnprintf(buffer,sizeof(buffer),format.c_str(),ap);
   va_end(ap);
- 
+
   string preamble = string("SK ") + module + "    ";
   preamble.resize(7);
   add_buffer(preamble);
@@ -152,7 +152,7 @@ void Logger::sketch_v(const std::string& module, const std::string& format, va_l
   pthread_mutex_lock( &mutex );
 
   vsnprintf(buffer,sizeof(buffer),format.c_str(),ap);
- 
+
   string preamble = string("SK ") + module + "    ";
   preamble.resize(7);
   add_buffer(preamble);
@@ -176,7 +176,7 @@ void Logger::add_message(const std::string& preamble,const std::string& message)
 
   if ( verbose )
     cerr << ">" << ss.str() ;
-  
+
   push_back(ss.str());
 }
 
@@ -197,7 +197,7 @@ void Logger::add(const std::string& format,...)
   va_start(ap,format);
   vsnprintf(buffer,sizeof(buffer),format.c_str(),ap);
   va_end(ap);
-  
+
   add_buffer(string());
 
   pthread_mutex_unlock( &mutex );
@@ -207,10 +207,10 @@ void Logger::add(const std::string& format,...)
 
 /****************************************************************************/
 
-bool Logger::runCommand( const Parser& parser ) 
-{ 
+bool Logger::runCommand( const Parser& parser )
+{
   bool result = false;
-  
+
   const string& command = parser.at(0);
 
   if ( command == "list" )
@@ -233,7 +233,7 @@ bool Logger::runCommand( const Parser& parser )
     result = true;
   }
 
-  return result; 
+  return result;
 }
 
 /****************************************************************************/
@@ -262,7 +262,7 @@ bool Logger::command_log(const vector<string>& _commands)
   const string& operand = *current++;
   if ( operand == "rate" )
   {
-  
+
     if ( current == _commands.end() )
       throw new runtime_error("Expecting rate value");
 

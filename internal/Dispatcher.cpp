@@ -34,9 +34,9 @@ bool Dispatcher::execute_new(const Parser& _commands) const
       objectmap_t::const_iterator it = objectmap.begin();
       while (it != objectmap.end())
       {
-	help.at(1) = (*it).first;
-	((*it).second)->runCommand(help);
-	++it;
+        help.at(1) = (*it).first;
+        ((*it).second)->runCommand(help);
+        ++it;
       }
       return true;
     }
@@ -46,7 +46,7 @@ bool Dispatcher::execute_new(const Parser& _commands) const
 
   if ( ! objectmap.count( command ) )
     throw new runtime_error("Command not found");
-  
+
   return objectmap.at(command)->runCommand(_commands);
 }
 
@@ -74,9 +74,9 @@ bool Dispatcher::add(IDispatchable* obj)
   {
     if ( objectmap.count( *it ) )
       throw new runtime_error("Command already registered");
-    
+
     objectmap[*it++] = obj;
-  }  
+  }
   return true;
 }
 

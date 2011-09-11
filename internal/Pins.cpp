@@ -44,7 +44,7 @@ void Pins::clear(void)
 int Pins::digitalRead(int pin) const
 {
   int result = digital_states.at(pin);
-  return result; 
+  return result;
 }
 
 /****************************************************************************/
@@ -125,10 +125,10 @@ void Pins::hwTriggerInterrupt(int irq) const
 
 /****************************************************************************/
 
-bool Pins::runCommand( const Parser& parser ) 
-{ 
+bool Pins::runCommand( const Parser& parser )
+{
   bool result = false;
-  
+
   const string& command = parser.at(0);
 
   if ( command == "pins" )
@@ -163,7 +163,7 @@ bool Pins::runCommand( const Parser& parser )
     result = true;
   }
 
-  return result; 
+  return result;
 }
 
 /****************************************************************************/
@@ -300,7 +300,7 @@ bool Pins::command_irq(const vector<string>& _commands) const
   // Get the irq number
   if ( current == _commands.end() )
     throw new runtime_error("Expecting irq number");
-  
+
   char c = (*current)[0];
   if ( c < '0' || c > '9' )
     throw new runtime_error("Unknown irq number");
@@ -308,14 +308,14 @@ bool Pins::command_irq(const vector<string>& _commands) const
   istringstream ss(*current++);
   int irq;
   ss >> irq;
-  
+
   if ( irq < 0 || irq >= num_interrupts )
     throw new runtime_error("Interrupt number out of range");
 
   // Make sure we're at the end of input
   if ( current != _commands.end() )
     throw new runtime_error("Unexpected tokens at end of input");
-  
+
   hwTriggerInterrupt( irq );
 
   return true;

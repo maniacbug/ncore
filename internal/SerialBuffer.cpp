@@ -44,7 +44,7 @@ void SerialBuffer::flush(void)
 void SerialBuffer::put(const string& str)
 {
   // WTF is this for??!!
-  log.sketch("SERL",str); 
+  log.sketch("SERL",str);
 }
 
 /****************************************************************************/
@@ -57,7 +57,7 @@ void SerialBuffer::put(char c)
     flush();
   }
 
-  if ( c == '\n' ) 
+  if ( c == '\n' )
   {
     flush();
   }
@@ -86,9 +86,9 @@ void SerialBuffer::put(char c)
 
 bool SerialBuffer::available(void) const
 {
-  return instream.rdbuf()->in_avail(); 
+  return instream.rdbuf()->in_avail();
 }
-  
+
 /****************************************************************************/
 
 void SerialBuffer::setInput(const std::string& instr)
@@ -104,21 +104,21 @@ char SerialBuffer::get(void)
   instream.readsome(&result,1);
   return result;
 }
-  
+
 /****************************************************************************/
 
-string& SerialBuffer::getCommands(void) const 
-{ 
-  static std::string commands = "send send-hex"; 
-  return commands; 
+string& SerialBuffer::getCommands(void) const
+{
+  static std::string commands = "send send-hex";
+  return commands;
 }
 
 /****************************************************************************/
 
-bool SerialBuffer::runCommand( const Parser& parser ) 
-{ 
+bool SerialBuffer::runCommand( const Parser& parser )
+{
   bool result = false;
-  
+
   const string& command = parser.at(0);
 
   if ( command == "send" )
@@ -142,7 +142,7 @@ bool SerialBuffer::runCommand( const Parser& parser )
     }
   }
 
-  return result; 
+  return result;
 }
 
 /****************************************************************************/
@@ -164,10 +164,10 @@ bool SerialBuffer::command_sendhex(const vector<string>& _commands)
 
   // Also log the command
   log.internal("SERL","send-hex %i chars",composite_str.size());
-  
+
   // set as input
   setInput(composite_str);
-  
+
   return true;
 }
 
@@ -186,20 +186,20 @@ bool SerialBuffer::command_send(const vector<string>& _commands)
   ostringstream composite;
   copy(_commands.begin() + 1, _commands.end() - hascr,ostream_iterator<string>(composite," "));
   string composite_str = composite.str();
-  
+
   // Trim off the trailing " " from the last ostream iterator
   composite_str.resize(composite_str.size()-1);
 
   // Also log the command
   log.internal("SERL","send %s %s",composite_str.c_str(),hascr?"(with CR)":"(no CR)");
-  
+
   // Add the trailing cr if needed
   if ( hascr )
     composite_str.push_back('\n');
 
   // set as input
   setInput(composite_str);
-  
+
   return true;
 }
 

@@ -20,7 +20,10 @@ struct SchedulableObject
   std::string commands;
   SchedulableObject( unsigned long _t, const std::string& _p ): trigger_at(_t), commands(_p) {}
   // lesser value means later in time
-  bool operator<(const SchedulableObject& _rhs) const { return trigger_at > _rhs.trigger_at; }
+  bool operator<(const SchedulableObject& _rhs) const
+  {
+    return trigger_at > _rhs.trigger_at;
+  }
 };
 
 class Dispatcher;
@@ -38,7 +41,7 @@ private:
 public:
 //protected:
   void runonce(void);
-  
+
 protected:
   std::string& getCommands(void) const;
   bool runCommand( const Parser& );

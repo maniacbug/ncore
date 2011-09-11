@@ -64,7 +64,7 @@ std::string& Eeprom::getCommands(void) const
 bool Eeprom::runCommand( const Parser& parser )
 {
   bool result = false;
-  
+
   const string& command = parser.at(0);
 
   if ( command == "eeprom" || command == "ee" )
@@ -84,7 +84,7 @@ bool Eeprom::runCommand( const Parser& parser )
     result = true;
   }
 
-  return result; 
+  return result;
 }
 
 /****************************************************************************/
@@ -95,7 +95,7 @@ static int get_number(vector<string>::const_iterator current,vector<string>::con
 
   if ( current == end )
     throw new runtime_error("Expecting value");
-  
+
   char c = (*current)[0];
   if ( c < '0' || c > '9' )
     throw new runtime_error("Expecing numeric value");
@@ -128,7 +128,7 @@ static int get_hex_number(vector<string>::const_iterator current,vector<string>:
 
 /****************************************************************************/
 
-bool Eeprom::command_eeprom(const std::vector<std::string>& _commands) 
+bool Eeprom::command_eeprom(const std::vector<std::string>& _commands)
 {
   vector<string>::const_iterator current = _commands.begin() + 1;
 
@@ -136,7 +136,7 @@ bool Eeprom::command_eeprom(const std::vector<std::string>& _commands)
 
   if ( addr < 0 || addr >= eeprom_size )
     throw new runtime_error("Address out of range");
-  
+
   if ( current == _commands.end() )
   {
     // read one byte
@@ -150,24 +150,24 @@ bool Eeprom::command_eeprom(const std::vector<std::string>& _commands)
       // read len bytes
       int length = get_number(current++,_commands.end());
       cout << "EEPROM @ " << addr << " for " << dec << length << " are " << hex ;
-      while( length-- ) 
-	cout << setfill('0') << setw(2) << (int)values.at(addr++) << " ";
+      while( length-- )
+        cout << setfill('0') << setw(2) << (int)values.at(addr++) << " ";
       cout << endl;
     }
     else if ( operand == "write" )
     {
       // write all the following bytes
       if ( current == _commands.end() )
-	throw new runtime_error("Expecting at least one value to write");
-      
+        throw new runtime_error("Expecting at least one value to write");
+
       ostringstream message;
       message << addr << " write ";
 
       while ( current != _commands.end() )
       {
-	int value = get_hex_number(current++,_commands.end());
-	message << hex << setfill('0') << setw(2) << value << " ";
-	values.at(addr++) = value;
+        int value = get_hex_number(current++,_commands.end());
+        message << hex << setfill('0') << setw(2) << value << " ";
+        values.at(addr++) = value;
       }
       cout << "EEPROM @ " << message.str() << endl;
       log.internal("EEPR",message.str());

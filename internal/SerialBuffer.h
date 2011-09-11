@@ -18,7 +18,7 @@ class SerialBuffer: public IDispatchable
 protected:
   std::string& getCommands(void) const;
   bool runCommand( const Parser& );
-  
+
   bool command_send(const std::vector<std::string>&);
   bool command_sendhex(const std::vector<std::string>&);
 
@@ -29,7 +29,7 @@ public:
   bool available(void) const;
   char get(void);
   void flush(void);
-  
+
   void setInput(const std::string&);
 };
 

@@ -52,21 +52,21 @@ void Scheduler::runonce(void)
       // TODO: pthread_mutex_unlock object_q_mutex
 
       if ( o.commands == "quit" )
-	done = true;
-      
+        done = true;
+
       try
       {
-	dispatch.execute(o.commands);
+        dispatch.execute(o.commands);
       }
       catch (runtime_error* e)
       {
-	logger.sketch("AT", "Error: %s",e->what());
+        logger.sketch("AT", "Error: %s",e->what());
       }
     }
     else
     {
       // TODO: pthread_mutex_unlock object_q_mutex
-      
+
       timespec tm;
       unsigned long wait = top_trigger_at - now;
       clock_gettime(CLOCK_REALTIME,&tm);
@@ -74,17 +74,17 @@ void Scheduler::runonce(void)
       tm.tv_nsec += (wait % 1000L) * 1000000L;
       if ( tm.tv_nsec >= 1000000000L )
       {
-	tm.tv_sec += 1;
-	tm.tv_nsec -= 1000000000L;
+        tm.tv_sec += 1;
+        tm.tv_nsec -= 1000000000L;
       }
       int v;
       sem_getvalue(&sem,&v);
       logger.sketch("AT","Waiting %lu",wait);
       int result = sem_timedwait(&sem,&tm);
       if ( result )
-	logger.sketch("AT","Sem timeout");
+        logger.sketch("AT","Sem timeout");
       else
-	logger.sketch("AT","Got sem");
+        logger.sketch("AT","Got sem");
     }
   }
 }
@@ -120,23 +120,23 @@ void Scheduler::clear(void)
 
 /****************************************************************************/
 
-string& Scheduler::getCommands(void) const 
-{ 
-  static std::string commands = "at"; 
-  return commands; 
+string& Scheduler::getCommands(void) const
+{
+  static std::string commands = "at";
+  return commands;
 }
 
 /****************************************************************************/
 
-bool Scheduler::runCommand( const Parser& parser ) 
-{ 
+bool Scheduler::runCommand( const Parser& parser )
+{
   bool result = false;
-  
+
   const string& command = parser.at(0);
 
   if ( command == "at" )
   {
-    result = command_at(parser); 
+    result = command_at(parser);
   }
   else if ( command == "help" )
   {
@@ -148,7 +148,7 @@ bool Scheduler::runCommand( const Parser& parser )
     result = true;
   }
 
-  return result; 
+  return result;
 }
 
 /****************************************************************************/
@@ -166,7 +166,7 @@ bool Scheduler::command_at(const vector<string>& _commands)
   ostringstream commandstr;
   copy(_commands.begin()+2,_commands.end(),ostream_iterator<string>(commandstr," "));
   add(trigger_at,commandstr.str());
-  
+
   return true;
 }
 
@@ -175,7 +175,7 @@ bool Scheduler::command_at(const vector<string>& _commands)
 void Scheduler::handler_thread_main(void* pv)
 {
   Scheduler* psched = reinterpret_cast<Scheduler*>(pv);
-  
+
   while(!psched->done)
     psched->runonce();
 }

@@ -15,7 +15,7 @@ class Dispatcher
 {
 protected:
   /**
-   * Map of commands to dispatchable objects 
+   * Map of commands to dispatchable objects
    */
   typedef std::map<std::string,IDispatchable*> objectmap_t;
   objectmap_t objectmap;

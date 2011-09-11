@@ -9,8 +9,8 @@ class Logger;
 #ifndef OUTPUT
 const int OUTPUT = 1;
 #endif
-#ifndef INPUT 
-const int INPUT = 0; 
+#ifndef INPUT
+const int INPUT = 0;
 #endif
 
 class Pins: public IDispatchable
@@ -27,7 +27,11 @@ private:
   Logger& log;
 
 protected:
-  std::string& getCommands() const { static std::string commands = "pins pin irq"; return commands; }
+  std::string& getCommands() const
+  {
+    static std::string commands = "pins pin irq";
+    return commands;
+  }
   bool runCommand( const Parser& );
 
   bool command_pins(const std::vector<std::string>&) const;
@@ -35,7 +39,7 @@ protected:
   bool command_pin(const std::vector<std::string>&);
   bool command_pin_digital(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );
   bool command_pin_analog(std::vector<std::string>::const_iterator current,std::vector<std::string>::const_iterator end );
- 
+
   bool command_irq(const std::vector<std::string>&) const;
 public:
   Pins(Logger&);

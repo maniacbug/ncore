@@ -12,7 +12,7 @@
 /****************************************************************************/
 
 using namespace std;
-  
+
 /****************************************************************************/
 
 SpiQueue::SpiQueue(Logger& _logger): logger(_logger), has_default(false), default_value(0)
@@ -21,9 +21,9 @@ SpiQueue::SpiQueue(Logger& _logger): logger(_logger), has_default(false), defaul
 
 /****************************************************************************/
 
-void SpiQueue::clear(void) 
-{ 
-  qts.clear(); 
+void SpiQueue::clear(void)
+{
+  qts.clear();
   has_default = false;
   default_value = 0;
 }
@@ -34,7 +34,7 @@ void SpiQueue::hwEnqueue(uint8_t _byte)
 {
   qts.push(_byte);
 }
-  
+
 /****************************************************************************/
 
 uint8_t SpiQueue::transfer(uint8_t _in)
@@ -56,18 +56,18 @@ uint8_t SpiQueue::transfer(uint8_t _in)
 
 /****************************************************************************/
 
-string& SpiQueue::getCommands(void) const 
-{ 
-  static std::string commands = "spi"; 
-  return commands; 
+string& SpiQueue::getCommands(void) const
+{
+  static std::string commands = "spi";
+  return commands;
 }
 
 /****************************************************************************/
 
-bool SpiQueue::runCommand( const Parser& parser ) 
-{ 
+bool SpiQueue::runCommand( const Parser& parser )
+{
   bool result = false;
-  
+
   const string& command = parser.at(0);
 
   if ( command == "spi" )
@@ -85,7 +85,7 @@ bool SpiQueue::runCommand( const Parser& parser )
     }
   }
 
-  return result; 
+  return result;
 }
 
 /****************************************************************************/
@@ -100,31 +100,31 @@ bool SpiQueue::command_spi(const vector<string>& _commands)
   {
     if ( _commands.size() != 3 )
       throw new runtime_error("Usage: spi default <xx>");
-    
+
     int i;
     istringstream convert(_commands.at(2));
     convert >> hex >> i;
 
     default_value = i;
     has_default = true;
-    
+
     logger.internal("SPI","set %02x as default",i);
   }
   else if ( operand.at(operand.size()-1) == 'x' )
   {
     if ( _commands.size() != 3 )
       throw new runtime_error("Usage: spi <count>x <xx>");
-    
+
     operand.resize(operand.size()-1);
-    
+
     int count;
     stringstream convert(operand);
     convert >> dec >> count;
-    
+
     int i;
     stringstream convert2(_commands.at(2));
     convert2 >> hex >> i;
-    
+
     logger.internal("SPI","queued %02i for output %i times",i,count);
 
     while(count--)
@@ -144,7 +144,7 @@ bool SpiQueue::command_spi(const vector<string>& _commands)
 
     // Also log the command
     logger.internal("SPI","queued %i bytes for output",composite.size());
-    
+
     // set as input
     vector<uint8_t>::const_iterator curbyte = composite.begin();
     while (curbyte != composite.end())
