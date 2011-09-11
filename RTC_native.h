@@ -9,8 +9,10 @@
 // RTC based on the native chip connected via SPI and the SPI library
 class RTC_native
 {
+private:
+    int32_t offset; /**< Offset from real time to the 'RTC' time */
 public:
-    RTC_native() {}
+    RTC_native(): offset(0) {}
     uint8_t begin(void);
     void adjust(const DateTime& dt);
     uint8_t isrunning(void);
