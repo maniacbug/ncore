@@ -8,6 +8,11 @@
 class Logger;
 class Parser;
 
+/**
+ * Mimics the Arduino Hardware Serial.  Provides an interface to mock
+ * the inputs to Arduino serial.  Logs the outputs.
+ */
+
 class SerialBuffer: public IDispatchable
 {
   Logger& log;

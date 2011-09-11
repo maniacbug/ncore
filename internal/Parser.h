@@ -4,6 +4,10 @@
 #include <vector>
 #include <string>
 
+/**
+ * Parses a command line into a string vector
+ */
+
 class Parser: public std::vector<std::string>
 {
 public:

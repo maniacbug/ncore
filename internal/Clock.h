@@ -3,6 +3,10 @@
 
 #include <sys/time.h>
 
+/**
+ * Mimics Arduino clock-related routines
+ */
+
 class Clock
 {
 private:

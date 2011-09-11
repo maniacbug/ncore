@@ -4,6 +4,10 @@
 class Dispatcher;
 class Clock;
 
+/**
+ * Encapsulates the shell loop.  Gets new commands from the user, sends to dispatcher.
+ */
+
 class Shell
 {
 public:

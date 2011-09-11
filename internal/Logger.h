@@ -11,6 +11,10 @@
 class Clock;
 class Parser;
 
+/**
+ * Maintains a log of actions for the user to inspect.
+ */
+
 class Logger: public std::vector<std::string>, public IDispatchable
 {
 private:

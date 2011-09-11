@@ -10,7 +10,12 @@
 
 #include <IDispatchable.h>
 
-// Threadsafe blocking queue.  "Pop" will block if the queue is empty.
+/**
+ * Threadsafe blocking queue.  Empty queue blocks the thread until data is
+ * available.
+ *
+ * @todo Move into its own header file.
+ */
 
 template <class T>
 class QueueTS
@@ -82,6 +87,11 @@ bool QueueTS<T>::available(void) const
 }
 
 class Logger;
+
+/**
+ * Mimics Arduino SPI interface.  Provides a means to queue up SPI responses
+ * and logs SPI transfers.
+ */
 
 class SpiQueue: public IDispatchable
 {

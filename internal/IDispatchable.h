@@ -5,6 +5,10 @@
 
 class Parser;
 
+/**
+ * Interface for objects which can handler dispatcher commands
+ */
+
 class IDispatchable
 {
 public:

@@ -1,6 +1,14 @@
 #ifndef __SKETCH_THREAD_H__
 #define __SKETCH_THREAD_H__
 
+/**
+ * Encapsulates the thread used to run an Arduino sketch.  Also provides a
+ * general-purpose thread interface for other uses.
+ *
+ * @todo Should split the general-purpose thread out into its own lower-
+ * level class.
+ */
+
 class SketchThread
 {
 private:

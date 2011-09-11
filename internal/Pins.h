@@ -13,6 +13,10 @@ const int OUTPUT = 1;
 const int INPUT = 0;
 #endif
 
+/**
+ * Mimics the Arduino GPIO pins
+ */
+
 class Pins: public IDispatchable
 {
 private:

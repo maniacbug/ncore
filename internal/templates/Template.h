@@ -6,8 +6,15 @@
 // Library includes
 // Project includes
 
+/**
+ * Example for how classes should be declared
+ */
+
 class Template
 {
+private:
+protected:
+public:
 };
 
 #endif // __TEMPLATE_H__

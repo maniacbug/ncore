@@ -14,6 +14,10 @@
 #include <Clock.h>
 #include <IDispatchable.h>
 
+/**
+ * An object which can be scheduled
+ */
+
 struct SchedulableObject
 {
   unsigned long trigger_at;
@@ -29,6 +33,10 @@ struct SchedulableObject
 class Dispatcher;
 class Logger;
 
+/**
+ * Allows for the scheduling of commands at a time in the future
+ */
+
 class Scheduler: public IDispatchable
 {
 private:
@@ -38,7 +46,9 @@ private:
   Clock clock; // TODO: Need to pass this in!!
   sem_t sem;
   bool done;
-public:
+
+// left public for tests
+public:  
 //protected:
   void runonce(void);
 

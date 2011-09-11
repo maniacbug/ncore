@@ -7,6 +7,10 @@
 
 class Logger;
 
+/**
+ * Mimics the Arduino EEPROM
+ */
+
 class Eeprom: public IDispatchable
 {
 private:
