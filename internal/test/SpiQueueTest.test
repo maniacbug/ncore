@@ -13,7 +13,7 @@ using namespace std;
 static QueueTS<string> q;
 
 extern ostream& operator<<(ostream& os, const Logger& log);
-  
+
 void semaphores_test_main(void)
 {
   bool done = false;
@@ -57,7 +57,7 @@ public:
   }
   void real_delay_us( unsigned long us )
   {
-    // Avoids the mock clock and inserts true delay. 
+    // Avoids the mock clock and inserts true delay.
     timespec tv;
     tv.tv_sec = 0;
     tv.tv_nsec = us * 1000L;
@@ -78,14 +78,14 @@ public:
   void testQueueAvailable( void )
   {
     q.push("test");
-  
+
     TS_ASSERT_EQUALS( q.available(), true );
   }
   void testQueueEmptyThenAvailable( void )
   {
     q.push("test");
     q.pop();
-  
+
     TS_ASSERT_EQUALS( q.available(), false );
   }
   void testQueueDouble( void )
@@ -114,14 +114,14 @@ public:
 
     q.push("quit");
     global_logger.internal("QPUS","quit");
-    
+
     t.waitToFinish();
 
     //cerr << logger;
-     
+
     TS_ASSERT_EQUALS( global_logger.lines_contain("first"), 2 );
     TS_ASSERT_EQUALS( global_logger.lines_contain("quit"), 2 );
-    //cerr << ":OUT]" << endl; 
+    //cerr << ":OUT]" << endl;
   }
   void testSpiTransferRead( void )
   {
@@ -215,13 +215,13 @@ public:
   {
     SketchThread t(1);
     t.startCustom(spi_test_main);
-    
+
     // This probably needs a mutex, too timing-dependant.
     real_delay_us(1);
-    
+
     spiq.hwEnqueue(0xb0);
     t.waitToFinish();
-    
+
     TS_ASSERT_EQUALS( logger.lines_contain("Waiting"), 1 );
     TS_ASSERT_EQUALS( logger.lines_contain("in ff"), 2 );
   }

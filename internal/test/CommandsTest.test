@@ -17,7 +17,11 @@ bool return_true(const vector<string>&)
 
 class TestDispatchable: public IDispatchable
 {
-  std::string& getCommands(void) const { static std::string commands = "test"; return commands; }
+  std::string& getCommands(void) const
+  {
+    static std::string commands = "test";
+    return commands;
+  }
   bool runCommand( const Parser& p )
   {
     bool result = false;
@@ -34,8 +38,15 @@ class TestDispatchable: public IDispatchable
 
 class NoCommandsDispatchable: public IDispatchable
 {
-  std::string& getCommands(void) const { static std::string commands = ""; return commands; }
-  bool runCommand( const Parser& ) { return false; }
+  std::string& getCommands(void) const
+  {
+    static std::string commands = "";
+    return commands;
+  }
+  bool runCommand( const Parser& )
+  {
+    return false;
+  }
 };
 
 
@@ -71,7 +82,7 @@ public:
   {
     TestDispatchable obj;
     commands.add(&obj);
-    
+
     TS_ASSERT_THROWS_ANYTHING( commands.add(&obj) );
   }
   void testWorkerNotFoundNew( void )
@@ -109,7 +120,7 @@ public:
   void testExceptionsNew( void )
   {
     NoCommandsDispatchable badobj;
-    
+
     TS_ASSERT_THROWS_ANYTHING( commands.add(NULL) );
     TS_ASSERT_THROWS_ANYTHING( commands.add(&badobj) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser()) );
@@ -122,7 +133,7 @@ public:
     cap.start();
     bool result = commands.execute("help");
     cap.stop();
-    
+
     TS_ASSERT_EQUALS( result, true );
   }
   void testHelpOne( void )
@@ -133,7 +144,7 @@ public:
     cap.start();
     bool result = commands.execute("help test");
     cap.stop();
-    
+
     TS_ASSERT_EQUALS( result, true );
     TS_ASSERT_EQUALS( cap.contains("\n"), 1 );
   }

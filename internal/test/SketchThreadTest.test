@@ -18,7 +18,7 @@ using namespace std;
 Logger global_logger;
 
 extern ostream& operator<<(ostream& os, const Logger& log);
-  
+
 void custom_thread_main(void);
 
 class SketchThreadTestSuite: public CxxTest::TestSuite
@@ -32,7 +32,7 @@ public:
   {
     SketchThread t;
     t.waitToFinish();
-    
+
     TS_ASSERT_EQUALS( global_logger.lines_contain("setup"), 1 );
     TS_ASSERT_EQUALS( global_logger.lines_contain("loop"), 10 );
   }
@@ -51,7 +51,7 @@ public:
   static void custom_thread_wdata_main(void* pv)
   {
     SketchThreadTestSuite* pts = reinterpret_cast<SketchThreadTestSuite*>(pv);
-    
+
     int i=5;
     while(i--)
       global_logger.add(pts->message());
@@ -78,13 +78,13 @@ public:
   {
     SketchThread t(0);
     TS_ASSERT_THROWS_ANYTHING(t.startCustom(custom_thread_main); );
-    t.waitToFinish(); 
+    t.waitToFinish();
   }
   void testExceptions4( void )
   {
     SketchThread t(0);
     TS_ASSERT_THROWS_ANYTHING(t.startCustom(empty,this); );
-    t.waitToFinish(); 
+    t.waitToFinish();
   }
 };
 

@@ -39,7 +39,7 @@ public:
     log.clear();
     parser.clear();
     commands.clear();
-    
+
     commands.add(&log);
   }
   void tearDown()
@@ -160,7 +160,7 @@ public:
     }
     pthread_join( bg_thread, NULL );
     cap.stop();
-   
+
     // Just running means it worked
     TS_ASSERT( 1 );
   }
@@ -236,7 +236,7 @@ public:
     commands.add(&log);
 
     bool ok = false;
-    
+
     try
     {
       ok = commands.execute("log rate 100");
@@ -266,7 +266,7 @@ public:
     va_list args;
     va_start (args, format);
     log.sketch_v("TEST",format,args);
-    va_end (args); 
+    va_end (args);
   }
   void testSketchVargs( void )
   {

@@ -29,7 +29,11 @@ struct TestAction: public IDispatchable
 {
   int called;
   TestAction(void): called(0) {}
-  std::string& getCommands(void) const { static std::string commands = "test"; return commands; }
+  std::string& getCommands(void) const
+  {
+    static std::string commands = "test";
+    return commands;
+  }
   bool runCommand( const Parser& p )
   {
     global_logger.sketch("TEST","TestAction %i",p.size());
@@ -38,7 +42,7 @@ struct TestAction: public IDispatchable
     {
       ++called;
       if ( p.size() > 1 && p.at(1) == "more" )
-	called += 4;
+        called += 4;
       result = true;
     }
     else if ( p.at(0) == "help" && p.at(1) == "test" )
@@ -76,13 +80,13 @@ public:
   }
   void real_delay_us( unsigned long us )
   {
-    // Avoids the mock clock and inserts true delay. 
+    // Avoids the mock clock and inserts true delay.
     timespec tv;
     tv.tv_sec = 0;
     tv.tv_nsec = us * 1000L;
     nanosleep(&tv,NULL);
   }
-  
+
   void setUp()
   {
     mock_time_reset();
@@ -150,7 +154,7 @@ public:
     //global_logger.setVerbose(true);  // Uncomment if it hangs, to watch the action and see where the prob is
     SketchThread t(1);
     t.startCustom(sched_test_main);
-   
+
     real_delay_us(5);
 
     global_sched.add(100,string("test"));
@@ -184,11 +188,11 @@ public:
 
     global_logger.setVerbose(false);
     //cerr << global_logger;
-     
+
     TS_ASSERT_EQUALS( global_logger.lines_contain("100 SK TEST"), 1 );
     TS_ASSERT_EQUALS( global_logger.lines_contain("200 SK TEST"), 1 );
     TS_ASSERT_EQUALS( global_logger.lines_contain("300 SK TEST"), 1 );
-    //cerr << ":OUT]" << endl; 
+    //cerr << ":OUT]" << endl;
   }
   void testAtCommandOk( void )
   {
@@ -211,7 +215,7 @@ public:
     sched.runonce(); // protected!!
     sched.runonce(); // protected!!
     cap.stop();
-    
+
     TS_ASSERT_EQUALS( cap.contains("AT"), 2 );
     TS_ASSERT_EQUALS( cap.contains("TEST"), 1 );
   }

@@ -111,7 +111,7 @@ public:
     pins.digitalWrite(2,HIGH);
     pins.pinMode(3,OUTPUT);
     pins.digitalWrite(3,HIGH);
-    
+
     TS_ASSERT_EQUALS( pins.hwGetDigital(2), LOW );
     TS_ASSERT_EQUALS( pins.hwGetDigital(3), HIGH );
   }
@@ -240,12 +240,12 @@ public:
   static void* sketch_blink(void* pv)
   {
     PinsTestSuite* p = reinterpret_cast<PinsTestSuite*>(pv);
-   
+
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL);
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL); 
-    
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL);
+
     pthread_mutex_lock(&(p->sketch_mutex));
-    
+
     int state = LOW;
     const int toggle_pin = 13;
     const int done_pin = 11;
@@ -286,7 +286,7 @@ public:
     while ( pins.hwGetDigital(11) == LOW )
     {
     }
-    
+
     // Note that the mutex is doing the same thing I'm trying to do
     // with the pins, but it's more reliable :)
     pthread_mutex_lock(&sketch_mutex);

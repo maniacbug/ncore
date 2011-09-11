@@ -96,7 +96,7 @@ public:
   void testCommandRead( void )
   {
     ee.writeByte(10,0xfa);
-    
+
     cap.start();
     commands.execute_new(Parser("eeprom 10"));
     cap.stop();
@@ -108,11 +108,11 @@ public:
     int i = 10;
     while (i--)
       ee.writeByte(10+i,0xd0+i);
-    
+
     cap.start();
     commands.execute_new(Parser("eeprom 10 len 10"));
     cap.stop();
-    
+
     TS_ASSERT_EQUALS( cap.contains(" d"), 10 );
     TS_ASSERT_EQUALS( cap.contains("d9"), 1 );
   }
@@ -121,7 +121,7 @@ public:
     cap.start();
     commands.execute_new(Parser("eeprom 20 write 1 2 3 4 5 6 7 8 9 a b c d e f 10"));
     cap.stop();
-    
+
     TS_ASSERT_EQUALS( cap.contains("write"), 1 );
     TS_ASSERT_EQUALS( ee.readByte(30), 0xb );
   }
@@ -146,7 +146,7 @@ public:
     TS_ASSERT_EQUALS( (bool)cap.contains("eeprom"), true );
   }
 };
-    // eeprom <addr> -- read one byte
-    // eeprom <addr> len <len> -- read <len> bytes
-    // eeprom <addr> write <xx> ... <xx> - write hex bytes to eeprom
+// eeprom <addr> -- read one byte
+// eeprom <addr> len <len> -- read <len> bytes
+// eeprom <addr> write <xx> ... <xx> - write hex bytes to eeprom
 // vim:cin:ai:sts=2 sw=2 ft=cpp

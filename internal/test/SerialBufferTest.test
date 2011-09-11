@@ -84,7 +84,7 @@ public:
   void testSetInputBuffer( void )
   {
     s.setInput(string("hi"));
-    
+
     TS_ASSERT_EQUALS( s.available(), true );
     TS_ASSERT_EQUALS( s.get(), 'h' );
     TS_ASSERT_EQUALS( s.get(), 'i' );
@@ -104,7 +104,7 @@ public:
   void testSendLongStringNew( void )
   {
     dispatch.execute_new(Parser("send this is a test of a really long test string, isn't it??"));
-  
+
     ostringstream result;
     while ( s.available() )
       result << s.get();
