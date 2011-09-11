@@ -1,21 +1,29 @@
+// STL includes
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
-
+// C includes
+// Library includes
 #include <readline/readline.h>
 #include <readline/history.h>
-
-#include <Shell.h>
+// Project includes
 #include <Dispatcher.h>
 #include <Parser.h>
 #include <Clock.h>
+#include <Shell.h>
+
+/****************************************************************************/
 
 using namespace std;
+
+/****************************************************************************/
 
 void Shell::run(const Dispatcher& _commands)
 {
   run(_commands,Clock());
 }
+
+/****************************************************************************/
 
 void Shell::run(const Dispatcher& _commands, const Clock& _clock)
 {
@@ -53,5 +61,7 @@ void Shell::run(const Dispatcher& _commands, const Clock& _clock)
   }
   while (command != "quit" );
 }
+
+/****************************************************************************/
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

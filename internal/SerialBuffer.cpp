@@ -1,26 +1,36 @@
+// STL includes
 #include <string>
 #include <stdexcept>
 #include <algorithm>
 #include <iterator>
 #include <iostream>
 #include <iomanip>
-
+// C includes
 #include <inttypes.h>
-
+// Library includes
+// Project includes
 #include <Logger.h>
 #include <Dispatcher.h>
-#include <SerialBuffer.h>
 #include <Clock.h>
 #include <Parser.h>
+#include <SerialBuffer.h>
+
+/****************************************************************************/
 
 using namespace std;
+
+/****************************************************************************/
 
 static Clock internalClock;
 static unsigned long last_logged_at = 0;
 
+/****************************************************************************/
+
 //
 // Public interface
 //
+
+/****************************************************************************/
 
 void SerialBuffer::flush(void)
 {
@@ -29,11 +39,16 @@ void SerialBuffer::flush(void)
   outstream_has_data = false;
 }
 
+/****************************************************************************/
+
 void SerialBuffer::put(const string& str)
 {
   // WTF is this for??!!
   log.sketch("SERL",str); 
 }
+
+/****************************************************************************/
+
 void SerialBuffer::put(char c)
 {
   if ( outstream_has_data && internalClock.millis() - last_logged_at > 1000 )
@@ -67,15 +82,21 @@ void SerialBuffer::put(char c)
 
 }
 
+/****************************************************************************/
+
 bool SerialBuffer::available(void) const
 {
   return instream.rdbuf()->in_avail(); 
 }
   
+/****************************************************************************/
+
 void SerialBuffer::setInput(const std::string& instr)
 {
   instream.str(instr);
 }
+
+/****************************************************************************/
 
 char SerialBuffer::get(void)
 {
@@ -84,11 +105,15 @@ char SerialBuffer::get(void)
   return result;
 }
   
+/****************************************************************************/
+
 string& SerialBuffer::getCommands(void) const 
 { 
   static std::string commands = "send send-hex"; 
   return commands; 
 }
+
+/****************************************************************************/
 
 bool SerialBuffer::runCommand( const Parser& parser ) 
 { 
@@ -120,6 +145,8 @@ bool SerialBuffer::runCommand( const Parser& parser )
   return result; 
 }
 
+/****************************************************************************/
+
 bool SerialBuffer::command_sendhex(const vector<string>& _commands)
 {
   if ( _commands.size() < 2 )
@@ -143,6 +170,8 @@ bool SerialBuffer::command_sendhex(const vector<string>& _commands)
   
   return true;
 }
+
+/****************************************************************************/
 
 bool SerialBuffer::command_send(const vector<string>& _commands)
 {
@@ -173,5 +202,7 @@ bool SerialBuffer::command_send(const vector<string>& _commands)
   
   return true;
 }
+
+/****************************************************************************/
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

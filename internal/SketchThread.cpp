@@ -1,11 +1,18 @@
+// STL includes
 #include <stdexcept>
 #include <iostream>
-
+// C includes
+// Library includes
 #include <pthread.h>
+// Project includes
 #include <SketchThread.h>
+
+/****************************************************************************/
 
 extern "C" void setup(void);
 extern "C" void loop(void);
+
+/****************************************************************************/
 
 SketchThread::SketchThread(int mode): pthread(NULL), custom_body(NULL), custom_body_wdata(NULL), custom_data(NULL)
 {
@@ -23,6 +30,8 @@ SketchThread::SketchThread(int mode): pthread(NULL), custom_body(NULL), custom_b
     throw new std::runtime_error("Unknown thread mode");
 }
 
+/****************************************************************************/
+
 void SketchThread::startCustom(void (*fn)(void))
 {
   if ( pthread )
@@ -35,6 +44,8 @@ void SketchThread::startCustom(void (*fn)(void))
   pthread = new pthread_t;
   pthread_create( pthread, NULL, sketch_thread_custom_main, this );
 }
+
+/****************************************************************************/
 
 void SketchThread::startCustom(void (*fn)(void*),void* data)
 {
@@ -53,6 +64,8 @@ void SketchThread::startCustom(void (*fn)(void*),void* data)
   pthread_create( pthread, NULL, sketch_thread_custom_wdata_main, this );
 }
 
+/****************************************************************************/
+
 void* SketchThread::sketch_thread_custom_wdata_main(void* pv)
 {
   SketchThread* psk = reinterpret_cast<SketchThread*>(pv);
@@ -65,6 +78,8 @@ void* SketchThread::sketch_thread_custom_wdata_main(void* pv)
 
   return NULL;
 }
+
+/****************************************************************************/
 
 void* SketchThread::sketch_thread_custom_main(void* pv)
 {
@@ -79,6 +94,8 @@ void* SketchThread::sketch_thread_custom_main(void* pv)
   return NULL;
 }
 
+/****************************************************************************/
+
 void* SketchThread::sketch_thread_main(void*)
 {
   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL);
@@ -92,10 +109,14 @@ void* SketchThread::sketch_thread_main(void*)
   return NULL;
 }
 
+/****************************************************************************/
+
 void SketchThread::waitToFinish(void)
 {
   pthread_join( *pthread, NULL );
 }
+
+/****************************************************************************/
 
 SketchThread::~SketchThread(void)
 {
@@ -106,5 +127,8 @@ SketchThread::~SketchThread(void)
     delete pthread;
   }
 }
+
+/****************************************************************************/
+
 // vim:cin:ai:sts=2 sw=2 ft=cpp
 

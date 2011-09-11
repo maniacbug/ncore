@@ -1,38 +1,56 @@
+// STL includes
 #include <string>
 #include <vector>
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
 #include <iomanip>
-
-#include <Eeprom.h>
+// C includes
+// Library includes
+// Project includes
 #include <Logger.h>
 #include <Parser.h>
+#include <Eeprom.h>
 
 using namespace std;
 
+/****************************************************************************/
+
 // eeprom size must always be a power of 2
 static const int eeprom_size = 1 << 9;
+
+/****************************************************************************/
 
 Eeprom::Eeprom(Logger& _log): log(_log)
 {
   values.resize(eeprom_size);
 }
+
+/****************************************************************************/
+
 size_t Eeprom::size(void)
 {
   return values.size();
 }
+
+/****************************************************************************/
+
 uint8_t Eeprom::readByte(int addr) const
 {
   uint8_t result = values.at(addr);
   log.sketch("EEPR","%i read %u",addr,result);
   return result;
 }
+
+/****************************************************************************/
+
 void Eeprom::writeByte(int addr, uint8_t value)
 {
   log.sketch("EEPR","%i write %u",addr,value);
   values.at(addr) = value;
 }
+
+/****************************************************************************/
 
 std::string& Eeprom::getCommands(void) const
 {
@@ -40,6 +58,8 @@ std::string& Eeprom::getCommands(void) const
 
   return commands;
 }
+
+/****************************************************************************/
 
 bool Eeprom::runCommand( const Parser& parser )
 {
@@ -67,6 +87,8 @@ bool Eeprom::runCommand( const Parser& parser )
   return result; 
 }
 
+/****************************************************************************/
+
 static int get_number(vector<string>::const_iterator current,vector<string>::const_iterator end )
 {
   int result = 0;
@@ -83,6 +105,8 @@ static int get_number(vector<string>::const_iterator current,vector<string>::con
 
   return result;
 }
+
+/****************************************************************************/
 
 static int get_hex_number(vector<string>::const_iterator current,vector<string>::const_iterator /*end*/ )
 {
@@ -101,6 +125,8 @@ static int get_hex_number(vector<string>::const_iterator current,vector<string>:
 
   return result;
 }
+
+/****************************************************************************/
 
 bool Eeprom::command_eeprom(const std::vector<std::string>& _commands) 
 {
@@ -152,5 +178,7 @@ bool Eeprom::command_eeprom(const std::vector<std::string>& _commands)
 
   return true;
 }
+
+/****************************************************************************/
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

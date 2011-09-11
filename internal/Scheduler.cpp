@@ -9,21 +9,29 @@
 // Library includes
 // Project includes
 #include <Dispatcher.h>
-#include <Scheduler.h>
 #include <Logger.h>
 #include <Parser.h>
+#include <Scheduler.h>
+
+/****************************************************************************/
 
 using namespace std;
+
+/****************************************************************************/
 
 Scheduler::Scheduler(Dispatcher& _d, Logger& _l): dispatch(_d), logger(_l), done(false)
 {
   sem_init(&sem,0,0);
 }
 
+/****************************************************************************/
+
 Scheduler::~Scheduler()
 {
   sem_destroy(&sem);
 }
+
+/****************************************************************************/
 
 void Scheduler::runonce(void)
 {
@@ -81,6 +89,8 @@ void Scheduler::runonce(void)
   }
 }
 
+/****************************************************************************/
+
 void Scheduler::add(unsigned long trigger_at, const std::string& commands )
 {
   logger.sketch("AT","%lu %s",trigger_at,commands.c_str());
@@ -90,10 +100,14 @@ void Scheduler::add(unsigned long trigger_at, const std::string& commands )
   sem_post(&sem);
 }
 
+/****************************************************************************/
+
 size_t Scheduler::size(void) const
 {
   return object_q.size();
 }
+
+/****************************************************************************/
 
 void Scheduler::clear(void)
 {
@@ -104,11 +118,15 @@ void Scheduler::clear(void)
   // TODO: pthread_mutex_unlock object_q_mutex
 }
 
+/****************************************************************************/
+
 string& Scheduler::getCommands(void) const 
 { 
   static std::string commands = "at"; 
   return commands; 
 }
+
+/****************************************************************************/
 
 bool Scheduler::runCommand( const Parser& parser ) 
 { 
@@ -133,6 +151,8 @@ bool Scheduler::runCommand( const Parser& parser )
   return result; 
 }
 
+/****************************************************************************/
+
 bool Scheduler::command_at(const vector<string>& _commands)
 {
   if ( _commands.size() < 3 )
@@ -149,7 +169,9 @@ bool Scheduler::command_at(const vector<string>& _commands)
   
   return true;
 }
-  
+
+/****************************************************************************/
+
 void Scheduler::handler_thread_main(void* pv)
 {
   Scheduler* psched = reinterpret_cast<Scheduler*>(pv);
@@ -157,4 +179,7 @@ void Scheduler::handler_thread_main(void* pv)
   while(!psched->done)
     psched->runonce();
 }
+
+/****************************************************************************/
+
 // vim:cin:ai:sts=2 sw=2 ft=cpp

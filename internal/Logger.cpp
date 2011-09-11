@@ -1,3 +1,4 @@
+// STL includes
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
@@ -6,19 +7,24 @@
 #include <iterator>
 #include <sstream>
 #include <numeric>
-
+// C includes
 #include <stdio.h>
 #include <stdarg.h>
+// Library includes
 #include <pthread.h>
-
-#include <Logger.h>
+// Project includes
 #include <Dispatcher.h>
 #include <Clock.h>
 #include <Parser.h>
+#include <Logger.h>
 
 using namespace std;
 
+/****************************************************************************/
+
 extern "C" unsigned long millis(void);
+
+/****************************************************************************/
 
 //
 // Rate throttler
@@ -44,6 +50,8 @@ void Logger::throttle_output_rate(void)
   }
 }
 
+/****************************************************************************/
+
 struct count_contains
 {
   string key;
@@ -54,6 +62,8 @@ struct count_contains
   }
 };
 
+/****************************************************************************/
+
 //
 // Public interface
 //
@@ -63,15 +73,21 @@ Logger::Logger(void): clock(NULL), last_check(0), rate_limit(default_rate_limit)
   pthread_mutex_init(&mutex,NULL);
 }
 
+/****************************************************************************/
+
 Logger::Logger(Clock& _clock): clock(&_clock), last_check(0), rate_limit(default_rate_limit), lines_remaining(lines_per_check), verbose(false)
 {
   pthread_mutex_init(&mutex,NULL);
 }
 
+/****************************************************************************/
+
 Logger::~Logger()
 {
   pthread_mutex_destroy(&mutex);
 }
+
+/****************************************************************************/
 
 void Logger::clear(void)
 {
@@ -84,10 +100,14 @@ void Logger::clear(void)
   verbose = false;
 }
 
+/****************************************************************************/
+
 int Logger::lines_contain(const std::string& value) const
 {
   return accumulate(begin(),end(),0,count_contains(value));
 }
+
+/****************************************************************************/
 
 void Logger::internal(const std::string& module, const std::string& format,...)
 {
@@ -104,6 +124,8 @@ void Logger::internal(const std::string& module, const std::string& format,...)
 
   pthread_mutex_unlock( &mutex );
 }
+
+/****************************************************************************/
 
 void Logger::sketch(const std::string& module, const std::string& format,...)
 {
@@ -123,6 +145,8 @@ void Logger::sketch(const std::string& module, const std::string& format,...)
   throttle_output_rate();
 }
 
+/****************************************************************************/
+
 void Logger::sketch_v(const std::string& module, const std::string& format, va_list ap)
 {
   pthread_mutex_lock( &mutex );
@@ -137,6 +161,8 @@ void Logger::sketch_v(const std::string& module, const std::string& format, va_l
 
   throttle_output_rate();
 }
+
+/****************************************************************************/
 
 void Logger::add_message(const std::string& preamble,const std::string& message)
 {
@@ -154,10 +180,14 @@ void Logger::add_message(const std::string& preamble,const std::string& message)
   push_back(ss.str());
 }
 
+/****************************************************************************/
+
 void Logger::add_buffer(const std::string& preamble)
 {
   add_message(preamble,string(buffer));
 }
+
+/****************************************************************************/
 
 void Logger::add(const std::string& format,...)
 {
@@ -174,6 +204,8 @@ void Logger::add(const std::string& format,...)
 
   throttle_output_rate();
 }
+
+/****************************************************************************/
 
 bool Logger::runCommand( const Parser& parser ) 
 { 
@@ -204,6 +236,8 @@ bool Logger::runCommand( const Parser& parser )
   return result; 
 }
 
+/****************************************************************************/
+
 bool Logger::command_list(const vector<string>& _commands) const
 {
   if ( _commands.size() != 1 )
@@ -215,6 +249,8 @@ bool Logger::command_list(const vector<string>& _commands) const
 
   return true;
 }
+
+/****************************************************************************/
 
 bool Logger::command_log(const vector<string>& _commands)
 {
@@ -246,5 +282,6 @@ bool Logger::command_log(const vector<string>& _commands)
   return true;
 }
 
+/****************************************************************************/
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

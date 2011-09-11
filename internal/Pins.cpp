@@ -1,21 +1,31 @@
+// STL includes
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
-
-#include <Pins.h>
+// C includes
+// Library includes
+// Project includes
 #include <Dispatcher.h>
 #include <Parser.h>
 #include <Logger.h>
+#include <Pins.h>
 
 using namespace std;
 
+/****************************************************************************/
+
 const int LOW = 0;
 const int HIGH = 1;
+
+/****************************************************************************/
 
 Pins::Pins(Logger& _log): log(_log)
 {
   clear();
 }
+
+/****************************************************************************/
+
 void Pins::clear(void)
 {
   digital_states.clear();
@@ -28,25 +38,40 @@ void Pins::clear(void)
   analog_states.resize(num_channels);
   isr_table.resize(num_interrupts);
 }
+
+/****************************************************************************/
+
 int Pins::digitalRead(int pin) const
 {
   int result = digital_states.at(pin);
   return result; 
 }
+
+/****************************************************************************/
+
 void Pins::hwSetDigital(int pin,int level)
 {
   digital_states.at(pin) = level;
   log.internal("PINS","%i %s",pin,level?"HIGH":"LOW");
 }
+
+/****************************************************************************/
+
 int Pins::analogRead(int pin) const
 {
   return analog_states.at(pin);
 }
+
+/****************************************************************************/
+
 void Pins::hwSetAnalog(int pin,int level)
 {
   analog_states.at(pin) = level;
   log.internal("PINS", "A%i %i",pin,level);
 }
+
+/****************************************************************************/
+
 void Pins::digitalWrite(int pin,int level)
 {
   if ( pin_modes.at(pin) == OUTPUT )
@@ -55,15 +80,23 @@ void Pins::digitalWrite(int pin,int level)
     log.sketch("PINS","%i %s",pin,level?"HIGH":"LOW");
   }
 }
+
+/****************************************************************************/
+
 int Pins::hwGetDigital(int pin) const
 {
   return digital_states.at(pin);
 }
+
+/****************************************************************************/
+
 void Pins::pinMode(int pin, int dir)
 {
   pin_modes.at(pin) = dir;
   log.sketch("PINS","%i %s",pin,dir?"OUTPUT":"INPUT");
 }
+
+/****************************************************************************/
 
 void Pins::attachInterrupt(int irq, void (*isr)(void))
 {
@@ -71,11 +104,15 @@ void Pins::attachInterrupt(int irq, void (*isr)(void))
   log.sketch("IRQ","%i attached",irq);
 }
 
+/****************************************************************************/
+
 void Pins::detachInterrupt(int irq)
 {
   attachInterrupt(irq,NULL);
   log.sketch("IRQ","%i detached",irq);
 }
+
+/****************************************************************************/
 
 void Pins::hwTriggerInterrupt(int irq) const
 {
@@ -85,6 +122,8 @@ void Pins::hwTriggerInterrupt(int irq) const
   log.internal("IRQ","%i triggered",irq);
   isr_table[irq]();
 }
+
+/****************************************************************************/
 
 bool Pins::runCommand( const Parser& parser ) 
 { 
@@ -127,6 +166,8 @@ bool Pins::runCommand( const Parser& parser )
   return result; 
 }
 
+/****************************************************************************/
+
 bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<string>::const_iterator end)
 {
   char c = (*current)[0];
@@ -165,6 +206,8 @@ bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<str
   return true;
 }
 
+/****************************************************************************/
+
 bool Pins::command_pin_analog(vector<string>::const_iterator current,vector<string>::const_iterator end)
 {
   string pin_str = (*current++).substr(1);
@@ -197,6 +240,8 @@ bool Pins::command_pin_analog(vector<string>::const_iterator current,vector<stri
   return true;
 }
 
+/****************************************************************************/
+
 bool Pins::command_pin(const vector<string>& _commands)
 {
   vector<string>::const_iterator current = _commands.begin();
@@ -216,6 +261,8 @@ bool Pins::command_pin(const vector<string>& _commands)
   else
     return command_pin_digital(current,_commands.end());
 }
+
+/****************************************************************************/
 
 bool Pins::command_pins(const vector<string>&) const
 {
@@ -240,6 +287,8 @@ bool Pins::command_pins(const vector<string>&) const
 
   return true;
 }
+
+/****************************************************************************/
 
 bool Pins::command_irq(const vector<string>& _commands) const
 {
@@ -271,5 +320,7 @@ bool Pins::command_irq(const vector<string>& _commands) const
 
   return true;
 }
+
+/****************************************************************************/
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -1,13 +1,18 @@
+// STL includes
 #include <vector>
 #include <string>
 #include <iostream>
 #include <stdexcept>
-
+// C includes
+// Library includes
+// Project includes
 #include <Parser.h>
-#include <Dispatcher.h>
 #include <IDispatchable.h>
+#include <Dispatcher.h>
 
 using namespace std;
+
+/****************************************************************************/
 
 bool Dispatcher::execute_new(const Parser& _commands) const
 {
@@ -45,10 +50,14 @@ bool Dispatcher::execute_new(const Parser& _commands) const
   return objectmap.at(command)->runCommand(_commands);
 }
 
+/****************************************************************************/
+
 bool Dispatcher::execute(const std::string& _str) const
 {
   return execute_new(Parser(_str));
 }
+
+/****************************************************************************/
 
 bool Dispatcher::add(IDispatchable* obj)
 {
@@ -71,9 +80,13 @@ bool Dispatcher::add(IDispatchable* obj)
   return true;
 }
 
+/****************************************************************************/
+
 void Dispatcher::clear(void)
 {
   objectmap.clear();
 }
+
+/****************************************************************************/
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

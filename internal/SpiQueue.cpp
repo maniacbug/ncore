@@ -1,16 +1,25 @@
+// STL includes
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-
+// C includes
+// Library includes
+// Project includes
 #include <Parser.h>
 #include <Logger.h>
 #include <SpiQueue.h>
 
+/****************************************************************************/
+
 using namespace std;
   
+/****************************************************************************/
+
 SpiQueue::SpiQueue(Logger& _logger): logger(_logger), has_default(false), default_value(0)
 {
 }
+
+/****************************************************************************/
 
 void SpiQueue::clear(void) 
 { 
@@ -19,11 +28,15 @@ void SpiQueue::clear(void)
   default_value = 0;
 }
 
+/****************************************************************************/
+
 void SpiQueue::hwEnqueue(uint8_t _byte)
 {
   qts.push(_byte);
 }
   
+/****************************************************************************/
+
 uint8_t SpiQueue::transfer(uint8_t _in)
 {
   uint8_t out = default_value;
@@ -41,11 +54,15 @@ uint8_t SpiQueue::transfer(uint8_t _in)
   return out;
 }
 
+/****************************************************************************/
+
 string& SpiQueue::getCommands(void) const 
 { 
   static std::string commands = "spi"; 
   return commands; 
 }
+
+/****************************************************************************/
 
 bool SpiQueue::runCommand( const Parser& parser ) 
 { 
@@ -70,6 +87,8 @@ bool SpiQueue::runCommand( const Parser& parser )
 
   return result; 
 }
+
+/****************************************************************************/
 
 bool SpiQueue::command_spi(const vector<string>& _commands)
 {
@@ -133,5 +152,7 @@ bool SpiQueue::command_spi(const vector<string>& _commands)
   }
   return true;
 }
+
+/****************************************************************************/
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp
