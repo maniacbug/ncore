@@ -65,16 +65,16 @@ DateTime::DateTime (uint32_t t)
     d = days + 1;
 }
 
-DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
+DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t sec)
 {
     if (year >= 2000)
         year -= 2000;
     yOff = year;
-    m = min(month,12);
-    d = min(day,31);
-    hh = min(hour,23);
-    mm = min(min,60);
-    ss = min(sec,60);
+    m = min(month,(uint8_t)12);
+    d = min(day,(uint8_t)31);
+    hh = min(hour,(uint8_t)23);
+    mm = min(minute,(uint8_t)60);
+    ss = min(sec,(uint8_t)60);
 }
 
 static uint8_t conv2d(const char* p)
