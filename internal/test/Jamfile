@@ -7,7 +7,7 @@ DEFINES = NATIVE=1 ;
 CORE_MODULES = [ GLOB $(CORE_DIR) : *.cpp ] ; 
 CODE_MODULES = [ GLOB $(CODE_DIR) : *.cpp ] ;
 TEST_MODULES = [ GLOB $(PWD) : *.test ] ;
-MOCK_MODULES = readline.cpp ;
+MOCK_MODULES = readline.cpp mock_time.cpp ;
 ARDUINO_EXAMPLES_DIR = /opt/arduino-0022/examples ;
 SKETCH_MODULES = $(ARDUINO_EXAMPLES_DIR)/4.Communication/SerialCallResponse/SerialCallResponse.pde ;
 LINK = c++ ;
