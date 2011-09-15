@@ -28,5 +28,12 @@ extern "C" {
     return 0;
   }
 
+  time_t time(time_t *p)
+  {
+    if (p)
+      *p = mock_time.tv_sec;
+    return mock_time.tv_sec;
+  }
+
 }
 
