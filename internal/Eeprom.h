@@ -25,6 +25,7 @@ public:
   size_t size(void);
   uint8_t readByte(int addr) const;
   void writeByte(int addr, uint8_t value);
+  void clear(void);
 };
 
 #endif // __EEPROM_H__

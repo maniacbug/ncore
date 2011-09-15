@@ -23,6 +23,14 @@ static const int eeprom_size = 1 << 9;
 
 Eeprom::Eeprom(Logger& _log): log(_log)
 {
+  clear();
+}
+
+/****************************************************************************/
+
+void Eeprom::clear(void)
+{
+  values.clear();
   values.resize(eeprom_size);
 }
 
