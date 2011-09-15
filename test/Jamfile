@@ -1,12 +1,12 @@
 CXXTEST_DIR	= $(HOME)/Source/cxxtest ;
-CODE_DIR	= ../internal ;
+INTERNAL_DIR	= ../internal ;
 CORE_DIR	= .. ;
 
-HDRS		+= $(CXXTEST_DIR) $(PWD) $(CODE_DIR) $(CORE_DIR) ;
+HDRS		+= $(CXXTEST_DIR) $(PWD) $(INTERNAL_DIR) $(CORE_DIR) ;
 DEFINES		+= NATIVE=1 ;
 
 CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ; 
-CODE_MODULES	= [ GLOB $(CODE_DIR) : *.cpp ] ;
+INTERNAL_MODULES = [ GLOB $(INTERNAL_DIR) : *.cpp ] ;
 TEST_MODULES	= [ GLOB $(PWD) : *.test ] ;
 MOCK_MODULES	= readline.cpp mock_time.cpp ;
 SKETCH_MODULES	= IfBlink.cpp ;
@@ -17,7 +17,7 @@ C++		= c++ ;
 LOCATE_TARGET	= out ;
 LOCATE_SOURCE	= out ;
 CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
-C++FLAGS	= ; 
+C++FLAGS	= $(CCFLAGS) ; 
 LINKFLAGS	= -fprofile-arcs -lpthread -lrt ;
 
 rule TestSuite
@@ -59,7 +59,7 @@ actions ignore Coverage
 {
   gcov $(>) -o $(LOCATE_TARGET)/ > $(<)
   $(MV) *.gcov $(LOCATE_TARGET)/
-  grep "###" $(LOCATE_TARGET)/$(CODE_MODULES:D=).gcov
+  grep "###" $(LOCATE_TARGET)/$(INTERNAL_MODULES:D=).gcov
 }
 rule Pde
 {
@@ -106,9 +106,9 @@ rule Main
 }
 
 TestSuite runner.cpp : $(TEST_MODULES) ;
-Main Tests : runner.cpp $(CODE_MODULES) $(MOCK_MODULES) ;
+Main Tests : runner.cpp $(INTERNAL_MODULES) $(MOCK_MODULES) ;
 RunTest result : Tests ;
-Coverage coverage : $(CODE_MODULES) ;
+Coverage coverage : $(INTERNAL_MODULES) ;
 
-Main Shell : shell.cpp $(CODE_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
+Main Shell : shell.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
