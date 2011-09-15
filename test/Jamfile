@@ -1,6 +1,7 @@
 CXXTEST_DIR	= $(HOME)/Source/cxxtest ;
 INTERNAL_DIR	= ../internal ;
 CORE_DIR	= .. ;
+EXTRAS_DIR	= $(CORE_DIR)/extras ;
 
 HDRS		+= $(CXXTEST_DIR) $(PWD) $(INTERNAL_DIR) $(CORE_DIR) ;
 DEFINES		+= NATIVE=1 ;
@@ -8,8 +9,8 @@ DEFINES		+= NATIVE=1 ;
 CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ; 
 INTERNAL_MODULES = [ GLOB $(INTERNAL_DIR) : *.cpp ] ;
 TEST_MODULES	= [ GLOB $(PWD) : *.test ] ;
-MOCK_MODULES	= readline.cpp mock_time.cpp ;
-SKETCH_MODULES	= IfBlink.cpp ;
+MOCK_MODULES	= $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
+SKETCH_MODULES	= $(EXTRAS_DIR)/IfBlink.cpp ;
 
 CXXTEST_GEN	= $(CXXTEST_DIR)/python/scripts/cxxtestgen --error-printer ;
 LINK		= c++ ;
@@ -110,5 +111,5 @@ Main Tests : runner.cpp $(INTERNAL_MODULES) $(MOCK_MODULES) ;
 RunTest result : Tests ;
 Coverage coverage : $(INTERNAL_MODULES) ;
 
-Main Shell : shell.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
+Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;

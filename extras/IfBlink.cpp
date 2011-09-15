@@ -17,6 +17,7 @@ void setup()
   // initialize the digital pin as an output.
   // Pin 13 has an LED connected on most Arduino boards:
   pinMode(13, OUTPUT);
+  pinMode(10, INPUT);
 }
 
 void loop()
