@@ -23,11 +23,32 @@ class Logger;
 class Eeprom: public IDispatchable
 {
 private:
-  std::vector<uint8_t> values;
-  Logger& log;
+  std::vector<uint8_t> values; /**< Eeprom memory mock */
+  Logger& log; /**< Where to log changes */
 protected:
+  /**
+   * Discover which commands this objects will dispatch
+   *
+   * @return Space-separated list of commands we will dispatch
+   */
   std::string& getCommands(void) const;
-  bool runCommand( const Parser& );
+
+  /**
+   * Run a command the user has typed
+   *
+   * @param commands Parsed command and arguments
+   *
+   * @retval true Found the command and it was successful
+   */
+  bool runCommand( const Parser& commands );
+
+  /**
+   * Handle the 'eeprom' command
+   *
+   * @param commands Parsed command and arguments
+   *
+   * @retval true The command was successful
+   */
   bool command_eeprom(const std::vector<std::string>&);
 public:
   Eeprom(Logger&);

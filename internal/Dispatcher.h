@@ -10,7 +10,6 @@
 #ifndef __DISPATCHER_H__
 #define __DISPATCHER_H__
 
-#include <vector>
 #include <string>
 #include <map>
 
@@ -22,25 +21,36 @@ class Parser;
  */
 class Dispatcher
 {
-protected:
-  /**
-   * Map of commands to dispatchable objects
-   */
-  typedef std::map<std::string,IDispatchable*> objectmap_t;
-  objectmap_t objectmap;
+private:
+  typedef std::map<std::string,IDispatchable*> objectmap_t; /**< Type used by internal map. */ 
+  objectmap_t objectmap; /**< Map of commands to dispatchable objects */
 
 public:
   /**
-   * Executes the worker associated with the first token in @p commands
+   * Executes the object associated with the first token in @p commands
+   *
+   * @param commands Simple string of space-separated command and parameters
+   *
+   * @retval true Worker function found and returned true
+   * @retval false Worker function not found or returned false
+   */
+  bool execute(const std::string& commands) const;
+  
+  /**
+   * Executes the object associated with the first token in @p commands
    *
    * @param commands Tokenized command and parameters
    *
    * @retval true Worker function found and returned true
    * @retval false Worker function not found or returned false
    */
-  bool execute(const std::string& commands) const;
   bool execute_new(const Parser& commands) const;
 
+  /**
+   * Add a new dispatchable object
+   *
+   * @retval true Added successfully
+   */
   bool add(IDispatchable*);
 
   /**
@@ -48,6 +58,11 @@ public:
    */
   void clear(void);
 
+  /**
+   * Determine the number of objects in the map
+   *
+   * @return Number of objects in the map
+   */
   size_t size(void) const
   {
     return objectmap.size();
