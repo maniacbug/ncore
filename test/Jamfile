@@ -1,22 +1,24 @@
-CXXTEST_DIR = $(HOME)/Source/cxxtest ;
-CXXTEST_GEN = $(CXXTEST_DIR)/python/scripts/cxxtestgen --error-printer ;
-CODE_DIR = .. ;
-CORE_DIR = ../.. ;
-HDRS = $(CXXTEST_DIR) $(PWD) $(CODE_DIR) $(CORE_DIR) ;
-DEFINES = NATIVE=1 ;
-CORE_MODULES = [ GLOB $(CORE_DIR) : *.cpp ] ; 
-CODE_MODULES = [ GLOB $(CODE_DIR) : *.cpp ] ;
-TEST_MODULES = [ GLOB $(PWD) : *.test ] ;
-MOCK_MODULES = readline.cpp mock_time.cpp ;
-ARDUINO_EXAMPLES_DIR = /opt/arduino-0022/examples ;
-SKETCH_MODULES = $(ARDUINO_EXAMPLES_DIR)/4.Communication/SerialCallResponse/SerialCallResponse.pde ;
-LINK = c++ ;
-C++ = c++ ;
-LOCATE_TARGET = out ;
-LOCATE_SOURCE = out ;
-CCFLAGS = -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
-C++FLAGS = $(CCFLAGS) ;
-LINKFLAGS = -fprofile-arcs -lpthread -lrt ;
+CXXTEST_DIR	= $(HOME)/Source/cxxtest ;
+CODE_DIR	= ../internal ;
+CORE_DIR	= .. ;
+
+HDRS		+= $(CXXTEST_DIR) $(PWD) $(CODE_DIR) $(CORE_DIR) ;
+DEFINES		+= NATIVE=1 ;
+
+CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ; 
+CODE_MODULES	= [ GLOB $(CODE_DIR) : *.cpp ] ;
+TEST_MODULES	= [ GLOB $(PWD) : *.test ] ;
+MOCK_MODULES	= readline.cpp mock_time.cpp ;
+SKETCH_MODULES	= IfBlink.cpp ;
+
+CXXTEST_GEN	= $(CXXTEST_DIR)/python/scripts/cxxtestgen --error-printer ;
+LINK		= c++ ;
+C++		= c++ ;
+LOCATE_TARGET	= out ;
+LOCATE_SOURCE	= out ;
+CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
+C++FLAGS	= ; 
+LINKFLAGS	= -fprofile-arcs -lpthread -lrt ;
 
 rule TestSuite
 {
