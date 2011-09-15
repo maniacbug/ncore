@@ -35,7 +35,7 @@ int main(void)
   cerr << "NCORE: Arduino Native Core" << endl << "Copyright (C) 2011 maniacbug@ymail.com GPLv2" << endl << endl;
 
   // Command Shell
-  Shell shell;
+  Shell shell(&theScheduler);
 
   // Add commands for all of the objects that can dispatch commands
   theDispatcher.add(&theLogger);

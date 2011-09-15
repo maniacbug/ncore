@@ -39,10 +39,11 @@ void Shell::run(const Dispatcher& _commands, const Clock& _clock)
     }
     else
     {
-      if ( ! remaining_schedule || ! remaining_schedule->size() )
+      cout << endl;
+      while ( remaining_schedule && remaining_schedule->size() )
       {
-	quit = true;
       }
+      quit = true;
     }
 
     if ( input && command.size() )
@@ -65,8 +66,6 @@ void Shell::run(const Dispatcher& _commands, const Clock& _clock)
     }
   }
   while (!quit);
-
-  cout << endl;
 }
 
 /****************************************************************************/
