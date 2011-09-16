@@ -24,8 +24,8 @@ class FailDispatchable: public IDispatchable
 {
   std::string& getCommands(void) const
   {
-    static std::string commands = "fail";
-    return commands;
+    static std::string dispatch = "fail";
+    return dispatch;
   }
   bool runCommand( const Parser& )
   {
@@ -36,9 +36,10 @@ class FailDispatchable: public IDispatchable
 class ShellTestSuite: public CxxTest::TestSuite
 {
   Pins pins;
-  Dispatcher commands;
+  Dispatcher dispatch;
   Logger log;
   OutputCapture cap;
+  Shell shell;
 public:
   ShellTestSuite(void): pins(log)
   {
@@ -46,11 +47,13 @@ public:
   void setUp()
   {
     pins.clear();
-    commands.clear();
+    dispatch.clear();
     log.clear();
     cap.clear();
-    commands.add(&pins);
-    commands.add(&log);
+    shell = Shell();
+    dispatch.add(&shell);
+    dispatch.add(&pins);
+    dispatch.add(&log);
   }
   void teardown()
   {
@@ -77,7 +80,7 @@ public:
   void testRuns( void )
   {
     cap.start();
-    Shell().run(Dispatcher());
+    shell.run(dispatch);
     cap.stop();
 
     TS_ASSERT( cap.buffer().size() > 0 );
@@ -85,7 +88,7 @@ public:
   void testEmpty( void )
   {
     cap.start();
-    Shell().run(Dispatcher());
+    shell.run(dispatch);
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("ncore") , 1 );
@@ -95,7 +98,7 @@ public:
     mock_readline_add("quit");
 
     cap.start();
-    Shell().run(Dispatcher());
+    shell.run(dispatch);
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("quit") , 1 );
@@ -106,7 +109,7 @@ public:
     mock_readline_add("quit");
 
     cap.start();
-    Shell().run(Dispatcher());
+    shell.run(dispatch);
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("ncore") , 2 );
@@ -117,9 +120,9 @@ public:
     mock_readline_add("quit");
 
     cap.start();
-    Shell().run(Dispatcher());
+    shell.run(dispatch);
     cap.stop();
-
+    
     TS_ASSERT_EQUALS( cap.contains("not found") , 1 );
   }
   void testRealCommand( void )
@@ -127,7 +130,7 @@ public:
     mock_readline_add("pins");
 
     cap.start();
-    Shell().run(commands);
+    shell.run(dispatch);
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("13:0") , 1 );
@@ -137,7 +140,7 @@ public:
     mock_readline_add("pin something");
 
     cap.start();
-    Shell().run(commands);
+    shell.run(dispatch);
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("Error: ") , 1 );
@@ -145,12 +148,12 @@ public:
   void testCommandFail( void )
   {
     FailDispatchable fail;
-    commands.add(&fail);
+    dispatch.add(&fail);
     mock_readline_add("fail");
     mock_readline_add("quit");
 
     cap.start();
-    Shell().run(commands);
+    shell.run(dispatch);
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("failed") , 1 );
@@ -164,7 +167,7 @@ public:
     mock_readline_add("pins");
 
     cap.start();
-    Shell().run(commands);
+    shell.run(dispatch);
     cap.stop();
 
     TS_ASSERT_EQUALS( cap.contains("13:1") , 1 );
@@ -179,7 +182,7 @@ public:
     cap.start();
     try
     {
-      Shell().run(commands);
+      shell.run(dispatch);
     }
     catch(...)
     {

@@ -10,6 +10,9 @@
 #ifndef __SHELL_H__
 #define __SHELL_H__
 
+#include <IDispatchable.h>
+#include <IContainer.h>
+
 class Dispatcher;
 class Clock;
 
@@ -17,9 +20,16 @@ class Clock;
  * Encapsulates the shell loop.  Gets new commands from the user, sends to dispatcher.
  */
 
-class Shell
+class Shell: public IDispatchable
 {
+private:
+  bool quit;
+  IContainer* remaining_schedule;
+protected:
+  std::string& getCommands(void) const;
+  bool runCommand( const Parser& );
 public:
+  Shell(IContainer* _remaining_schedule = NULL): quit(false), remaining_schedule(_remaining_schedule) {}
   void run(const Dispatcher& commands);
   void run(const Dispatcher& commands, const Clock& clock);
 };

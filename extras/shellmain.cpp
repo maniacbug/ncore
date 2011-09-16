@@ -18,6 +18,8 @@
 
 using namespace std;
 
+extern "C" void init(void);
+
 Dispatcher theDispatcher;
 Clock theClock;
 Logger theLogger(theClock);
@@ -27,12 +29,13 @@ Eeprom theEeprom(theLogger);
 SpiQueue theSpiQueue(theLogger);
 Scheduler theScheduler(theDispatcher,theLogger);
 
-extern "C" void init(void);
-
 int main(void)
 {
   // Announce
   cerr << "NCORE: Arduino Native Core" << endl << "Copyright (C) 2011 maniacbug@ymail.com GPLv2" << endl << endl;
+
+  // Command Shell
+  Shell shell;
 
   // Add commands for all of the objects that can dispatch commands
   theDispatcher.add(&theLogger);
@@ -41,6 +44,7 @@ int main(void)
   theDispatcher.add(&theEeprom);
   theDispatcher.add(&theSpiQueue);
   theDispatcher.add(&theScheduler);
+  theDispatcher.add(&shell);
  
   // Announce to the log
   theLogger.internal("CORE","Started");
@@ -53,7 +57,7 @@ int main(void)
   scheduler_thread.startCustom(Scheduler::handler_thread_main,&theScheduler);
 
   // Operate the shell
-  Shell().run(theDispatcher,theClock);
+  shell.run(theDispatcher,theClock);
 
   return 0;
 }

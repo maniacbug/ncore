@@ -38,9 +38,14 @@ void Shell::run(const Dispatcher& _commands, const Clock& _clock)
       command = string(input);
     }
     else
-      command = "quit";
+    {
+      if ( ! remaining_schedule || ! remaining_schedule->size() )
+      {
+	quit = true;
+      }
+    }
 
-    if ( command != "quit" && command != "")
+    if ( input && command.size() )
     {
       bool valid = false;
       try
@@ -59,7 +64,43 @@ void Shell::run(const Dispatcher& _commands, const Clock& _clock)
         add_history(input);
     }
   }
-  while (command != "quit" );
+  while (!quit);
+
+  cout << endl;
+}
+
+/****************************************************************************/
+
+string& Shell::getCommands(void) const
+{
+  static std::string commands = "quit";
+  return commands;
+}
+
+/****************************************************************************/
+
+bool Shell::runCommand( const Parser& parser )
+{
+  bool result = false;
+
+  const string& command = parser.at(0);
+
+  if ( command == "quit" )
+  {
+    quit = true;
+    result = true;
+  }
+  else if ( command == "help" )
+  {
+    const string& command = parser.at(1);
+    if ( command == "quit" )
+    {
+      cout << "quit -- stop running and exit." << endl;
+      result = true;
+    }
+  }
+
+  return result;
 }
 
 /****************************************************************************/
