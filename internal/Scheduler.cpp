@@ -38,7 +38,9 @@ void Scheduler::runonce(void)
   if ( object_q.empty() )
   {
     sem_wait(&sem);
+#if 0
     logger.sketch("AT","Got sem");
+#endif 
   }
   if ( ! object_q.empty() )
   {
@@ -79,12 +81,17 @@ void Scheduler::runonce(void)
       }
       int v;
       sem_getvalue(&sem,&v);
+#if 0
       logger.sketch("AT","Waiting %lu",wait);
       int result = sem_timedwait(&sem,&tm);
+      // This is debugging info, not really needed for regular use.
       if ( result )
         logger.sketch("AT","Sem timeout");
       else
         logger.sketch("AT","Got sem");
+#else
+      sem_timedwait(&sem,&tm);
+#endif
     }
   }
 }
