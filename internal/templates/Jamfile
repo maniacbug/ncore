@@ -1,0 +1,124 @@
+SKETCH_DIR	= $(HOME)/Source/Arduino ;
+SKETCH_LIB_DIR	= $(SKETCH_DIR)/libraries ;
+CORE_DIR	= $(SKETCH_DIR)/hardware/native ;
+INTERNAL_DIR	= $(CORE_DIR)/internal ;
+PDE_DIR		= $(PWD) ;
+LIBRARIES	= $(SKETCH_LIB_DIR)/Tictocs ;
+CXXTEST_DIR	= $(HOME)/Source/cxxtest ;
+CXXTEST_GEN	= $(CXXTEST_DIR)/python/scripts/cxxtestgen --error-printer ;
+
+HDRS		= $(CXXTEST_DIR) $(INTERNAL_DIR) $(LIBRARIES) $(PDE_DIR) $(CORE_DIR) ;
+DEFINES		+= NATIVE=1 TEST=1 ;
+
+CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ;
+INTERNAL_MODULES = [ GLOB $(INTERNAL_DIR) : *.cpp ] ;
+TEST_MODULES	= [ GLOB $(PWD) : *.test ] ;
+EXTRA_MODULES	= [ GLOB $(PWD) : *.cpp ] $(CORE_DIR)/extras/mock_time.cpp ;
+MOCK_MODULES	= ;
+
+SEARCH_SOURCE	= $(PWD) ;
+LOCATE_TARGET 	= $(SEARCH_SOURCE)/out ;
+LOCATE_SOURCE 	= $(SEARCH_SOURCE)/out ;
+SKETCH_MODULES	= [ GLOB $(PDE_DIR) : *.pde *.cpp *.c ] [ GLOB $(LIBRARIES) : *.cpp ] ;
+
+C++		= c++ ;
+LINK 		= c++ ;
+CCFLAGS 	= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
+C++FLAGS 	= $(CCFLAGS) ;
+LINKFLAGS	= -fprofile-arcs -lpthread -lrt -lreadline ;
+
+rule TestSuite
+{
+  Depends $(<) : $(>) ;
+  MakeLocate $(<) : $(LOCATE_SOURCE) ;
+  Clean clean : $(<) ;
+}
+
+actions TestSuite
+{
+  $(CXXTEST_GEN) $(>) > $(<)
+}
+
+rule RunTest
+{
+  Depends $(<) : $(>) ;
+  Clean clean : $(<) ;
+  MakeLocate $(<) : $(LOCATE_TARGET) ;
+  Depends all : $(<) ;
+}
+
+actions RunTest
+{
+  $(RM) $(LOCATE_TARGET)/*.gcda
+  $(>) | tee $(<)
+}
+
+rule Coverage 
+{
+	Depends $(<) : $(>) ;
+	Depends $(<) : result ;
+	MakeLocate $(<) : $(LOCATE_TARGET) ;
+	Clean clean : $(<) ;
+	Clean clean : $(2:D=).gcov ;
+}
+
+actions ignore Coverage 
+{
+	gcov $(>) -o $(LOCATE_TARGET)/ > $(<)
+	$(MV) *.gcov $(LOCATE_TARGET)/
+	grep "###" $(LOCATE_TARGET)/$(SKETCH_MODULES:D=).gcov
+}
+
+rule Pde
+{
+	Depends $(<) : $(>) ;
+	MakeLocate $(<) : $(LOCATE_SOURCE) ;
+	Clean clean :
+	$(<) ;
+}
+
+actions Pde
+{
+	echo "#include <WProgram.h>" > $(<)
+	echo "#line 1 \"$(>)\"" >> $(<)
+	cat $(>) >> $(<)
+}
+
+rule C++Pde
+{
+	local _CPP = $(>:G)$(>:B).cpp ;
+	Pde $(_CPP) : $(>) ;
+	C++ $(<) : $(_CPP) ;
+}
+
+rule UserObject
+{
+	switch $(>:S)
+	{
+	case .pde :
+		C++Pde $(<) : $(>) ;
+	}
+}
+
+rule Objects
+{
+	local _i ;
+
+	for _i in [ FGristFiles $(<) ]
+	{
+		Object $(_i:G)$(_i:B)$(SUFOBJ) : $(_i) ;
+		Depends obj : $(_i:G)$(_i:B)$(SUFOBJ) ;
+	}
+}
+
+rule Main
+{
+	MainFromObjects $(<) : $(>:B)$(SUFOBJ) ;
+	Objects $(>) ;
+}
+
+TestSuite runner.cpp : $(TEST_MODULES) ;
+Main Tests : runner.cpp $(CODE_MODULES) $(MOCK_MODULES) $(SKETCH_MODULES) $(INTERNAL_MODULES) $(CORE_MODULES) $(HELPER_MODULES) ;
+RunTest result : Tests ;
+
+Coverage coverage : $(SKETCH_MODULES) ;
