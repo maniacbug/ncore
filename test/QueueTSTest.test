@@ -8,21 +8,10 @@
 #include <cxxtest/TestSuite.h>
 
 // Project includes
-
-#include <string>
-#include <queue>
-
-#include <inttypes.h>
-#include <pthread.h>
-#include <semaphore.h>
-
 #include <SketchThread.h>
 #include <QueueTS.h>
 
 using namespace std;
-
-extern "C" void setup(void) {}
-extern "C" void loop(void) {}
 
 struct PopperThread: SketchThread
 {

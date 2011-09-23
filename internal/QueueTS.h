@@ -8,7 +8,12 @@
 // Library includes
 // Project includes
 
-// Threadsafe blocking queue.  "Pop" will block if the queue is empty.
+/**
+ * Threadsafe blocking queue.  Empty queue blocks the thread until data is
+ * available.
+ *
+ * @todo Move into its own header file.
+ */
 
 template <class T> 
 class QueueTS
