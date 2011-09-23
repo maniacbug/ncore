@@ -21,6 +21,13 @@ CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
 C++FLAGS	= $(CCFLAGS) ; 
 LINKFLAGS	= -fprofile-arcs -lpthread -lrt ;
 
+if ( $(OS) = MACOSX )
+{
+	HDRS 		+= /Developer/SDKs/MacOSX10.6.sdk/usr/include ;
+	DEFINES 	+= MAC=1 ;
+	LINKFLAGS 	= -fprofile-arcs -lpthread ;
+}
+
 rule TestSuite
 {
   Depends $(<) : $(>) ;
@@ -113,3 +120,6 @@ Coverage coverage : $(INTERNAL_MODULES) ;
 
 Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
+
+TestSuite threadrunner.cpp : Threads.test ;
+Main Threads : threadrunner.cpp ;

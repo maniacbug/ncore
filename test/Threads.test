@@ -1,0 +1,135 @@
+// STL includes
+#include <vector>
+#include <string>
+
+// C includes
+
+// Library includes
+#include <cxxtest/TestSuite.h>
+
+// Project includes
+
+#include <string>
+#include <queue>
+
+#include <inttypes.h>
+#include <pthread.h>
+#include <semaphore.h>
+
+// Threadsafe blocking queue.  "Pop" will block if the queue is empty.
+
+template <class T> 
+class QueueTS
+{
+private:
+  std::queue<T> q;
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
+public:
+  QueueTS(void);
+  virtual ~QueueTS();
+  void push(const T&);
+  T pop(void);
+  void clear(void);
+  bool available(void) const;
+};
+
+template <class T> 
+QueueTS<T>::QueueTS(void)
+{
+  pthread_mutex_init(&mutex,NULL);
+  pthread_cond_init(&cond,0);
+}
+  
+template <class T> 
+QueueTS<T>::~QueueTS()
+{
+  pthread_mutex_destroy(&mutex);
+  pthread_cond_destroy(&cond);
+}
+
+template <class T> 
+void QueueTS<T>::push(const T& item)
+{
+  pthread_mutex_lock(&mutex);
+  q.push(item);
+  pthread_mutex_unlock(&mutex);
+  pthread_cond_signal(&cond);
+}
+
+template <class T> 
+T QueueTS<T>::pop(void)
+{
+  pthread_mutex_lock(&mutex);
+  while ( !q.size() )
+    pthread_cond_wait(&cond,&mutex);
+  T item = q.front();
+  q.pop();
+  pthread_mutex_unlock(&mutex);
+
+  return item;
+}
+  
+template <class T> 
+void QueueTS<T>::clear(void)
+{
+  pthread_mutex_lock(&mutex);
+  while ( q.size() )
+    q.pop();
+  pthread_mutex_unlock(&mutex);
+}
+
+#include <iostream>
+
+template <class T> 
+bool QueueTS<T>::available(void) const
+{
+  pthread_mutex_lock(const_cast<pthread_mutex_t*>(&mutex));
+  bool result = q.size() > 0;
+  pthread_mutex_unlock(const_cast<pthread_mutex_t*>(&mutex));
+  return result;
+}
+
+using namespace std;
+
+class QTSTestSuite: public CxxTest::TestSuite
+{
+  QueueTS<string> *q;
+public:
+  void setUp()
+  {
+    q = new QueueTS<string>;
+  }
+  void tearDown()
+  {
+    delete q;
+  }
+
+  void testEmpty( void )
+  {
+    TS_ASSERT_EQUALS( q->available(), false );
+  }
+  
+  void testAdd( void )
+  {
+    q->push("Hello");
+    TS_ASSERT_EQUALS( q->available(), true );
+  }
+  
+  void testGet( void )
+  {
+    string in = "Hello";
+    q->push(in);
+    string result = q->pop();
+    TS_ASSERT_EQUALS( result, in );
+  }
+  
+  void testClear( void )
+  {
+    string in = "Hello";
+    q->push(in);
+    q->clear();
+    TS_ASSERT_EQUALS( q->available(), false );
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
