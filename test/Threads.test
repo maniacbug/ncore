@@ -16,6 +16,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+#include <SketchThread.h>
+
 // Threadsafe blocking queue.  "Pop" will block if the queue is empty.
 
 template <class T> 
@@ -79,8 +81,6 @@ void QueueTS<T>::clear(void)
   pthread_mutex_unlock(&mutex);
 }
 
-#include <iostream>
-
 template <class T> 
 bool QueueTS<T>::available(void) const
 {
@@ -91,6 +91,36 @@ bool QueueTS<T>::available(void) const
 }
 
 using namespace std;
+
+extern "C" void setup(void) {}
+extern "C" void loop(void) {}
+
+struct PopperThread: SketchThread
+{
+  int num_pops;
+  string result;
+  QueueTS<string>& q;
+  static PopperThread* that;
+  static void thread_main(void)
+  {
+    that->run();
+  }
+  void run(void)
+  {
+    while(1)
+    {
+      result = q.pop();
+      ++num_pops;
+    }
+  }
+  PopperThread(QueueTS<string>& _q): SketchThread(1), num_pops(0), q(_q)
+  {
+    that = this;
+    startCustom(thread_main);
+  }
+};
+
+PopperThread* PopperThread::that = NULL;
 
 class QTSTestSuite: public CxxTest::TestSuite
 {
@@ -130,6 +160,54 @@ public:
     q->push(in);
     q->clear();
     TS_ASSERT_EQUALS( q->available(), false );
+  }
+
+  void delay_us(unsigned long us)
+  {
+    timespec tv;
+    tv.tv_sec = 0;
+    tv.tv_nsec = us * 1000L;
+    nanosleep(&tv,NULL);
+  }
+  void testBlocksOnEmpty( void )
+  {
+    PopperThread t(*q);
+    delay_us(50);
+
+    TS_ASSERT_EQUALS( t.num_pops, 0 );
+  }
+  void testGetsOne( void )
+  {
+    PopperThread t(*q);
+    delay_us(50);
+    q->push("Hello");
+    delay_us(50);
+
+    TS_ASSERT_EQUALS( t.num_pops, 1 );
+  }
+  void testGetsLots( void )
+  {
+    PopperThread t(*q);
+    
+    const int num_pushes = 10;
+    int i = num_pushes;
+    while ( i-- )
+    {
+      q->push("Hello");
+      delay_us(50);
+    }
+    delay_us(50);
+    TS_ASSERT_EQUALS( t.num_pops, num_pushes );
+  }
+  void testGotTheRightOne( void )
+  {
+    string in = "Hello"; 
+    PopperThread t(*q);
+    delay_us(50);
+    q->push(in);
+    delay_us(50);
+
+    TS_ASSERT_EQUALS( t.result, in );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

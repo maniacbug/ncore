@@ -8,7 +8,7 @@ DEFINES		+= NATIVE=1 ;
 
 CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ; 
 INTERNAL_MODULES = [ GLOB $(INTERNAL_DIR) : *.cpp ] ;
-TEST_MODULES	= [ GLOB $(PWD) : *.test ] ;
+TEST_MODULES	= [ GLOB $(PWD) : *Test.test ] ;
 MOCK_MODULES	= $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
 SKETCH_MODULES	= $(EXTRAS_DIR)/IfBlink.cpp ;
 
@@ -122,4 +122,7 @@ Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(S
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
 
 TestSuite threadrunner.cpp : Threads.test ;
-Main Threads : threadrunner.cpp ;
+Main Threads : threadrunner.cpp $(INTERNAL_DIR)/SketchThread.cpp ;
+
+Main Shell : shell.cpp $(CODE_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
+LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
