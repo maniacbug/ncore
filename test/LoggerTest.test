@@ -15,6 +15,7 @@
 #include <Parser.h>
 #include <Dispatcher.h>
 #include <OutputCapture.h>
+#include <Clock.h>
 
 using namespace std;
 

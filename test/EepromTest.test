@@ -5,6 +5,7 @@
 #include <Logger.h>
 #include <Dispatcher.h>
 #include <OutputCapture.h>
+#include <Parser.h>
 
 using namespace std;
 

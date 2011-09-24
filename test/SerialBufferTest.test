@@ -4,6 +4,8 @@
 
 #include <SerialBuffer.h>
 #include <Logger.h>
+#include <Parser.h>
+#include <Dispatcher.h>
 #include <OutputCapture.h>
 
 using namespace std;

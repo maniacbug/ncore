@@ -12,7 +12,7 @@ TEST_MODULES	= [ GLOB $(PWD) : *Test.test ] ;
 MOCK_MODULES	= $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
 SKETCH_MODULES	= $(EXTRAS_DIR)/IfBlink.cpp ;
 
-CXXTEST_GEN	= $(CXXTEST_DIR)/python/scripts/cxxtestgen --error-printer ;
+CXXTEST_GEN	= $(CXXTEST_DIR)/python/scripts/cxxtestgen ;
 LINK		= c++ ;
 C++		= c++ ;
 LOCATE_TARGET	= out ;
@@ -37,7 +37,24 @@ rule TestSuite
 
 actions TestSuite
 {
-  $(CXXTEST_GEN) $(>) > $(<)
+  $(CXXTEST_GEN) --part $(>) > $(<)
+}
+
+rule TestRoot
+{
+  MakeLocate $(<) : $(LOCATE_SOURCE) ;
+}
+
+actions TestRoot
+{
+  $(CXXTEST_GEN) --root --error-printer > $(<)
+}
+
+rule C++TestSuite
+{
+  local _CPP = $(>:B).cpp ;
+  TestSuite $(_CPP) : $(>) ;
+  C++ $(<) : $(_CPP) ;
 }
 
 rule RunTest
@@ -95,6 +112,7 @@ rule UserObject
   switch $(>:S)
   {
     case .pde : C++Pde $(<) : $(>) ;
+    case .test : C++TestSuite $(<) : $(>) ;
   }
 }
 rule Objects
@@ -113,8 +131,8 @@ rule Main
         Objects $(>) ;
 }
 
-TestSuite runner.cpp : $(TEST_MODULES) ;
-Main Tests : runner.cpp $(INTERNAL_MODULES) $(MOCK_MODULES) ;
+TestRoot runner.cpp ;
+Main Tests : runner.cpp $(INTERNAL_MODULES) $(MOCK_MODULES) $(TEST_MODULES) ;
 RunTest result : Tests ;
 Coverage coverage : $(INTERNAL_MODULES) ;
 
