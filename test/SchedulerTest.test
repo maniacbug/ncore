@@ -189,9 +189,9 @@ public:
     global_logger.setVerbose(false);
     //cerr << global_logger;
 
-    TS_ASSERT_EQUALS( global_logger.lines_contain("100 SK TEST"), 1 );
-    TS_ASSERT_EQUALS( global_logger.lines_contain("200 SK TEST"), 1 );
-    TS_ASSERT_EQUALS( global_logger.lines_contain("300 SK TEST"), 1 );
+    // Cannot assert exact timing with this test.
+    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction 1"), 1 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction 2"), 2 );
     //cerr << ":OUT]" << endl;
   }
   void testAtCommandOk( void )
