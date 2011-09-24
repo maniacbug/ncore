@@ -22,7 +22,7 @@
 // Project includes
 #include <Clock.h>
 #include <IDispatchable.h>
-//#include <IContainer.h>
+#include <IContainer.h>
 
 /**
  * An object which can be scheduled
@@ -47,7 +47,7 @@ class Logger;
  * Allows for the scheduling of commands at a time in the future
  */
 
-class Scheduler: public IDispatchable //, public IContainer
+class Scheduler: public IDispatchable, public IContainer
 {
 private:
   std::priority_queue<SchedulableObject> object_q;
