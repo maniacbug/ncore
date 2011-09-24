@@ -121,8 +121,8 @@ Coverage coverage : $(INTERNAL_MODULES) ;
 Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
 
-TestSuite macrunner.cpp : QueueTSTest.test SpiQueueTest.test ParserTest.test ClockTest.test LoggerTest.test EepromTest.test ;
-Main MacTests : macrunner.cpp  $(INTERNAL_DIR)/Parser.cpp  $(INTERNAL_DIR)/SketchThread.cpp $(INTERNAL_DIR)/Clock.cpp $(INTERNAL_DIR)/Logger.cpp $(INTERNAL_DIR)/Eeprom.cpp $(INTERNAL_DIR)/Dispatcher.cpp $(INTERNAL_DIR)/SpiQueue.cpp $(EXTRAS_DIR)/setuploop.cpp $(EXTRAS_DIR)/readline.cpp globals.cpp $(EXTRAS_DIR)/mock_time.cpp ;
+TestSuite macrunner.cpp : SchedulerTest.test QueueTSTest.test SpiQueueTest.test ParserTest.test ClockTest.test LoggerTest.test EepromTest.test SketchThreadTest.test ;
+Main MacTests : macrunner.cpp  $(INTERNAL_DIR)/Scheduler.cpp  $(INTERNAL_DIR)/Parser.cpp  $(INTERNAL_DIR)/SketchThread.cpp $(INTERNAL_DIR)/Clock.cpp $(INTERNAL_DIR)/Logger.cpp $(INTERNAL_DIR)/Eeprom.cpp $(INTERNAL_DIR)/Dispatcher.cpp $(INTERNAL_DIR)/SpiQueue.cpp $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
 
 Main Shell : shell.cpp $(CODE_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
