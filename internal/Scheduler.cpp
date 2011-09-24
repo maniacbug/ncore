@@ -19,39 +19,57 @@ using namespace std;
 
 /****************************************************************************/
 
+#if MAC
+
+#include <mach/clock.h>
+#include <mach/mach.h>
+
+// https://gist.github.com/1087739
+static void clock_gettime(uint8_t, timespec* ts)
+{
+  clock_serv_t cclock;
+  mach_timespec_t mts;
+  host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+  clock_get_time(cclock, &mts);
+  mach_port_deallocate(mach_task_self(), cclock);
+  ts->tv_sec = mts.tv_sec;
+  ts->tv_nsec = mts.tv_nsec;
+}
+static const int CLOCK_REALTIME = 1;
+#endif
+
+/****************************************************************************/
+
 Scheduler::Scheduler(Dispatcher& _d, Logger& _l): dispatch(_d), logger(_l), done(false)
 {
-  sem_init(&sem,0,0);
+  pthread_mutex_init(&mutex,NULL);
+  pthread_cond_init(&cond,0);
 }
 
 /****************************************************************************/
 
 Scheduler::~Scheduler()
 {
-  sem_destroy(&sem);
+  pthread_mutex_destroy(&mutex);
+  pthread_cond_destroy(&cond);
 }
 
 /****************************************************************************/
 
 void Scheduler::runonce(void)
 {
-  if ( object_q.empty() )
+  pthread_mutex_lock(&mutex);
+  while ( object_q.empty() )
   {
-    sem_wait(&sem);
-#if 0
-    logger.sketch("AT","Got sem");
-#endif 
+    pthread_cond_wait(&cond,&mutex);
   }
-  if ( ! object_q.empty() )
-  {
-    // TODO: pthread_mutex_lock object_q_mutex
     unsigned long top_trigger_at = object_q.top().trigger_at;
     unsigned long now = clock.millis();
     if ( now >= top_trigger_at )
     {
       SchedulableObject o = object_q.top();
       object_q.pop();
-      // TODO: pthread_mutex_unlock object_q_mutex
+      pthread_mutex_unlock(&mutex);
 
       if ( o.commands == "quit" )
         done = true;
@@ -67,8 +85,6 @@ void Scheduler::runonce(void)
     }
     else
     {
-      // TODO: pthread_mutex_unlock object_q_mutex
-
       timespec tm;
       unsigned long wait = top_trigger_at - now;
       clock_gettime(CLOCK_REALTIME,&tm);
@@ -79,21 +95,9 @@ void Scheduler::runonce(void)
         tm.tv_sec += 1;
         tm.tv_nsec -= 1000000000L;
       }
-      int v;
-      sem_getvalue(&sem,&v);
-#if 0
-      logger.sketch("AT","Waiting %lu",wait);
-      int result = sem_timedwait(&sem,&tm);
-      // This is debugging info, not really needed for regular use.
-      if ( result )
-        logger.sketch("AT","Sem timeout");
-      else
-        logger.sketch("AT","Got sem");
-#else
-      sem_timedwait(&sem,&tm);
-#endif
+      pthread_cond_timedwait(&cond,&mutex,&tm);
+      pthread_mutex_unlock(&mutex);
     }
-  }
 }
 
 /****************************************************************************/
@@ -101,10 +105,10 @@ void Scheduler::runonce(void)
 void Scheduler::add(unsigned long trigger_at, const std::string& commands )
 {
   logger.sketch("AT","%lu %s",trigger_at,commands.c_str());
-  // TODO: pthread_mutex_lock object_q_mutex
+  pthread_mutex_lock(&mutex);
   object_q.push(SchedulableObject(trigger_at,commands));
-  // TODO: pthread_mutex_unlock object_q_mutex
-  sem_post(&sem);
+  pthread_mutex_unlock(&mutex);
+  pthread_cond_signal(&cond);
 }
 
 /****************************************************************************/
@@ -119,10 +123,10 @@ size_t Scheduler::size(void) const
 void Scheduler::clear(void)
 {
   clock = Clock();
-  // TODO: pthread_mutex_lock object_q_mutex
+  pthread_mutex_lock(&mutex);
   while ( ! object_q.empty() )
     object_q.pop();
-  // TODO: pthread_mutex_unlock object_q_mutex
+  pthread_mutex_unlock(&mutex);
 }
 
 /****************************************************************************/

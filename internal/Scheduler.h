@@ -22,7 +22,7 @@
 // Project includes
 #include <Clock.h>
 #include <IDispatchable.h>
-#include <IContainer.h>
+//#include <IContainer.h>
 
 /**
  * An object which can be scheduled
@@ -47,14 +47,16 @@ class Logger;
  * Allows for the scheduling of commands at a time in the future
  */
 
-class Scheduler: public IDispatchable, public IContainer
+class Scheduler: public IDispatchable //, public IContainer
 {
 private:
   std::priority_queue<SchedulableObject> object_q;
   Dispatcher& dispatch;
   Logger& logger;
   Clock clock; // TODO: Need to pass this in!!
-  sem_t sem;
+  //sem_t sem;
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
   bool done;
 
 // left public for tests
