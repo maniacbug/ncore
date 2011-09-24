@@ -22,7 +22,11 @@ extern "C" {
     return 0;
   }
 
+#if MAC
+  int gettimeofday(struct timeval *tv, void *)
+#else
   int gettimeofday(struct timeval *tv, struct timezone *)
+#endif
   {
     memcpy(tv,&mock_time,sizeof(mock_time));
     return 0;
