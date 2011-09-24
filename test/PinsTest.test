@@ -266,6 +266,7 @@ public:
     pthread_mutex_unlock(&(p->sketch_mutex));
     while (1)
     {
+      pthread_testcancel();
     }
     return NULL;
   }
