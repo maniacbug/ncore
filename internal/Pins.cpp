@@ -271,7 +271,7 @@ bool Pins::command_pins(const vector<string>&) const
   vector<int>::const_iterator digital = digital_states.begin();
   while ( digital != digital_states.end() )
   {
-    cout << counter++ << ":" << *digital << " ";
+    cout << dec << counter++ << ":" << *digital << " ";
     ++digital;
   }
   cout << endl;
@@ -280,7 +280,7 @@ bool Pins::command_pins(const vector<string>&) const
   vector<int>::const_iterator analog = analog_states.begin();
   while ( analog != analog_states.end() )
   {
-    cout << counter++ << ":" << *analog << " ";
+    cout << dec << counter++ << ":" << *analog << " ";
     ++analog;
   }
   cout << endl;
