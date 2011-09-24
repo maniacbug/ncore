@@ -42,7 +42,14 @@ char* readline(const char* prompt)
   }
 }
 
+#if MAC
+extern "C" int add_history(const char*)
+{
+  return 0;
+}
+#else
 extern "C" void add_history(const char*)
 {
 }
+#endif
 // vim:cin:ai:sts=2 sw=2 ft=cpp
