@@ -7,12 +7,14 @@
 #include <SpiQueue.h>
 #include <Dispatcher.h>
 #include <OutputCapture.h>
+#include <Logger.h>
 
 using namespace std;
 
 static QueueTS<string> q;
 
 extern ostream& operator<<(ostream& os, const Logger& log);
+extern Logger global_logger;
 
 void semaphores_test_main(void)
 {
