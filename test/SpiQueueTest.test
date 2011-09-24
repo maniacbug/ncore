@@ -218,8 +218,7 @@ public:
     SketchThread t(1);
     t.startCustom(spi_test_main);
 
-    // This probably needs a mutex, too timing-dependant.
-    real_delay_us(1);
+    while ( logger.size() == 0 )  {}
 
     spiq.hwEnqueue(0xb0);
     t.waitToFinish();
