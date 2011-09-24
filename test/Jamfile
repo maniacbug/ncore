@@ -122,7 +122,7 @@ Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(S
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
 
 TestSuite qtsrunner.cpp : QueueTSTest.test ;
-Main QTS : qtsrunner.cpp $(INTERNAL_DIR)/SketchThread.cpp ;
+Main QTS : qtsrunner.cpp $(INTERNAL_DIR)/SketchThread.cpp $(EXTRAS_DIR)/setuploop.cpp ;
 
 Main Shell : shell.cpp $(CODE_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
