@@ -18,7 +18,7 @@ C++		= c++ ;
 LOCATE_TARGET	= out ;
 LOCATE_SOURCE	= out ;
 CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
-#C++FLAGS	= $(CCFLAGS) ; 
+C++FLAGS	= $(CCFLAGS) ; 
 LINKFLAGS	= -fprofile-arcs -lpthread -lrt ;
 
 if ( $(OS) = MACOSX )
@@ -136,11 +136,8 @@ Main Tests : runner.cpp $(INTERNAL_MODULES) $(MOCK_MODULES) $(TEST_MODULES) ;
 RunTest result : Tests ;
 Coverage coverage : $(INTERNAL_MODULES) ;
 
-Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
-LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
+#Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
+#LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
 
-TestSuite macrunner.cpp : SchedulerTest.test QueueTSTest.test SpiQueueTest.test ParserTest.test ClockTest.test LoggerTest.test EepromTest.test SketchThreadTest.test ;
-Main MacTests : macrunner.cpp  $(INTERNAL_DIR)/Scheduler.cpp  $(INTERNAL_DIR)/Parser.cpp  $(INTERNAL_DIR)/SketchThread.cpp $(INTERNAL_DIR)/Clock.cpp $(INTERNAL_DIR)/Logger.cpp $(INTERNAL_DIR)/Eeprom.cpp $(INTERNAL_DIR)/Dispatcher.cpp $(INTERNAL_DIR)/SpiQueue.cpp $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
-
-Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
-LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
+#TestSuite macrunner.cpp : SchedulerTest.test QueueTSTest.test SpiQueueTest.test ParserTest.test ClockTest.test LoggerTest.test EepromTest.test SketchThreadTest.test ;
+#Main MacTests : macrunner.cpp  $(INTERNAL_DIR)/Scheduler.cpp  $(INTERNAL_DIR)/Parser.cpp  $(INTERNAL_DIR)/SketchThread.cpp $(INTERNAL_DIR)/Clock.cpp $(INTERNAL_DIR)/Logger.cpp $(INTERNAL_DIR)/Eeprom.cpp $(INTERNAL_DIR)/Dispatcher.cpp $(INTERNAL_DIR)/SpiQueue.cpp $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
