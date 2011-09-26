@@ -23,10 +23,37 @@ void custom_thread_main(void);
 
 class SketchThreadTestSuite: public CxxTest::TestSuite
 {
+  class InheritedSketchThread: public SketchThread
+  {
+  private:
+    int reps;
+  protected:
+    virtual void internal_setup(void) 
+    {
+      reps = 10;
+    }
+    virtual void internal_loop(void) 
+    {
+      if (reps--)
+	global_logger.add("internal_loop");
+      else
+	pthread_exit(NULL);
+    }
+  public:
+    InheritedSketchThread(void): SketchThread(2)
+    {
+    }
+  };
 public:
   void setUp()
   {
     global_logger.clear();
+  }
+  void testInheritedThread( void )
+  {
+    InheritedSketchThread t;
+    t.waitToFinish();
+    TS_ASSERT_EQUALS( global_logger.lines_contain("internal_loop"), 10 );
   }
   void testThread( void )
   {

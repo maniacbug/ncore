@@ -26,6 +26,12 @@ SketchThread::SketchThread(int mode): pthread(NULL), custom_body(NULL), custom_b
   else if ( mode == 1 )
   {
   }
+  // Inherited thread, will call internal_setup() and internal_loop()
+  else if ( mode == 2 )
+  {
+    pthread = new pthread_t;
+    pthread_create( pthread, NULL, sketch_thread_inherited_main, this );
+  }
   else
     throw new std::runtime_error("Unknown thread mode");
 }
@@ -90,6 +96,25 @@ void* SketchThread::sketch_thread_custom_main(void* pv)
 
   if ( psk && psk->custom_body )
     psk->custom_body();
+
+  return NULL;
+}
+
+/****************************************************************************/
+
+void* SketchThread::sketch_thread_inherited_main(void* pv)
+{
+  SketchThread* psk = reinterpret_cast<SketchThread*>(pv);
+
+  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL);
+  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL);
+
+  if ( psk )
+  {
+    psk->internal_setup();
+    while (1)
+      psk->internal_loop();
+  }
 
   return NULL;
 }

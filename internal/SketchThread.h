@@ -29,6 +29,10 @@ protected:
   static void* sketch_thread_main(void*);
   static void* sketch_thread_custom_main(void*);
   static void* sketch_thread_custom_wdata_main(void*);
+  static void* sketch_thread_inherited_main(void*);
+
+  virtual void internal_setup(void) {}
+  virtual void internal_loop(void) {}
 
 public:
   SketchThread(int mode=0);
