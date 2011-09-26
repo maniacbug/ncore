@@ -154,6 +154,42 @@ SketchThread::~SketchThread(void)
 }
 
 /****************************************************************************/
+/****************************************************************************/
 
+ThreadDeconflict::ThreadDeconflict(void): current_id(0)
+{
+  pthread_mutex_init(&mutex,NULL);
+  pthread_cond_init(&cond,0);
+}
+
+/****************************************************************************/
+
+ThreadDeconflict::~ThreadDeconflict()
+{
+  pthread_mutex_destroy(&mutex);
+  pthread_cond_destroy(&cond);
+}
+
+/****************************************************************************/
+
+void ThreadDeconflict::wait(int from)
+{
+  pthread_mutex_lock(&mutex);
+  while ( current_id != from )
+    pthread_cond_wait(&cond,&mutex);
+  pthread_mutex_unlock(&mutex);
+}
+
+/****************************************************************************/
+
+void ThreadDeconflict::yieldTo(int to)
+{
+  pthread_mutex_lock(&mutex);
+  current_id = to;
+  pthread_mutex_unlock(&mutex);
+  pthread_cond_broadcast(&cond);
+}
+
+/****************************************************************************/
 // vim:cin:ai:sts=2 sw=2 ft=cpp
 

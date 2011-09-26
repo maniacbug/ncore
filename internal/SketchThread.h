@@ -42,5 +42,23 @@ public:
   virtual ~SketchThread();
 };
 
+/**
+ * Implements a system where multiple threads can co-exist but only one can
+ * run.  Each thread has an ID, and can yield control to another thread's ID/
+ */
+
+class ThreadDeconflict
+{
+private:
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
+  volatile int current_id;
+public:
+  ThreadDeconflict();
+  ~ThreadDeconflict();
+  void yieldTo(int to);
+  void wait(int from);
+};
+
 #endif // __SKETCH_THREAD_H__
 // vim:cin:ai:sts=2 sw=2 ft=cpp

@@ -44,6 +44,31 @@ class SketchThreadTestSuite: public CxxTest::TestSuite
     {
     }
   };
+  class DCSketchThread: public SketchThread
+  {
+  private:
+    ThreadDeconflict& decon;
+    int id;
+  protected:
+    virtual void internal_loop(void) 
+    {
+      int next_id = id + 1;
+      if ( next_id > 3 )
+	next_id = 0;
+     
+      decon.wait(id);
+      cout << id << " -> " << next_id << endl;
+      decon.yieldTo(next_id);
+      decon.wait(id);
+      cout << id << " -> " << next_id << endl;
+      decon.yieldTo(next_id);
+      pthread_exit(NULL);
+    }
+  public:
+    DCSketchThread(ThreadDeconflict& _decon, int _id): SketchThread(2), decon(_decon), id(_id)
+    {
+    }
+  };
 public:
   void setUp()
   {
@@ -112,6 +137,33 @@ public:
     SketchThread t(0);
     TS_ASSERT_THROWS_ANYTHING(t.startCustom(empty,this); );
     t.waitToFinish();
+  }
+  void testDeconflict( void )
+  {
+    OutputCapture cap;
+    cap.clear();
+    cap.start();
+    ThreadDeconflict decon;
+    cout << endl << "0 -> 1" << endl;
+    
+    DCSketchThread t1(decon,1);
+    DCSketchThread t2(decon,2);
+    DCSketchThread t3(decon,3);
+
+    decon.yieldTo(1);
+    decon.wait(0);
+    cout << "0 -> 1" << endl;
+    decon.yieldTo(1);
+    decon.wait(0);
+    cout << "0 done" << endl;
+    t1.waitToFinish();
+    t2.waitToFinish();
+    t3.waitToFinish();
+    
+    cap.stop();
+
+    TS_ASSERT_EQUALS( cap.contains("->") , 8);
+    TS_ASSERT_EQUALS( cap.contains("0"), 5);
   }
 };
 
