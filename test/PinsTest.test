@@ -311,6 +311,18 @@ public:
     TS_ASSERT_EQUALS( ok, true );
     TS_ASSERT_EQUALS( (bool)cap.contains("pins"), true );
   }
+  void testPinSymbolSet( void )
+  {
+    pins.pinSymbol(5,"test_pin");
+    commands.execute_new(Parser("pin test_pin high"));
+    TS_ASSERT_EQUALS( pins.hwGetDigital(5), HIGH );
+  }
+  void todp_testPinSymbolList( void )
+  {
+    pins.pinSymbol(6,"test_pin");
+    pins.hwSetDigital(6,HIGH);
+    TS_ASSERT_EQUALS( log.lines_contain("test_pin"), 1 );
+  }
 };
 
 int PinsTestSuite::isr_called_count;

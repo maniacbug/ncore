@@ -98,6 +98,14 @@ void Pins::pinMode(int pin, int dir)
 
 /****************************************************************************/
 
+void Pins::pinSymbol(int pin, const std::string& symbol)
+{
+  symbol_map[pin] = symbol;
+  symbol_reverse_map[symbol] = pin;
+}
+
+/****************************************************************************/
+
 void Pins::attachInterrupt(int irq, void (*isr)(void))
 {
   isr_table.at(irq) = isr;
@@ -170,13 +178,22 @@ bool Pins::runCommand( const Parser& parser )
 
 bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<string>::const_iterator end)
 {
-  char c = (*current)[0];
-  if ( c < '0' || c > '9' )
-    throw new runtime_error("Unknown pin value");
-
-  istringstream ss(*current++);
   int pin;
-  ss >> pin;
+  char c = (*current)[0];
+  if ( c >= '0' && c <= '9' )
+  {
+    istringstream ss(*current);
+    ss >> pin;
+  }
+  else
+  {
+    // This is a pin symbol
+    if ( symbol_reverse_map.count(*current) )
+      pin = symbol_reverse_map.at(*current);
+    else
+      throw new runtime_error("Unknown pin value");
+  }
+  current++;
 
   if ( pin < 0 || pin >= num_pins )
     throw new runtime_error("Pin out of range");
