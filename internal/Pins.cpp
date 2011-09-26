@@ -19,6 +19,20 @@ const int HIGH = 1;
 
 /****************************************************************************/
 
+string Pins::pin_log_name(int pin) const
+{
+  ostringstream os;
+
+  if ( symbol_map.count(pin) )
+    os << symbol_map.at(pin);
+  else
+    os << dec << pin;
+
+  return os.str();
+}
+
+/****************************************************************************/
+
 Pins::Pins(Logger& _log): log(_log)
 {
   clear();
@@ -32,6 +46,8 @@ void Pins::clear(void)
   pin_modes.clear();
   analog_states.clear();
   isr_table.clear();
+  symbol_map.clear();
+  symbol_reverse_map.clear();
 
   digital_states.resize(num_pins);
   pin_modes.resize(num_pins);
@@ -52,7 +68,7 @@ int Pins::digitalRead(int pin) const
 void Pins::hwSetDigital(int pin,int level)
 {
   digital_states.at(pin) = level;
-  log.internal("PINS","%i %s",pin,level?"HIGH":"LOW");
+  log.internal("PINS","%s %s",pin_log_name(pin).c_str(),level?"HIGH":"LOW");
 }
 
 /****************************************************************************/
@@ -77,7 +93,7 @@ void Pins::digitalWrite(int pin,int level)
   if ( pin_modes.at(pin) == OUTPUT )
   {
     digital_states.at(pin) = level;
-    log.sketch("PINS","%i %s",pin,level?"HIGH":"LOW");
+    log.sketch("PINS","%s %s",pin_log_name(pin).c_str(),level?"HIGH":"LOW");
   }
 }
 
@@ -93,7 +109,7 @@ int Pins::hwGetDigital(int pin) const
 void Pins::pinMode(int pin, int dir)
 {
   pin_modes.at(pin) = dir;
-  log.sketch("PINS","%i %s",pin,dir?"OUTPUT":"INPUT");
+  log.sketch("PINS","%s %s",pin_log_name(pin).c_str(),dir?"OUTPUT":"INPUT");
 }
 
 /****************************************************************************/

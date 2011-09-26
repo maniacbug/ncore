@@ -48,6 +48,8 @@ private:
   Logger& log;
 
 protected:
+  // What string should we use to log this pin?
+  std::string pin_log_name(int) const;
   std::string& getCommands() const
   {
     static std::string commands = "pins pin irq";

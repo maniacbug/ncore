@@ -317,11 +317,15 @@ public:
     commands.execute_new(Parser("pin test_pin high"));
     TS_ASSERT_EQUALS( pins.hwGetDigital(5), HIGH );
   }
-  void todp_testPinSymbolList( void )
+  void testPinSymbolList( void )
   {
-    pins.pinSymbol(6,"test_pin");
-    pins.hwSetDigital(6,HIGH);
-    TS_ASSERT_EQUALS( log.lines_contain("test_pin"), 1 );
+    const int pin = 6;
+    const string name = "test_pin_number_6";
+    pins.pinSymbol(pin,name);
+    pins.hwSetDigital(pin,HIGH);
+    pins.pinMode(pin,OUTPUT);
+    pins.digitalWrite(pin,HIGH);
+    TS_ASSERT_EQUALS( log.lines_contain(name), 3 );
   }
 };
 
