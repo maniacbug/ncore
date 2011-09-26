@@ -274,6 +274,14 @@ public:
     t_printf("Hello %s","test");
     TS_ASSERT_EQUALS( log.lines_contain("Hello test"), 1 );
   }
+  void testVerbose( void )
+  {
+    cap.start();
+    log.setVerbose(true);
+    log.add("test");
+    cap.stop();
+    TS_ASSERT_EQUALS( cap.contains("test"), 1 );
+  }
 
 };
 

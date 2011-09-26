@@ -175,7 +175,7 @@ void Logger::add_message(const std::string& preamble,const std::string& message)
   ss << message << endl;
 
   if ( verbose )
-    cerr << ">" << ss.str() ;
+    cout << ">" << ss.str() ;
 
   push_back(ss.str());
 }

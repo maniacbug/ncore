@@ -112,8 +112,7 @@ void* SketchThread::sketch_thread_inherited_main(void* pv)
   if ( psk )
   {
     psk->internal_setup();
-    while (1)
-      psk->internal_loop();
+    while (psk->internal_loop()) {}
   }
 
   return NULL;

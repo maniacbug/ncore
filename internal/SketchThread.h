@@ -32,7 +32,7 @@ protected:
   static void* sketch_thread_inherited_main(void*);
 
   virtual void internal_setup(void) {}
-  virtual void internal_loop(void) {}
+  virtual bool internal_loop(void) { return false; }
 
 public:
   SketchThread(int mode=0);
