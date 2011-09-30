@@ -9,6 +9,7 @@
 #include <Parser.h>
 #include <Logger.h>
 #include <Pins.h>
+#include <Clock.h>
 
 using namespace std;
 
@@ -180,6 +181,7 @@ bool Pins::runCommand( const Parser& parser )
       cout << "pin <#> HIGH|LOW -- set digital pin high or low" << endl;
       cout << "pin A<#> <value> -- set analog pin to value" << endl;
       cout << "pin <#> is <symbol> -- assign a symbolic name to a digitial pin" << endl;
+      cout << "pin <#> press -- toggle value of pin and back after 50ms" << endl;
     }
     else if ( helpcommand == "irq" )
     {
@@ -195,6 +197,7 @@ bool Pins::runCommand( const Parser& parser )
 
 bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<string>::const_iterator end)
 {
+  bool press = false;
   int pin;
   char c = (*current)[0];
   if ( c >= '0' && c <= '9' )
@@ -224,6 +227,11 @@ bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<str
     level = HIGH;
   else if ( *current == "low" )
     level = LOW;
+  else if ( *current == "press" )
+  {
+    level = hwGetDigital(pin) ^ HIGH;
+    press = true;
+  }
   else if ( *current == "is" )
   {
     // This is setting a pin symbol.
@@ -244,6 +252,11 @@ bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<str
     throw new runtime_error("Unexpected tokens at end of input");
 
   hwSetDigital( pin, level );
+  if ( press )
+  {
+    Clock().delay(50);
+    hwSetDigital( pin, level ^ HIGH );
+  }
 
   return true;
 }

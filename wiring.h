@@ -127,6 +127,7 @@ void init(void);
 void done(void);
 
 void pinMode(uint8_t, uint8_t);
+void pinSymbol(uint8_t, const char*);
 void digitalWrite(uint8_t, uint8_t);
 int digitalRead(uint8_t);
 int analogRead(uint8_t);
