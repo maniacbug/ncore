@@ -25,6 +25,7 @@ private:
   typedef std::map<std::string,IDispatchable*> objectmap_t; /**< Type used by internal map. */ 
   objectmap_t objectmap; /**< Map of commands to dispatchable objects */
 
+  static void call_help(const objectmap_t::value_type&);
 public:
   /**
    * Executes the object associated with the first token in @p commands
