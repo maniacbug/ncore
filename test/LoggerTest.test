@@ -288,7 +288,23 @@ public:
     cap.stop();
     TS_ASSERT_EQUALS( cap.contains("test"), 1 );
   }
-
+  void testVerboseCommand( void )
+  {
+    cap.start();
+    commands.execute("log verbose");
+    log.add("test");
+    cap.stop();
+    TS_ASSERT_EQUALS( cap.contains("test"), 1 );
+  }
+  void testQuietCommand( void )
+  {
+    log.setVerbose(true);
+    commands.execute("log quiet");
+    cap.start();
+    log.add("test");
+    cap.stop();
+    TS_ASSERT_EQUALS( cap.contains("test"), 0 );
+  }
 };
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

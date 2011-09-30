@@ -324,6 +324,16 @@ bool Logger::command_log(const vector<string>& _commands)
     rate_limit = rate;
     pthread_mutex_unlock( const_cast<pthread_mutex_t*>(&mutex) );
   }
+  else if ( operand == "verbose" )
+  {
+    setVerbose(true);
+    internal("LOG","set to verbose");
+  }
+  else if ( operand == "quiet" )
+  {
+    setVerbose(false);
+    internal("LOG","set to quiet");
+  }
   else
     throw new runtime_error("Unknown operand");
 
