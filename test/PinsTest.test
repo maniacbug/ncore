@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <streambuf>
+#include <regex>
 
 #include <pthread.h>
 #include <cxxtest/TestSuite.h>
@@ -198,6 +199,7 @@ public:
     TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin 5 something")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin 5 high something")) );
     TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin something high")) );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute_new(Parser("pin 1 is")) );
   }
   void testCommandAnalogSet( void )
   {
@@ -326,6 +328,13 @@ public:
     pins.pinMode(pin,OUTPUT);
     pins.digitalWrite(pin,HIGH);
     TS_ASSERT_EQUALS( log.lines_contain(name), 3 );
+  }
+  void testCommandSymbolSet( void )
+  {
+    commands.execute_new(Parser("pin 8 is button"));
+    commands.execute_new(Parser("pin button high"));
+
+    TS_ASSERT_EQUALS( pins.digitalRead(8), HIGH );
   }
 };
 

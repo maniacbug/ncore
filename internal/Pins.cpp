@@ -179,6 +179,7 @@ bool Pins::runCommand( const Parser& parser )
     {
       cout << "pin <#> HIGH|LOW -- set digital pin high or low" << endl;
       cout << "pin A<#> <value> -- set analog pin to value" << endl;
+      cout << "pin <#> is <symbol> -- assign a symbolic name to a digitial pin" << endl;
     }
     else if ( helpcommand == "irq" )
     {
@@ -218,11 +219,19 @@ bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<str
   if ( current == end )
     throw new runtime_error("Expecting pin level");
 
-  int level;
+  int level = LOW;
   if ( *current == "high" )
     level = HIGH;
   else if ( *current == "low" )
     level = LOW;
+  else if ( *current == "is" )
+  {
+    // This is setting a pin symbol.
+    if ( ++current == end )
+      throw new runtime_error("Expecting symbol name");
+
+    pinSymbol(pin,*current);
+  }
   else
   {
     throw new runtime_error("Unknown level value");
