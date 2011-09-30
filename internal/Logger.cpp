@@ -10,6 +10,7 @@
 // C includes
 #include <stdio.h>
 #include <stdarg.h>
+#include <regex.h>
 // Library includes
 #include <pthread.h>
 // Project includes
@@ -228,6 +229,10 @@ bool Logger::runCommand( const Parser& parser )
     if ( command == "list" )
     {
       cout << "list -- list all log entries from beginning" << endl;
+      cout << "list /regexp/ -- list all log entries that match the regexp" << endl;
+    }
+    else if ( command == "log" )
+    {
       cout << "log rate <xxx> -- set minimim time elapsed between 10 log entries" << endl;
     }
     result = true;
@@ -238,16 +243,59 @@ bool Logger::runCommand( const Parser& parser )
 
 /****************************************************************************/
 
+struct not_matches
+{
+  regex_t *regex;
+  not_matches(const string& _key)
+  {
+    regex = (regex_t*) malloc(sizeof(regex_t));
+    if ( regcomp(regex, _key.c_str(), REG_EXTENDED) )
+      throw new runtime_error( string("Error in regular expression ") + _key );
+  }
+  ~not_matches()
+  {
+    regfree(regex);
+  }
+  bool operator()(const string& test) const
+  {
+    regmatch_t match;
+    return regexec(regex, test.c_str(), 1, &match, 0);
+  }
+};
+
+/****************************************************************************/
+
 bool Logger::command_list(const vector<string>& _commands) const
 {
-  if ( _commands.size() != 1 )
+  bool result = false;
+
+  if ( _commands.size() == 1 )
+  {
+    pthread_mutex_lock( const_cast<pthread_mutex_t*>(&mutex) );
+    copy(begin(),end(),ostream_iterator<string>(cout,""));
+    pthread_mutex_unlock( const_cast<pthread_mutex_t*>(&mutex) );
+    result = true;
+  }
+  else if ( _commands.size() == 2 )
+  {
+    string operand = _commands.at(1);
+    if (operand.at(0) == '/' && operand.at(operand.size()-1) == '/')
+    {
+      string pattern = operand.substr(1,operand.size()-2);
+      
+      pthread_mutex_lock( const_cast<pthread_mutex_t*>(&mutex) );
+      remove_copy_if(begin(),end(),ostream_iterator<string>(cout,""),not_matches(pattern));
+      pthread_mutex_unlock( const_cast<pthread_mutex_t*>(&mutex) );
+
+      result = true;
+    }
+    else
+      throw new runtime_error("Expected regex as operand");
+  }
+  else
     throw new runtime_error("No parameters expected");
 
-  pthread_mutex_lock( const_cast<pthread_mutex_t*>(&mutex) );
-  copy(begin(),end(),ostream_iterator<string>(cout,""));
-  pthread_mutex_unlock( const_cast<pthread_mutex_t*>(&mutex) );
-
-  return true;
+  return result;
 }
 
 /****************************************************************************/
