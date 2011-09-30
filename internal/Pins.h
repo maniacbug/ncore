@@ -52,7 +52,7 @@ protected:
   std::string pin_log_name(int) const;
   std::string& getCommands() const
   {
-    static std::string commands = "pins pin irq";
+    static std::string commands = "pins pin irq (default)";
     return commands;
   }
   bool runCommand( const Parser& );

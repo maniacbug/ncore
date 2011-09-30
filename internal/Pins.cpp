@@ -189,6 +189,17 @@ bool Pins::runCommand( const Parser& parser )
     }
     result = true;
   }
+  // is this a pin symbol we are aware of?
+  else if ( symbol_reverse_map.count(command) )
+  {
+    // translate it to "pin X press"
+    Parser press;
+    press.resize(3);
+    press.at(0) = "pin";
+    press.at(1) = command;
+    press.at(2) = "press";
+    result = command_pin(press);
+  }
 
   return result;
 }

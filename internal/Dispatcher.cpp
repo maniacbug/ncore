@@ -46,8 +46,21 @@ bool Dispatcher::execute_new(const Parser& _commands) const
     command = _commands.at(1);
   }
 
+  // Do we know about this command?
   if ( ! objectmap.count( command ) )
-    throw new runtime_error("Command not found");
+  {
+    // If not, do we have a default?
+    if ( objectmap.count( "(default)" ) )
+    {
+      // If so, try handling this command
+      if ( ! objectmap.at("(default)")->runCommand(_commands) )
+	throw new runtime_error("Command not found");
+      else
+	return true;
+    }
+    else
+      throw new runtime_error("Command not found");
+  }
 
   return objectmap.at(command)->runCommand(_commands);
 }

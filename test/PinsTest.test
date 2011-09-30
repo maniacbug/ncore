@@ -15,6 +15,7 @@
 using namespace std;
 
 extern "C" void init(void);
+extern ostream& operator<<(ostream& os, const Logger& log);
 
 const int LOW = 0;
 const int HIGH = 1;
@@ -335,6 +336,26 @@ public:
     commands.execute_new(Parser("pin button high"));
 
     TS_ASSERT_EQUALS( pins.digitalRead(8), HIGH );
+  }
+  void testPinSymbolPress( void )
+  {
+    const int pin = 6;
+    const string name = "test_pin_number_6";
+    pins.pinSymbol(pin,name);
+    
+    commands.execute_new(Parser(string("pin ") + name + " press"));
+   
+    TS_ASSERT_EQUALS( log.lines_contain(name), 2 );
+  }
+  void testPinSymbolAlone( void )
+  {
+    const int pin = 6;
+    const string name = "test_pin_number_6";
+    pins.pinSymbol(pin,name);
+    
+    commands.execute_new(Parser(name));
+    
+    TS_ASSERT_EQUALS( log.lines_contain(name), 2 );
   }
 };
 
