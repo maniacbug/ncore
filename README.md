@@ -24,6 +24,8 @@ NCORE runs from the command-line.  It requires an understanding of build scripts
 
 Beyond that, the requirements are pretty simple.  It just needs gcc and the 'ftjam' build tool.
 
+If you want to build the tests, you'll need cxxtest from http://cxxtest.tigris.org.  NCORE has been tested with cxxtest 3.10.1.
+
 ## How do I get it?
 
 Clone it from github.  Create a 'hardware' directory off your sketches directory, and clone into 'native' under that.  For example...
