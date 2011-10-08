@@ -1,7 +1,6 @@
 #include <iostream>
 #include <sstream>
 #include <streambuf>
-#include <regex>
 
 #include <pthread.h>
 #include <cxxtest/TestSuite.h>
