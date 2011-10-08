@@ -31,13 +31,13 @@ public:
 
   void testEmpty( void )
   {
-    TS_ASSERT_EQUALS( log.size(), 0 );
+    TS_ASSERT_EQUALS( log.size(), 0U );
   }
   void testOutput( void )
   {
     s.put("test");
 
-    TS_ASSERT_EQUALS( log.size(), 1 );
+    TS_ASSERT_EQUALS( log.size(), 1U );
     TS_ASSERT( log.at(0).find("test") != string::npos );
   }
   void testChars( void )
@@ -48,7 +48,7 @@ public:
     s.put('t');
     s.put('\n');
 
-    TS_ASSERT_EQUALS( log.size(), 1 );
+    TS_ASSERT_EQUALS( log.size(), 1U );
     TS_ASSERT( log.at(0).find("test") != string::npos );
   }
   void testNoCR( void )
@@ -58,7 +58,7 @@ public:
     s.put('s');
     s.put('t');
 
-    TS_ASSERT_EQUALS( log.size(), 0 );
+    TS_ASSERT_EQUALS( log.size(), 0U );
   }
   void testNonPrintable( void )
   {

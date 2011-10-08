@@ -84,9 +84,9 @@ public:
   void testLoggingReads( void )
   {
     int addr = 100;
-    const int reads = 10;
+    const unsigned int reads = 10;
 
-    int n = reads;
+    unsigned int n = reads;
     while(n--)
     {
       ee.readByte(addr++);

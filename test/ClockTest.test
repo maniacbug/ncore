@@ -31,17 +31,17 @@ public:
   }
   void testStart( void )
   {
-    TS_ASSERT_EQUALS( clock.millis(), 0 );
+    TS_ASSERT_EQUALS( clock.millis(), 0UL );
   }
   void testDelay( void )
   {
     clock.delay(10);
-    TS_ASSERT_EQUALS( clock.millis(), 10 );
+    TS_ASSERT_EQUALS( clock.millis(), 10UL );
   }
   void testDelayUS( void )
   {
     clock.delayMicroseconds(1000);
-    TS_ASSERT_EQUALS( clock.millis(), 1 );
+    TS_ASSERT_EQUALS( clock.millis(), 1UL );
   }
   void testCombined( void )
   {
@@ -50,7 +50,7 @@ public:
     clock.delay(10);
     clock.delayMicroseconds(2000);
     clock.delayMicroseconds(900);
-    TS_ASSERT_EQUALS( clock.millis(), 32 );
+    TS_ASSERT_EQUALS( clock.millis(), 32UL );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

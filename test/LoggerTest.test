@@ -67,14 +67,14 @@ public:
 
   void testEmpty( void )
   {
-    TS_ASSERT_EQUALS( log.size(), 0 );
+    TS_ASSERT_EQUALS( log.size(), 0U );
   }
   void testAdd( void )
   {
     log.add("Test1");
     log.add("Test12");
     log.add("Test123");
-    TS_ASSERT_EQUALS( log.size(), 3 );
+    TS_ASSERT_EQUALS( log.size(), 3U );
     TS_ASSERT( log.at(0).find("Test1") != string::npos );
   }
   void testVargs( void )
@@ -213,7 +213,7 @@ public:
       clock.delay(1);
     }
 
-    TS_ASSERT_EQUALS( log.size(), 13 );
+    TS_ASSERT_EQUALS( log.size(), 13U );
     TS_ASSERT_EQUALS( countSubStrings(log.at(10),"limit"), 1 );
   }
   void testCommandHelp( void )

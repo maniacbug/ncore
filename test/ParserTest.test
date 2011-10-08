@@ -19,20 +19,20 @@ public:
   {
     parser.parse(string());
 
-    TS_ASSERT_EQUALS( parser.size(), 0 );
+    TS_ASSERT_EQUALS( parser.size(), 0U );
   }
   void testSingle( void )
   {
     parser.parse(string("test"));
 
-    TS_ASSERT_EQUALS( parser.size(), 1 );
+    TS_ASSERT_EQUALS( parser.size(), 1U );
     TS_ASSERT_EQUALS( parser.at(0), "test" );
   }
   void testMany( void )
   {
     parser.parse("this is a test of many words");
 
-    TS_ASSERT_EQUALS( parser.size(), 7 );
+    TS_ASSERT_EQUALS( parser.size(), 7U );
     TS_ASSERT_EQUALS( parser.at(0), string("this") );
     TS_ASSERT_EQUALS( parser.at(6), string("words") );
   }
@@ -40,7 +40,7 @@ public:
   {
     Parser temp("this is a test of many words");
 
-    TS_ASSERT_EQUALS( temp.size(), 7 );
+    TS_ASSERT_EQUALS( temp.size(), 7U );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
