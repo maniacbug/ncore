@@ -107,7 +107,7 @@ public:
 
     TS_ASSERT_EQUALS( cap.contains("NCORE"), 3 );
   }
-  void todo_testListCommandRegexp( void )
+  void testListCommandRegexp( void )
   {
     log.add("Test1");
     log.add("Test12");
@@ -120,6 +120,12 @@ public:
     cap.stop();
 
     TS_ASSERT_EQUALS( countSubStrings(cap.buffer(),"NCORE"), 2 );
+  }
+  void testListCommandRegexpExceptions( void )
+  {
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("list /*/") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("list /./ more") );
+    TS_ASSERT_THROWS_ANYTHING( commands.execute("list something") );
   }
   static void * write_logs(void* pv)
   {
@@ -274,7 +280,31 @@ public:
     t_printf("Hello %s","test");
     TS_ASSERT_EQUALS( log.lines_contain("Hello test"), 1 );
   }
-
+  void testVerbose( void )
+  {
+    cap.start();
+    log.setVerbose(true);
+    log.add("test");
+    cap.stop();
+    TS_ASSERT_EQUALS( cap.contains("test"), 1 );
+  }
+  void testVerboseCommand( void )
+  {
+    cap.start();
+    commands.execute("log verbose");
+    log.add("test");
+    cap.stop();
+    TS_ASSERT_EQUALS( cap.contains("test"), 1 );
+  }
+  void testQuietCommand( void )
+  {
+    log.setVerbose(true);
+    commands.execute("log quiet");
+    cap.start();
+    log.add("test");
+    cap.stop();
+    TS_ASSERT_EQUALS( cap.contains("test"), 0 );
+  }
 };
 
 // vim:cin:ai:sts=2 sw=2 ft=cpp

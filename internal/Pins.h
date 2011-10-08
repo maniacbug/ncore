@@ -11,6 +11,9 @@
 #define __PINS_H__
 
 #include <vector>
+#include <string>
+#include <map>
+
 #include <IDispatchable.h>
 
 class Logger;
@@ -37,12 +40,19 @@ private:
   std::vector<int> analog_states;
   std::vector<void (*)(void)> isr_table;
 
+  // Not sure this is the best way to deal with it, but
+  // it's the fastest!!
+  std::map<int,std::string> symbol_map;
+  std::map<std::string,int> symbol_reverse_map; 
+
   Logger& log;
 
 protected:
+  // What string should we use to log this pin?
+  std::string pin_log_name(int) const;
   std::string& getCommands() const
   {
-    static std::string commands = "pins pin irq";
+    static std::string commands = "pins pin irq (default)";
     return commands;
   }
   bool runCommand( const Parser& );
@@ -67,6 +77,7 @@ public:
   void digitalWrite(int pin,int level);
   int hwGetDigital(int pin) const;
   void pinMode(int pin, int dir);
+  void pinSymbol(int pin, const std::string& symbol);
 };
 
 #endif // __PINS_H__

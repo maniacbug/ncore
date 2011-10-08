@@ -98,6 +98,7 @@ public:
     dispatch.add(&sched);
     global_logger.clear();
     dispatch.add(&global_logger);
+    global_dispatch.clear();
     cap.clear();
   }
 
@@ -189,10 +190,33 @@ public:
     global_logger.setVerbose(false);
     //cerr << global_logger;
 
-    TS_ASSERT_EQUALS( global_logger.lines_contain("100 SK TEST"), 1 );
-    TS_ASSERT_EQUALS( global_logger.lines_contain("200 SK TEST"), 1 );
-    TS_ASSERT_EQUALS( global_logger.lines_contain("300 SK TEST"), 1 );
+    // Cannot assert exact timing with this test.
+    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction 1"), 1 );
+    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction 2"), 2 );
     //cerr << ":OUT]" << endl;
+  }
+  void testCover1sWait( void )
+  {
+    // This test is here to over only the case where the system wraps around the
+    // 1s mark in nanoseconds.
+    global_dispatch.add(&action);
+    global_logger.setClock(clock);
+    global_logger.setRate(1);
+    //global_logger.setVerbose(true);  // Uncomment if it hangs, to watch the action and see where the prob is
+    SketchThread t(1);
+    t.startCustom(sched_test_main);
+    global_sched.add(999,string("test"));
+    real_delay_us(50000L);
+    clock.delay(2000);
+    real_delay_us(50000L);
+    global_sched.add(1000,string("test"));
+    real_delay_us(5);
+
+    t.waitToFinish();
+
+    global_logger.setVerbose(false);
+    //cerr << global_logger;
+    TS_ASSERT_EQUALS( global_logger.lines_contain("TestAction 1"), 2 );
   }
   void testAtCommandOk( void )
   {

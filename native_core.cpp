@@ -71,6 +71,11 @@ void pinMode(uint8_t pin,uint8_t mode)
   thePins.pinMode(pin,mode);
 }
 
+void pinSymbol(uint8_t pin,const char* label)
+{
+  thePins.pinSymbol(pin,label);
+}
+
 void attachInterrupt(uint8_t num, void (*fn)(void), int)
 {
   thePins.attachInterrupt(num,fn);

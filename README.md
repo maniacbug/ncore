@@ -6,11 +6,11 @@ The native core allows you to compile and run Arduino sketches on the PC, genera
 
 ## Why is that useful?
 
-You can full-fledged Arduino sketches without the hardware.  Perhaps you're away from your desk and didn't bring the hardware.  Maybe you're on a plane?  Or maybe the hardware isn't done yet.
+You can full-fledged Arduino sketches without any hardware.  Perhaps you're away from your desk and didn't bring the hardware.  Maybe you're on a plane?  Or maybe the hardware isn't done yet.
 
 You get a trace of exactly what your sketch is doing to the hardware and when it happened, to help debug your logic.
 
-You can use the debugger.
+You can use the debugger on Mac & Linux where there is no WinAVR.
 
 You can run automated tests using normal frameworks, such as cxxtest.
 
@@ -18,7 +18,7 @@ You can run a script which pretends to be the hardware and see how your sketch r
 
 ## What do I need to use it?
 
-NCORE runs only on Linux.  It wouldn't be too hard to port to Mac, and I haven't even looked at a Windows port.  I use it on Ubuntu 11.04.
+NCORE runs on Linux and Mac.  I use it on Ubuntu 11.04 and Mac OSX 10.6 (Snow Leopard).
 
 NCORE runs from the command-line.  It requires an understanding of build scripts and running build tools from the command-line.
 
@@ -26,7 +26,12 @@ Beyond that, the requirements are pretty simple.  It just needs gcc and the 'ftj
 
 ## How do I get it?
 
-Clone it from github.  Create a 'hardware' directory off your sketches directory, and clone into 'native' under that.
+Clone it from github.  Create a 'hardware' directory off your sketches directory, and clone into 'native' under that.  For example...
+
+$ cd ~/Source/Arduino/
+$ mkdir hardware
+$ cd hardware
+$ git clone ... native
 
 ## How do I set it up?
 

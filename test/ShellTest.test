@@ -193,5 +193,14 @@ public:
 
     TS_ASSERT_EQUALS( cap.contains("ncore") , 2 );
   }
+  void testCommandHelp( void )
+  {
+    cap.start();
+    bool ok = dispatch.execute("help");
+    cap.stop();
+
+    TS_ASSERT_EQUALS( ok, true );
+    TS_ASSERT_EQUALS( (bool)cap.contains("quit"), true );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

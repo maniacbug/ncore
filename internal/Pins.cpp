@@ -9,6 +9,7 @@
 #include <Parser.h>
 #include <Logger.h>
 #include <Pins.h>
+#include <Clock.h>
 
 using namespace std;
 
@@ -16,6 +17,20 @@ using namespace std;
 
 const int LOW = 0;
 const int HIGH = 1;
+
+/****************************************************************************/
+
+string Pins::pin_log_name(int pin) const
+{
+  ostringstream os;
+
+  if ( symbol_map.count(pin) )
+    os << symbol_map.at(pin);
+  else
+    os << dec << pin;
+
+  return os.str();
+}
 
 /****************************************************************************/
 
@@ -32,6 +47,8 @@ void Pins::clear(void)
   pin_modes.clear();
   analog_states.clear();
   isr_table.clear();
+  symbol_map.clear();
+  symbol_reverse_map.clear();
 
   digital_states.resize(num_pins);
   pin_modes.resize(num_pins);
@@ -52,7 +69,7 @@ int Pins::digitalRead(int pin) const
 void Pins::hwSetDigital(int pin,int level)
 {
   digital_states.at(pin) = level;
-  log.internal("PINS","%i %s",pin,level?"HIGH":"LOW");
+  log.internal("PINS","%s %s",pin_log_name(pin).c_str(),level?"HIGH":"LOW");
 }
 
 /****************************************************************************/
@@ -77,7 +94,7 @@ void Pins::digitalWrite(int pin,int level)
   if ( pin_modes.at(pin) == OUTPUT )
   {
     digital_states.at(pin) = level;
-    log.sketch("PINS","%i %s",pin,level?"HIGH":"LOW");
+    log.sketch("PINS","%s %s",pin_log_name(pin).c_str(),level?"HIGH":"LOW");
   }
 }
 
@@ -93,7 +110,15 @@ int Pins::hwGetDigital(int pin) const
 void Pins::pinMode(int pin, int dir)
 {
   pin_modes.at(pin) = dir;
-  log.sketch("PINS","%i %s",pin,dir?"OUTPUT":"INPUT");
+  log.sketch("PINS","%s %s",pin_log_name(pin).c_str(),dir?"OUTPUT":"INPUT");
+}
+
+/****************************************************************************/
+
+void Pins::pinSymbol(int pin, const std::string& symbol)
+{
+  symbol_map[pin] = symbol;
+  symbol_reverse_map[symbol] = pin;
 }
 
 /****************************************************************************/
@@ -155,12 +180,25 @@ bool Pins::runCommand( const Parser& parser )
     {
       cout << "pin <#> HIGH|LOW -- set digital pin high or low" << endl;
       cout << "pin A<#> <value> -- set analog pin to value" << endl;
+      cout << "pin <#> is <symbol> -- assign a symbolic name to a digitial pin" << endl;
+      cout << "pin <#> press -- toggle value of pin and back after 50ms" << endl;
     }
     else if ( helpcommand == "irq" )
     {
       cout << "irq <#> -- trigger irq <#>" << endl;
     }
     result = true;
+  }
+  // is this a pin symbol we are aware of?
+  else if ( symbol_reverse_map.count(command) )
+  {
+    // translate it to "pin X press"
+    Parser press;
+    press.resize(3);
+    press.at(0) = "pin";
+    press.at(1) = command;
+    press.at(2) = "press";
+    result = command_pin(press);
   }
 
   return result;
@@ -170,13 +208,23 @@ bool Pins::runCommand( const Parser& parser )
 
 bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<string>::const_iterator end)
 {
-  char c = (*current)[0];
-  if ( c < '0' || c > '9' )
-    throw new runtime_error("Unknown pin value");
-
-  istringstream ss(*current++);
+  bool press = false;
   int pin;
-  ss >> pin;
+  char c = (*current)[0];
+  if ( c >= '0' && c <= '9' )
+  {
+    istringstream ss(*current);
+    ss >> pin;
+  }
+  else
+  {
+    // This is a pin symbol
+    if ( symbol_reverse_map.count(*current) )
+      pin = symbol_reverse_map.at(*current);
+    else
+      throw new runtime_error("Unknown pin value");
+  }
+  current++;
 
   if ( pin < 0 || pin >= num_pins )
     throw new runtime_error("Pin out of range");
@@ -185,11 +233,24 @@ bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<str
   if ( current == end )
     throw new runtime_error("Expecting pin level");
 
-  int level;
+  int level = LOW;
   if ( *current == "high" )
     level = HIGH;
   else if ( *current == "low" )
     level = LOW;
+  else if ( *current == "press" )
+  {
+    level = hwGetDigital(pin) ^ HIGH;
+    press = true;
+  }
+  else if ( *current == "is" )
+  {
+    // This is setting a pin symbol.
+    if ( ++current == end )
+      throw new runtime_error("Expecting symbol name");
+
+    pinSymbol(pin,*current);
+  }
   else
   {
     throw new runtime_error("Unknown level value");
@@ -202,6 +263,11 @@ bool Pins::command_pin_digital(vector<string>::const_iterator current,vector<str
     throw new runtime_error("Unexpected tokens at end of input");
 
   hwSetDigital( pin, level );
+  if ( press )
+  {
+    Clock().delay(50);
+    hwSetDigital( pin, level ^ HIGH );
+  }
 
   return true;
 }

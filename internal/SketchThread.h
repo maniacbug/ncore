@@ -29,6 +29,10 @@ protected:
   static void* sketch_thread_main(void*);
   static void* sketch_thread_custom_main(void*);
   static void* sketch_thread_custom_wdata_main(void*);
+  static void* sketch_thread_inherited_main(void*);
+
+  virtual void internal_setup(void) {}
+  virtual bool internal_loop(void) { return false; }
 
 public:
   SketchThread(int mode=0);
@@ -36,6 +40,24 @@ public:
   void startCustom(void (*fn)(void*),void*);
   void waitToFinish(void);
   virtual ~SketchThread();
+};
+
+/**
+ * Implements a system where multiple threads can co-exist but only one can
+ * run.  Each thread has an ID, and can yield control to another thread's ID/
+ */
+
+class ThreadDeconflict
+{
+private:
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
+  volatile int current_id;
+public:
+  ThreadDeconflict();
+  ~ThreadDeconflict();
+  void yieldTo(int to);
+  void wait(int from);
 };
 
 #endif // __SKETCH_THREAD_H__
