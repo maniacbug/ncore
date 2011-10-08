@@ -12,7 +12,7 @@ TEST_MODULES	= [ GLOB $(PWD) : *Test.test ] ;
 MOCK_MODULES	= $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
 SKETCH_MODULES	= $(EXTRAS_DIR)/IfBlink.cpp ;
 
-CXXTEST_GEN	= $(CXXTEST_DIR)/python/scripts/cxxtestgen ;
+CXXTEST_GEN	= $(CXXTEST_DIR)/cxxtestgen.py ;
 LINK		= c++ ;
 C++		= c++ ;
 LOCATE_TARGET	= out ;
