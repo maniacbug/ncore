@@ -107,13 +107,13 @@ public:
   }
   void testPinModeInput( void )
   {
-    // Setting pinMode INPUT means digitalWrite will have no impact
+    // Digital WRITE on an input pin is OK now, as it's the default value
     pins.pinMode(2,INPUT);
     pins.digitalWrite(2,HIGH);
     pins.pinMode(3,OUTPUT);
     pins.digitalWrite(3,HIGH);
 
-    TS_ASSERT_EQUALS( pins.hwGetDigital(2), LOW );
+    TS_ASSERT_EQUALS( pins.hwGetDigital(2), HIGH );
     TS_ASSERT_EQUALS( pins.hwGetDigital(3), HIGH );
   }
   void testAttachInterrupt( void )

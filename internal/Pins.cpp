@@ -91,11 +91,8 @@ void Pins::hwSetAnalog(int pin,int level)
 
 void Pins::digitalWrite(int pin,int level)
 {
-  if ( pin_modes.at(pin) == OUTPUT )
-  {
-    digital_states.at(pin) = level;
-    log.sketch("PINS","%s %s",pin_log_name(pin).c_str(),level?"HIGH":"LOW");
-  }
+  digital_states.at(pin) = level;
+  log.sketch("PINS","%s %s",pin_log_name(pin).c_str(),level?"HIGH":"LOW");
 }
 
 /****************************************************************************/
