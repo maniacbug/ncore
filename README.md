@@ -1,4 +1,4 @@
-# NCORE: Arduino Native Core
+# NCORE: Native Core for Arduino
 
 ## What is a 'Native Core'?
 
@@ -41,10 +41,10 @@ $ git clone ... native
 
 ## How do I build the examples?
 
-The examples include all examples shipped with core Arduino 0021, plus many libraries which are handled by NCORE.  All are working without modification,
+The examples include all examples shipped with Arduino 1.0, plus many libraries which are handled by NCORE.  All are working without modification,
 except to forward-declare functions and fix bugs.  Some bugs became much more obvious once they were running under NCORE.
 
-Edit examples/Jamrules, and change the first line, SKETCH\_DIR to point to your Arduino sketch directory.
+Edit examples/Jamrules, and change the first line, CORE\_DIR to point to where you installed the native core, and ARDUINO\_DIR to where you installed Arduino.
 
 From the command line, cd to the 'examples' directory, and type:
 
@@ -87,12 +87,11 @@ My "Sketch Directory" in the Arduino IDE is ~/Source/Arduino.  Let's say we're s
 1. Create the HelloWorld sketch in the IDE the normal way.
 2. This creates ~/Source/Arduino/HelloWorld/HelloWorld.pde.
 3. Create a 'native' directory underneath, e.g. ~/Source/Arduino/HelloWorld/native
-4. Copy Jamrules from ~/Source/Arduino/hardware/native/examples/Jamrules into ~/Source/Arduino/HelloWorld/native
-5. Create Jamfile ...
+4. Copy Jamrules and Jamfile from ~/Source/Arduino/hardware/native/samples into ~/Source/Arduino/HelloWorld/native
 5. From a command prompt, cd to ~/Source/Arduino/HelloWorld/native, and type 'jam' 
 6. Run out/HelloWorld
 
-In your sketch, use the ".PDE" extension for anything that should be included in both Arduino hardware builds and native builds.  Use ".CPP" for files
+In your sketch, use the ".INO" extension for anything that should be included in both Arduino hardware builds and native builds.  Use ".CPP" for files
 that should only be in the Arduino hardware build.  The native build will not pick those up.  In the 'native' directory off your sketch, include any files
-that should be in the native build.  The Arduino hardware build will not pick those up.  This allows you to substitute native versions of any of your
+that should be only in the native build.  The Arduino hardware build will not pick those up.  This allows you to substitute native versions of any of your
 functions if you need it.  This avoids lots of "#if NATIVE" everywhere in your sketch.
