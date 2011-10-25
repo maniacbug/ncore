@@ -10,7 +10,7 @@
 // Project includes
 #include <Logger.h>
 #include <Parser.h>
-#include <Eeprom.h>
+#include <EepromInternal.h>
 
 using namespace std;
 
