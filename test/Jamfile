@@ -19,15 +19,18 @@ LOCATE_TARGET	= out ;
 LOCATE_SOURCE	= out ;
 CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
 C++FLAGS	= $(CCFLAGS) ; 
-LINKFLAGS	= -fprofile-arcs -Wl,--no-as-needed -lpthread ;
+LINKFLAGS	= -fprofile-arcs ;
 
 if ( $(OS) = MACOSX )
 {
 	HDRS 		+= /Developer/SDKs/MacOSX10.6.sdk/usr/include ;
 	DEFINES 	+= MAC=1 ;
+	CXXTEST_GEN	= $(CXXTEST_DIR)/python/scripts/cxxtestgen ;
+	LINKFLAGS	+= -lpthread ;
 }
 else
 {
+	LINKFLAGS	+= -Wl,--no-as-needed -lpthread ;
 	LINKFLAGS	+= -lrt ;
 	C++FLAGS	+= -std=c++0x ;
 }
