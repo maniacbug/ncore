@@ -104,12 +104,12 @@ public:
 
   void testEmpty( void )
   {
-    TS_ASSERT_EQUALS( sched.size(), 0 );
+    TS_ASSERT_EQUALS( sched.size(), 0U );
   }
   void testAdd( void )
   {
     sched.add(1000,string("test")) ;
-    TS_ASSERT_EQUALS( sched.size(), 1 );
+    TS_ASSERT_EQUALS( sched.size(), 1U );
   }
   void testNotRun( void )
   {

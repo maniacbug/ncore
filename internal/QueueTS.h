@@ -11,23 +11,51 @@
 /**
  * Threadsafe blocking queue.  Empty queue blocks the thread until data is
  * available.
- *
- * @todo Move into its own header file.
  */
 
 template <class T> 
 class QueueTS
 {
 private:
-  std::queue<T> q;
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
+  std::queue<T> q; /**< The queue of objects */
+  pthread_mutex_t mutex; /**< A mutex controlling access to the queue */
+  pthread_cond_t cond; /**< Condition var which allows one caller to block waiting for another caller to insert */
 public:
+  /**
+   * Default constructor
+   */
   QueueTS(void);
+
+  /**
+   * Destructor
+   */
   virtual ~QueueTS();
-  void push(const T&);
+  
+  /**
+   * Push an object onto the queue
+   *
+   * @param object Object to be copied into the queue
+   */
+  void push(const T& object);
+  
+  /**
+   * Pop an object off the queue and return it
+   *
+   * @return Object popped off queue
+   */
   T pop(void);
+  
+  /**
+   * Clears the queue to zero objects
+   */
   void clear(void);
+  
+  /**
+   * Test whether there is an object to be popped.  If this returns false,
+   * you can expect a call to pop() is going to block.
+   *
+   * @return Whether there is at least one object on the queue.
+   */
   bool available(void) const;
 };
 

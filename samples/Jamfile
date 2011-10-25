@@ -1,0 +1,11 @@
+SubDir TOP ;
+
+LOCATE_TARGET = out ;
+LOCATE_SOURCE = out ;
+SEARCH_SOURCE = $(PWD:D) ;
+
+LIBS 		= ;
+HDRS 		+= $(LIBRARY_DIR)/$(LIBS) ;
+LIBRARY_MODULES	= [ GLOB $(LIBRARY_DIR)/$(LIBS) : *.cpp *.c ] ;
+
+Main $(SEARCH_SOURCE:B) : $(SKETCH_MODULES) $(LIBRARY_MODULES) $(CORE_MODULES) $(INTERNAL_MODULES) [ GLOB $(SEARCH_SOURCE) : *.ino *.cpp ] $(EXTRAS_DIR)/shellmain.cpp [ GLOB $(PWD) : *.ino *.cpp ] ;

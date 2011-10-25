@@ -1,5 +1,8 @@
 #ifndef __OUTPUT_CAPTURE_H__
 #define __OUTPUT_CAPTURE_H__
+
+#include <iostream>
+
 class OutputCapture
 {
   std::stringstream test_buffer;

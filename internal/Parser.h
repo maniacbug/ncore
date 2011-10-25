@@ -20,12 +20,28 @@
 class Parser: public std::vector<std::string>
 {
 public:
+  /**
+   * Default Constructor
+   */
   Parser(void) {}
+  
+  /**
+   * Typical Constructor
+   *
+   * @param _str Space-separated set of words to parse into the string vector
+   */
   Parser(const std::string& _str)
   {
     parse(_str);
   }
-  void parse(const std::string&);
+
+  /**
+   * Parse the string into the string vector.  Breaks words on space
+   * boundaries.  Adds the result at the end of the current vector.
+   *
+   * @param _str Space-separated set of words to parse into the string vector
+   */
+  void parse(const std::string& _str);
 };
 
 #endif // __PARSER_H__

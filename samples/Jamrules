@@ -1,0 +1,78 @@
+CORE_DIR	= $(HOME)/Source/Arduino/hardware/native ;
+ARDUINO_DIR	= /opt/Arduino ;
+INTERNAL_DIR	= $(CORE_DIR)/internal ;
+EXTRAS_DIR	= $(CORE_DIR)/extras ;
+LIBRARY_DIR	= $(ARDUINO_DIR)/libraries ;
+
+HDRS		+= $(INTERNAL_DIR) $(CORE_DIR) ;
+DEFINES		+= NATIVE=1 ARDUINO=100 ;
+
+CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ; 
+INTERNAL_MODULES = [ GLOB $(INTERNAL_DIR) : *.cpp ] ;
+
+LINK		= c++ ;
+C++		= c++ ;
+LOCATE_TARGET	= out ;
+LOCATE_SOURCE	= out ;
+CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
+C++FLAGS	= $(CCFLAGS) -std=c++0x ; 
+LINKFLAGS	= -fprofile-arcs -lpthread -lreadline ;
+
+if ( $(OS) = MACOSX )
+{
+	HDRS 		+= /Developer/SDKs/MacOSX10.6.sdk/usr/include ;
+	DEFINES 	+= MAC=1 ;
+}
+else
+{
+	LINKFLAGS	+= -lrt ;
+}
+
+rule Ino
+{
+  Depends $(<) : $(>) ;
+  MakeLocate $(<) : $(LOCATE_SOURCE) ;
+  Clean clean : $(<) ;
+}
+
+actions Ino
+{
+  echo "#include <Arduino.h>" > $(<) 
+  echo "#line 1 \"$(>)\"" >> $(<)
+  cat $(>) >> $(<) 
+}
+
+rule C++Ino
+{
+  local _CPP = $(>:B).cpp ;
+  Ino $(_CPP) : $(>) ;
+  C++ $(<) : $(_CPP) ;
+}
+
+rule UserObject
+{
+  switch $(>:S)
+  {
+    case .ino : C++Ino $(<) : $(>) ;
+  }
+}
+
+rule Objects
+{
+        local _i ;
+
+        for _i in [ FGristFiles $(<) ]
+        {
+		local _b = $(_i:B)$(SUFOBJ) ;
+		local _o = $(_b:G=$(SOURCE_GRIST:E)) ;
+                Object $(_o) : $(_i) ;
+                Depends obj : $(_o) ;
+        }
+}
+
+rule Main
+{
+        MainFromObjects $(<) : $(>:B)$(SUFOBJ) ;
+        Objects $(>) ;
+}
+

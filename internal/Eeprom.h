@@ -51,10 +51,41 @@ protected:
    */
   bool command_eeprom(const std::vector<std::string>&);
 public:
-  Eeprom(Logger&);
+  /**
+   * Constructor
+   *
+   * @param _log Where to log results
+   */
+  Eeprom(Logger& _log);
+  
+  /**
+   * EEPROM Total Size
+   *
+   * @return Total size of EEPROM, whether used or not
+   */
   size_t size(void);
+  
+  /**
+   * Read from EEPROM
+   *
+   * @param addr Address within EEPROM to read from
+   *
+   * @result Value in EEPROM
+   */
   uint8_t readByte(int addr) const;
+  
+  /**
+   * Write to EEPROM
+   *
+   * @param addr Address within EEPROM
+   * @param value Value to write
+   */
+  
   void writeByte(int addr, uint8_t value);
+  
+  /**
+   * Reset all values to 0
+   */
   void clear(void);
 };
 
