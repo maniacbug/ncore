@@ -101,6 +101,7 @@ public:
   void testQueueConcurrent( void )
   {
     //cerr << "[IN:" << __FUNCTION__ ;
+    global_logger.clear();
     SketchThread t(1);
     t.startCustom(semaphores_test_main);
     real_delay_us(5);
@@ -119,7 +120,7 @@ public:
 
     t.waitToFinish();
 
-    //cerr << logger;
+    //cerr << global_logger;
 
     TS_ASSERT_EQUALS( global_logger.lines_contain("first"), 2 );
     TS_ASSERT_EQUALS( global_logger.lines_contain("quit"), 2 );
