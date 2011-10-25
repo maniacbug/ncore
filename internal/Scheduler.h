@@ -54,7 +54,6 @@ private:
   Dispatcher& dispatch;
   Logger& logger;
   Clock clock; // TODO: Need to pass this in!!
-  //sem_t sem;
   pthread_mutex_t mutex;
   pthread_cond_t cond;
   bool done;
