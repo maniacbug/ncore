@@ -34,25 +34,31 @@ If you want to build the tests, you'll need cxxtest from http://cxxtest.tigris.o
 
 Clone it from github.  Create a 'hardware' directory off your sketches directory, and clone into 'native' under that.  For example...
 
-$ cd ~/Source/Arduino/
-$ mkdir hardware
-$ cd hardware
-$ git clone ... native
+ $ cd ~/Source/Arduino
+ $ mkdir hardware
+ $ cd hardware
+ $ git clone git://github.com/maniacbug/ncore.git native
 
 ## How do I build the examples?
 
-The examples include all examples shipped with Arduino 1.0, plus many libraries which are handled by NCORE.  All are working without modification,
-except to forward-declare functions and fix bugs.  Some bugs became much more obvious once they were running under NCORE.
+NCORE has been tested against all examples shipped with Arduino 1.0, plus many libraries which are handled by NCORE such as EEPROM and SPI.
+All are working without modification, except to forward-declare functions and fix bugs.  Some bugs became much more obvious once they were running under NCORE.
 
-Edit examples/Jamrules, and change the first line, CORE\_DIR to point to where you installed the native core, and ARDUINO\_DIR to where you installed Arduino.
+The examples are in their own repository.  To get them: 
 
-From the command line, cd to the 'examples' directory, and type:
+ $ cd ~/Source/Arduino
+ $ git clone git://github.com/maniacbug/ncore-examples.git
+ $ cd ncore-examples
 
-$ jam Blink
+Edit Jamrules, and change the first line, CORE\_DIR to point to where you installed the native core, and ARDUINO\_DIR to where you installed Arduino.
 
-This will build the Blink example.  You can then build all the examples using:
+First, build one of the examples.  The following will build the 'Blink' example:
 
-$ jam -j10
+ $ jam Blink
+
+Then build all of the examples in one go:
+
+ $ jam -j10
 
 Just be sure to have built ONE example first, or it takes forever to compile.
 
@@ -60,9 +66,9 @@ Also, the -j10 is optional.  It goes faster that way.
 
 ## How do I launch it?
 
-Again, from the examples directory, after building Blink, type:
+From the examples directory, after building Blink, type:
 
-$ out/Blink
+ $ out/Blink
 
 ## How do I run it?
 
