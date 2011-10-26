@@ -1,7 +1,7 @@
 #include <string>
 
 #include <cxxtest/TestSuite.h>
-#include <Eeprom.h>
+#include <EepromInternal.h>
 #include <Logger.h>
 #include <Dispatcher.h>
 #include <OutputCapture.h>

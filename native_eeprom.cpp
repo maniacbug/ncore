@@ -1,6 +1,6 @@
 #include <vector>
 #include <inttypes.h>
-#include <Eeprom.h>
+#include <EepromInternal.h>
 
 extern Eeprom theEeprom;
 

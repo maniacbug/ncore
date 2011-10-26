@@ -4,7 +4,7 @@ INTERNAL_DIR	= $(CORE_DIR)/internal ;
 EXTRAS_DIR	= $(CORE_DIR)/extras ;
 LIBRARY_DIR	= $(ARDUINO_DIR)/libraries ;
 
-HDRS		+= $(INTERNAL_DIR) $(CORE_DIR) ;
+HDRS		+= $(CORE_DIR) $(INTERNAL_DIR) ;
 DEFINES		+= NATIVE=1 ARDUINO=100 ;
 
 CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ; 
@@ -15,7 +15,7 @@ C++		= c++ ;
 LOCATE_TARGET	= out ;
 LOCATE_SOURCE	= out ;
 CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
-C++FLAGS	= $(CCFLAGS) -std=c++0x ; 
+C++FLAGS	= $(CCFLAGS) ; 
 LINKFLAGS	= -fprofile-arcs -lpthread -lreadline ;
 
 if ( $(OS) = MACOSX )
@@ -26,6 +26,7 @@ if ( $(OS) = MACOSX )
 else
 {
 	LINKFLAGS	+= -lrt ;
+	C++FLAGS	+= -std=c++0x ;
 }
 
 rule Ino
@@ -54,6 +55,7 @@ rule UserObject
   switch $(>:S)
   {
     case .ino : C++Ino $(<) : $(>) ;
+    case .pde : C++Ino $(<) : $(>) ;
   }
 }
 
