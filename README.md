@@ -34,10 +34,10 @@ If you want to build the tests, you'll need cxxtest from http://cxxtest.tigris.o
 
 Clone it from github.  Create a 'hardware' directory off your sketches directory, and clone into 'native' under that.  For example...
 
- $ cd ~/Source/Arduino
- $ mkdir hardware
- $ cd hardware
- $ git clone git://github.com/maniacbug/ncore.git native
+	$ cd ~/Source/Arduino
+	$ mkdir hardware
+	$ cd hardware
+	$ git clone git://github.com/maniacbug/ncore.git native
 
 ## How do I build the examples?
 
@@ -46,19 +46,19 @@ All are working without modification, except to forward-declare functions and fi
 
 The examples are in their own repository.  To get them: 
 
- $ cd ~/Source/Arduino
- $ git clone git://github.com/maniacbug/ncore-examples.git
- $ cd ncore-examples
+	$ cd ~/Source/Arduino
+	$ git clone git://github.com/maniacbug/ncore-examples.git
+	$ cd ncore-examples
 
 Edit Jamrules, and change the first line, CORE\_DIR to point to where you installed the native core, and ARDUINO\_DIR to where you installed Arduino.
 
 First, build one of the examples.  The following will build the 'Blink' example:
 
- $ jam Blink
+	$ jam Blink
 
 Then build all of the examples in one go:
 
- $ jam -j10
+	$ jam -j10
 
 Just be sure to have built ONE example first, or it takes forever to compile.
 
@@ -68,7 +68,7 @@ Also, the -j10 is optional.  It goes faster that way.
 
 From the examples directory, after building Blink, type:
 
- $ out/Blink
+	$ out/Blink
 
 ## How do I run it?
 
