@@ -12,7 +12,7 @@
 #include <SketchThread.h>
 #include <SerialBuffer.h>
 #include <Clock.h>
-#include <Eeprom.h>
+#include <EepromInternal.h>
 #include <SpiQueue.h>
 #include <Scheduler.h>
 
