@@ -16,7 +16,7 @@ LOCATE_TARGET	= out ;
 LOCATE_SOURCE	= out ;
 CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
 C++FLAGS	= $(CCFLAGS) ; 
-LINKFLAGS	= -fprofile-arcs -lpthread -lreadline ;
+LINKFLAGS	= -fprofile-arcs -Wl,--no-as-needed -lpthread -lreadline ;
 
 if ( $(OS) = MACOSX )
 {
