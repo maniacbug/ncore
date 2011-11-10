@@ -142,5 +142,5 @@ void noTone(uint8_t pin)
   theLogger.sketch("PINS","%i: noTone",pin);
 }
 
-// vim:cin:ai:sts=2 sw=2
+// vim:cin:ai:sts=2 sw=2 ft=cpp
 
