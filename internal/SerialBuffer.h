@@ -43,6 +43,7 @@ public:
   bool available(void) const;
   char get(void);
   void flush(void);
+  char peek(void) const;
 
   void setInput(const std::string&);
 };

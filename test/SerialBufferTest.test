@@ -147,6 +147,12 @@ public:
     TS_ASSERT_EQUALS( ok, true );
     TS_ASSERT_EQUALS( (bool)cap.contains("send"), true );
   }
+  void testPeek( void )
+  {
+    s.setInput("test");
 
+    TS_ASSERT_EQUALS( s.peek(), 't' );
+    TS_ASSERT_EQUALS( s.get(), 't' );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp
