@@ -101,6 +101,15 @@ void printf_P(const char* format,...)
     at = formatstr.find("%S",at);
   }
 
+  // Remove trailing \n and \r
+  size_t s = formatstr.size();
+  char c = formatstr.at(s-1);
+  while ( s && ( c == '\n' || c == '\r' ) )
+  {
+    formatstr.resize(--s);
+    c = formatstr.at(s-1);
+  }
+
   va_list args;
   va_start (args, format);
   //vprintf (formatstr.c_str(), args);
@@ -142,5 +151,5 @@ void noTone(uint8_t pin)
   theLogger.sketch("PINS","%i: noTone",pin);
 }
 
-// vim:cin:ai:sts=2 sw=2
+// vim:cin:ai:sts=2 sw=2 ft=cpp
 

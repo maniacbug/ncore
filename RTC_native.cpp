@@ -33,6 +33,6 @@ DateTime RTC_native::now()
 {
     tzset();
 
-    return DateTime(time(NULL)+offset-timezone+(daylight?3600:0));
+    return DateTime(time(NULL)+offset-timezone); //+(daylight?3600:0));
 }
 // vim:ai:cin:sw=4 sts=4 ft=cpp

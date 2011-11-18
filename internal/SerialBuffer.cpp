@@ -106,6 +106,14 @@ char SerialBuffer::get(void)
 }
 
 /****************************************************************************/
+  
+char SerialBuffer::peek(void) const
+{
+  SerialBuffer* nonconst_this = const_cast<SerialBuffer*>(this);
+  return nonconst_this->instream.peek();
+}
+
+/****************************************************************************/
 
 string& SerialBuffer::getCommands(void) const
 {

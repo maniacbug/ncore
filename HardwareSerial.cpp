@@ -31,7 +31,7 @@ int HardwareSerial::available(void)
 
 int HardwareSerial::peek(void)
 {
-  return 0;
+  return theSerialBuffer.peek();
 }
 
 int HardwareSerial::read(void)

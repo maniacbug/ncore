@@ -34,25 +34,31 @@ If you want to build the tests, you'll need cxxtest from http://cxxtest.tigris.o
 
 Clone it from github.  Create a 'hardware' directory off your sketches directory, and clone into 'native' under that.  For example...
 
-$ cd ~/Source/Arduino/
-$ mkdir hardware
-$ cd hardware
-$ git clone ... native
+	$ cd ~/Source/Arduino
+	$ mkdir hardware
+	$ cd hardware
+	$ git clone git://github.com/maniacbug/ncore.git native
 
 ## How do I build the examples?
 
-The examples include all examples shipped with Arduino 1.0, plus many libraries which are handled by NCORE.  All are working without modification,
-except to forward-declare functions and fix bugs.  Some bugs became much more obvious once they were running under NCORE.
+NCORE has been tested against all examples shipped with Arduino 1.0, plus many libraries which are handled by NCORE such as EEPROM and SPI.
+All are working without modification, except to forward-declare functions and fix bugs.  Some bugs became much more obvious once they were running under NCORE.
 
-Edit examples/Jamrules, and change the first line, CORE\_DIR to point to where you installed the native core, and ARDUINO\_DIR to where you installed Arduino.
+The examples are in their own repository.  To get them: 
 
-From the command line, cd to the 'examples' directory, and type:
+	$ cd ~/Source/Arduino
+	$ git clone git://github.com/maniacbug/ncore-examples.git
+	$ cd ncore-examples
 
-$ jam Blink
+Edit Jamrules, and change the first line, CORE\_DIR to point to where you installed the native core, and ARDUINO\_DIR to where you installed Arduino.
 
-This will build the Blink example.  You can then build all the examples using:
+First, build one of the examples.  The following will build the 'Blink' example:
 
-$ jam -j10
+	$ jam Blink
+
+Then build all of the examples in one go:
+
+	$ jam -j10
 
 Just be sure to have built ONE example first, or it takes forever to compile.
 
@@ -60,9 +66,9 @@ Also, the -j10 is optional.  It goes faster that way.
 
 ## How do I launch it?
 
-Again, from the examples directory, after building Blink, type:
+From the examples directory, after building Blink, type:
 
-$ out/Blink
+	$ out/Blink
 
 ## How do I run it?
 
@@ -95,3 +101,112 @@ In your sketch, use the ".INO" extension for anything that should be included in
 that should only be in the Arduino hardware build.  The native build will not pick those up.  In the 'native' directory off your sketch, include any files
 that should be only in the native build.  The Arduino hardware build will not pick those up.  This allows you to substitute native versions of any of your
 functions if you need it.  This avoids lots of "#if NATIVE" everywhere in your sketch.
+
+## Examples of output
+
+### Blink
+
+	NCORE: Arduino Native Core
+	Copyright (C) 2011 maniacbug@ymail.com GPLv2
+	
+	ncore 6$ at 5000 list
+	ncore 8$ at 5001 quit
+	NCORE: 000006 IN CORE Started
+	NCORE: 000008 SK AT   5000 list 
+	NCORE: 000009 SK AT   5001 quit 
+	NCORE: 000057 SK PINS 13 OUTPUT
+	NCORE: 000057 SK PINS 13 HIGH
+	NCORE: 000057 SK CLOK delay 1000
+	NCORE: 001057 SK PINS 13 LOW
+	NCORE: 001057 SK CLOK delay 1000
+	NCORE: 002057 SK PINS 13 HIGH
+	NCORE: 002057 SK CLOK delay 1000
+	NCORE: 003057 SK PINS 13 LOW
+	NCORE: 003057 SK CLOK delay 1000
+	NCORE: 004057 SK PINS 13 HIGH
+	NCORE: 004057 SK CLOK delay 1000
+
+### Button
+
+	NCORE: Arduino Native Core
+	Copyright (C) 2011 maniacbug@ymail.com GPLv2
+	
+	ncore 1$ log rate 50
+	ncore 4$ at 100 pin 2 press
+	ncore 6$ at 200 list
+	ncore 7$ at 201 quit
+	NCORE: 000001 IN CORE Started
+	NCORE: 000004 IN LOG  set rate limit to 50ms
+	NCORE: 000006 SK AT   100 pin 2 press 
+	NCORE: 000007 SK AT   200 list 
+	NCORE: 000007 SK AT   201 quit 
+	NCORE: 000051 SK PINS 13 OUTPUT
+	NCORE: 000051 SK PINS 2 INPUT
+	NCORE: 000051 SK PINS 13 LOW
+	NCORE: 000051 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 SK PINS 13 LOW
+	NCORE: 000052 IN LOG  delay 50 (rate limit)
+	NCORE: 000100 IN PINS 2 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 SK PINS 13 HIGH
+	NCORE: 000102 IN LOG  delay 50 (rate limit)
+	NCORE: 000150 IN PINS 2 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 SK PINS 13 LOW
+	NCORE: 000152 IN LOG  delay 50 (rate limit)
+
+### StringToIntRGB
+
+	NCORE: Arduino Native Core
+	Copyright (C) 2011 maniacbug@ymail.com GPLv2
+	
+	ncore 1$ log rate 0
+	ncore 3$ at 100 send 0,64,128 cr
+	ncore 3$ at 110 list
+	ncore 4$ at 111 quit
+	ncore 4$ 
+	NCORE: 000001 IN CORE Started
+	NCORE: 000003 IN LOG  set rate limit to 0ms
+	NCORE: 000003 SK AT   100 send 0,64,128 cr 
+	NCORE: 000004 SK AT   110 list 
+	NCORE: 000004 SK AT   111 quit 
+	NCORE: 000051 SK CORE Serial started.
+	NCORE: 000051 SK PINS 9 OUTPUT
+	NCORE: 000051 SK PINS 10 OUTPUT
+	NCORE: 000051 SK PINS 11 OUTPUT
+	NCORE: 000051 SK PINS 13 OUTPUT
+	NCORE: 000051 SK PINS 13 HIGH
+	NCORE: 000100 IN SERL send 0,64,128 (with CR)
+	NCORE: 000100 SK PINS 11: 255
+	NCORE: 000100 SK PINS 9: 191
+	NCORE: 000100 SK PINS 10: 127
+	NCORE: 000100 SK SERL Red: 0, Green: 64, Blue: 128
+
