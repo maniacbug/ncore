@@ -4,6 +4,7 @@
 #include <inttypes.h>
 #define PROGMEM
 #define strlen_P strlen
+#define memcpy_P memcpy
 #define PSTR(x) (x)
 typedef const char prog_char;
 typedef uint8_t prog_uint8_t;
