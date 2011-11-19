@@ -26,7 +26,7 @@ class TemplateTestSuite: public CxxTest::TestSuite
 public:
   void setUp()
   {
-    pTemplate* = new Template();
+    pTemplate = new Template();
   }
   
   void tearDown()
