@@ -17,7 +17,7 @@ using namespace std;
 /****************************************************************************/
 
 // eeprom size must always be a power of 2
-static const int eeprom_size = 1 << 9;
+static const int eeprom_size = 1 << 10;
 
 /****************************************************************************/
 
