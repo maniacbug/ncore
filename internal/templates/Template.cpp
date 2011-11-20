@@ -6,10 +6,12 @@
  version 2 as published by the Free Software Foundation.
  */
 
-// STL includes
-// C includes
-// Library includes
-// Project includes
+// STL headers
+// C headers
+// Framework headers
+// Library headers
+// Project headers
+// This component's header
 #include <Template.h>
 
 /****************************************************************************/

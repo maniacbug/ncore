@@ -6,16 +6,15 @@
  version 2 as published by the Free Software Foundation.
  */
 
-// STL includes
+// STL headers
 #include <vector>
 #include <string>
-
-// C includes
-
-// Library includes
+// C headers
+// Framework headers
+// Library headers
 #include <cxxtest/TestSuite.h>
-
-// Project includes
+// Project headers
+// This component's header
 #include <Template.h>
 
 using namespace std;

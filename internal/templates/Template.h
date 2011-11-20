@@ -9,10 +9,11 @@
 #ifndef __TEMPLATE_H__
 #define __TEMPLATE_H__
 
-// STL includes
-// C includes
-// Library includes
-// Project includes
+// STL headers
+// C headers
+// Framework headers
+// Library headers
+// Project headers
 
 /**
  * Example for how classes should be declared
