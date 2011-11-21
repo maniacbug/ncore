@@ -22,21 +22,30 @@ using namespace std;
 
 class WireQueueTestSuite: public CxxTest::TestSuite
 {
-  WireQueue* pWireQueue ;
+  Logger* pLogger;
+  WireQueue* pWireQueue;
 public:
   void setUp()
   {
-    pWireQueue = new WireQueue();
+    pLogger = new Logger();
+    pWireQueue = new WireQueue(*pLogger);
   }
   
   void tearDown()
   {
     delete pWireQueue;
+    delete pLogger;
   }
 
   void testEmpty( void )
   {
     TS_ASSERT(pWireQueue);
+  }
+  
+  void testSend( void )
+  {
+    pWireQueue->send(0xfe);
+    TS_ASSERT_EQUALS( pLogger->lines_contain("fe"), 1 );
   }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

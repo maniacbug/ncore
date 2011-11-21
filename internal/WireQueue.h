@@ -6,12 +6,14 @@
  version 2 as published by the Free Software Foundation.
  */
 
-#ifndef __WIREQUEUEi_H__
-#define __WIREQUEUEi_H__
+#ifndef __WIREQUEUE_H__
+#define __WIREQUEUE_H__
 
 // STL headers
 // C headers
 // Framework headers
+#include <Logger.h>
+#include <QueueTS.h>
 // Library headers
 // Project headers
 
@@ -22,9 +24,13 @@
 class WireQueue
 {
 private:
+  QueueTS<uint8_t> qts;
+  Logger& logger;
 protected:
 public:
+  WireQueue(Logger& _logger): logger(_logger) {}
+  void send(uint8_t);
 };
 
-#endif // __WIREQUEUEi_H__
+#endif // __WIREQUEUE_H__
 // vim:cin:ai:sts=2 sw=2 ft=cpp
