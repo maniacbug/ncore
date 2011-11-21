@@ -15,6 +15,7 @@
 #include <EepromInternal.h>
 #include <SpiQueue.h>
 #include <Scheduler.h>
+#include <WireQueue.h>
 
 using namespace std;
 
@@ -28,6 +29,7 @@ SerialBuffer theSerialBuffer(theLogger);
 Eeprom theEeprom(theLogger);
 SpiQueue theSpiQueue(theLogger);
 Scheduler theScheduler(theDispatcher,theLogger);
+WireQueue theWireQueue(theLogger);
 
 int main(void)
 {

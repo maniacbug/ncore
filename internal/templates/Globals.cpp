@@ -12,6 +12,7 @@
 #include <Eeprom.h>
 #include <SpiQueue.h>
 #include <Scheduler.h>
+#include <WireQueue.h>
 // Project includes
 #include <Globals.h>
 
@@ -23,6 +24,7 @@ SerialBuffer theSerialBuffer(theLogger);
 Eeprom theEeprom(theLogger);
 SpiQueue theSpiQueue(theLogger);
 Scheduler theScheduler(theDispatcher,theLogger);
+WireQueue theWireQueue(theLogger);
 
 /****************************************************************************/
 
