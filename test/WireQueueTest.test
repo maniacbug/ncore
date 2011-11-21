@@ -47,5 +47,16 @@ public:
     pWireQueue->send(0xfe);
     TS_ASSERT_EQUALS( pLogger->lines_contain("fe"), 1 );
   }
+
+  void testReceive( void )
+  {
+    pWireQueue->hwEnqueue(1);
+    pWireQueue->hwEnqueue(2);
+    pWireQueue->hwEnqueue(3);
+
+    TS_ASSERT_EQUALS( pWireQueue->receive(), 1 );
+    TS_ASSERT_EQUALS( pWireQueue->receive(), 2 );
+    TS_ASSERT_EQUALS( pWireQueue->receive(), 3 );
+  }
 };
 // vim:cin:ai:sts=2 sw=2 ft=cpp

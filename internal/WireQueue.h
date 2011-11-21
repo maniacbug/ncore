@@ -30,6 +30,8 @@ protected:
 public:
   WireQueue(Logger& _logger): logger(_logger) {}
   void send(uint8_t);
+  uint8_t receive(void);
+  void hwEnqueue(uint8_t);
 };
 
 #endif // __WIREQUEUE_H__
