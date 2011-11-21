@@ -6,12 +6,14 @@
  version 2 as published by the Free Software Foundation.
  */
 
-#ifndef __TEMPLATE_H__
-#define __TEMPLATE_H__
+#ifndef __WIREQUEUE_H__
+#define __WIREQUEUE_H__
 
 // STL headers
 // C headers
 // Framework headers
+#include <Logger.h>
+#include <QueueTS.h>
 // Library headers
 // Project headers
 
@@ -19,12 +21,18 @@
  * Example for how classes should be declared
  */
 
-class Template
+class WireQueue
 {
 private:
+  QueueTS<uint8_t> qts;
+  Logger& logger;
 protected:
 public:
+  WireQueue(Logger& _logger): logger(_logger) {}
+  void send(uint8_t);
+  uint8_t receive(void);
+  void hwEnqueue(uint8_t);
 };
 
-#endif // __TEMPLATE_H__
+#endif // __WIREQUEUE_H__
 // vim:cin:ai:sts=2 sw=2 ft=cpp

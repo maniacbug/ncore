@@ -76,13 +76,13 @@ extern "C"{
 
 #ifdef __cplusplus
 }
-template <class T>
-T min(T a,T b)
+template <class T,class S>
+T min(T a,S b)
 {
   return ((a)<(b)?(a):(b));
 }
-template <class T>
-T max(T a,T b)
+template <class T,class S>
+T max(T a,S b)
 {
   return ((a)>(b)?(a):(b));
 }

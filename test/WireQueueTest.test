@@ -1,0 +1,62 @@
+/*
+ Copyright (C) 2011 J. Coliz <maniacbug@ymail.com>
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ version 2 as published by the Free Software Foundation.
+ */
+
+// STL headers
+#include <vector>
+#include <string>
+#include <iostream>
+// C headers
+// Framework headers
+// Library headers
+#include <cxxtest/TestSuite.h>
+// Project headers
+// This component's header
+#include <WireQueue.h>
+
+using namespace std;
+
+class WireQueueTestSuite: public CxxTest::TestSuite
+{
+  Logger* pLogger;
+  WireQueue* pWireQueue;
+public:
+  void setUp()
+  {
+    pLogger = new Logger();
+    pWireQueue = new WireQueue(*pLogger);
+  }
+  
+  void tearDown()
+  {
+    delete pWireQueue;
+    delete pLogger;
+  }
+
+  void testEmpty( void )
+  {
+    TS_ASSERT(pWireQueue);
+  }
+  
+  void testSend( void )
+  {
+    pWireQueue->send(0xfe);
+    TS_ASSERT_EQUALS( pLogger->lines_contain("fe"), 1 );
+  }
+
+  void testReceive( void )
+  {
+    pWireQueue->hwEnqueue(1);
+    pWireQueue->hwEnqueue(2);
+    pWireQueue->hwEnqueue(3);
+
+    TS_ASSERT_EQUALS( pWireQueue->receive(), 1 );
+    TS_ASSERT_EQUALS( pWireQueue->receive(), 2 );
+    TS_ASSERT_EQUALS( pWireQueue->receive(), 3 );
+  }
+};
+// vim:cin:ai:sts=2 sw=2 ft=cpp
