@@ -9,12 +9,15 @@
 // STL headers
 // C headers
 // Framework headers
+#include <WireQueue.h>
 // Library headers
 // Project headers
 // This component's header
 #include <Wire.h>
 
 TwoWire Wire;
+
+extern WireQueue theWireQueue;
 
 /****************************************************************************/
 TwoWire::TwoWire()
@@ -47,8 +50,9 @@ uint8_t TwoWire::requestFrom(int, int)
 {
   return 0;
 }
-void TwoWire::send(uint8_t)
+void TwoWire::send(uint8_t val)
 {
+  theWireQueue.send(val);
 }
 void TwoWire::send(uint8_t*, uint8_t)
 {
@@ -65,7 +69,7 @@ uint8_t TwoWire::available(void)
 }
 uint8_t TwoWire::receive(void)
 {
-  return 0;
+  return theWireQueue.receive();
 }
 void TwoWire::onReceive( void (*)(int) )
 {
