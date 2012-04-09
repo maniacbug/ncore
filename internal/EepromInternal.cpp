@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <iomanip>
+#include <iterator>
 // C includes
 // Library includes
 // Project includes
@@ -185,6 +186,30 @@ bool Eeprom::command_eeprom(const std::vector<std::string>& _commands)
   }
 
   return true;
+}
+
+/****************************************************************************/
+
+ostream& operator<<(ostream& os, const Eeprom& eep)
+{
+  copy(eep.begin(),eep.end(),ostream_iterator<uint8_t>(os));
+
+  return os;
+}
+
+/****************************************************************************/
+
+istream& operator>>(istream& is, Eeprom& eep)
+{
+  eep.clear();
+  int addr = 0;
+  int val = is.get();
+  while ( is.good() )
+  {
+    eep.writeByte( addr++, val );
+    val = is.get();
+  }
+  return is;
 }
 
 /****************************************************************************/
