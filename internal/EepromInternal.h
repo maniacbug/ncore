@@ -23,6 +23,7 @@ class Logger;
 class Eeprom: public IDispatchable
 {
 private:
+public:
   std::vector<uint8_t> values; /**< Eeprom memory mock */
   Logger& log; /**< Where to log changes */
 protected:
@@ -87,7 +88,28 @@ public:
    * Reset all values to 0
    */
   void clear(void);
+
+  /**
+   * Beginning of eeprom space
+   */
+  std::vector<uint8_t>::const_iterator begin() const { return values.begin(); }
+
+  /**
+   * Ending of eeprom space
+   */
+  std::vector<uint8_t>::const_iterator end() const { return values.end(); }
+
 };
+
+/**
+ * Serialize eeprom to output stream
+ */
+extern std::ostream& operator<<(std::ostream& os, const Eeprom& eep);
+
+/**
+ * Serialize eeprom from input stream
+ */
+extern std::istream& operator>>(std::istream& os, Eeprom& eep);
 
 #endif // __EEPROM_H__
 // vim:cin:ai:sts=2 sw=2 ft=cpp

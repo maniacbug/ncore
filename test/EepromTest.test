@@ -1,4 +1,6 @@
 #include <string>
+#include <iostream>
+#include <fstream>
 
 #include <cxxtest/TestSuite.h>
 #include <EepromInternal.h>
@@ -23,6 +25,7 @@ public:
   }
   void setUp()
   {
+    ee.clear();
     log.clear();
     commands.clear();
     cap.clear();
@@ -145,6 +148,43 @@ public:
 
     TS_ASSERT_EQUALS( ok, true );
     TS_ASSERT_EQUALS( (bool)cap.contains("eeprom"), true );
+  }
+  void testSaveToFile( void )
+  {
+    string test = "This is a test of writing stuff to EEPROM.";
+    int addr = 100;
+
+    // Write a string out
+    string::const_iterator it = test.begin();
+    while (it != test.end())
+    {
+      ee.writeByte(addr++,*it++);
+    }
+    ee.writeByte(addr,0);
+
+    ofstream outfile;
+    outfile.open("out/eeprom.bin");
+    outfile << ee; 
+    outfile.close();
+
+    ee.clear();
+
+    ifstream infile;
+    infile.open("out/eeprom.bin",ifstream::binary);
+    infile >> ee;
+    infile.close();
+    
+    // Read a string back
+    string result;
+    addr = 100;
+    char c = ee.readByte(addr++);
+    while (c)
+    {
+      result.push_back(c);
+      c = ee.readByte(addr++);
+    }
+    
+    TS_ASSERT_EQUALS( test, result );
   }
 };
 // eeprom <addr> -- read one byte
