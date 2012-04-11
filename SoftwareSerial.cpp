@@ -9,10 +9,15 @@
 // STL headers
 // C headers
 // Framework headers
+#include <Logger.h>
+#include <SerialBuffer.h>
 // Library headers
 // Project headers
 // This component's header
 #include <SoftwareSerial.h>
+
+extern Logger theLogger;
+extern SerialBuffer theSerialBuffer;
 
 /****************************************************************************/
 SoftwareSerial::SoftwareSerial(uint8_t /*receivePin*/, uint8_t /*transmitPin*/, bool /*inverse_logic*/ )
@@ -23,9 +28,11 @@ SoftwareSerial::~SoftwareSerial()
 }
 void SoftwareSerial::begin(long /*speed*/)
 {
+  theLogger.sketch("CORE","Software Serial started.");
 }
-void SoftwareSerial::write(uint8_t /*byte*/)
+void SoftwareSerial::write(uint8_t c)
 {
+  theSerialBuffer.put(c);
 }
 void SoftwareSerial::flush()
 {
