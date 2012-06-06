@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 inline uint8_t pgm_read_byte(const uint8_t* p) { return *p; }
+inline uint32_t pgm_read_dword(const uint32_t* p) { return *p; }
 extern void printf_P(const char* format,...);
 
 #ifdef __cplusplus
