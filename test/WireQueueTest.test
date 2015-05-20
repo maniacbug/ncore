@@ -30,18 +30,18 @@ public:
     pLogger = new Logger();
     pWireQueue = new WireQueue(*pLogger);
   }
-  
+
   void tearDown()
   {
     delete pWireQueue;
-    delete pLogger;
+    // delete pLogger;
   }
 
   void testEmpty( void )
   {
     TS_ASSERT(pWireQueue);
   }
-  
+
   void testSend( void )
   {
     pWireQueue->send(0xfe);
