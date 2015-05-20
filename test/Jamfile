@@ -1,12 +1,12 @@
 CXXTEST_DIR	= $(HOME)/Source/cxxtest ;
-INTERNAL_DIR	= ../internal ;
 CORE_DIR	= .. ;
+INTERNAL_DIR  = $(CORE_DIR)/internal ;
 EXTRAS_DIR	= $(CORE_DIR)/extras ;
 
 HDRS		+= $(CXXTEST_DIR) $(PWD) $(INTERNAL_DIR) $(CORE_DIR) ;
 DEFINES		+= NATIVE=1 ;
 
-CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ; 
+CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ;
 INTERNAL_MODULES = [ GLOB $(INTERNAL_DIR) : *.cpp ] ;
 TEST_MODULES	= [ GLOB $(PWD) : *Test.test ] ;
 MOCK_MODULES	= $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
@@ -18,7 +18,7 @@ C++		= c++ ;
 LOCATE_TARGET	= out ;
 LOCATE_SOURCE	= out ;
 CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
-C++FLAGS	= $(CCFLAGS) ; 
+C++FLAGS	= $(CCFLAGS) ;
 LINKFLAGS	= -fprofile-arcs ;
 
 if ( $(OS) = MACOSX )
@@ -78,7 +78,7 @@ actions RunTest
   $(>) | tee $(<)
 }
 
-rule Coverage 
+rule Coverage
 {
   Depends $(<) : $(>) ;
   Depends $(<) : result ;
@@ -87,7 +87,7 @@ rule Coverage
   Clean clean : $(2:D=).gcov ;
 }
 
-actions ignore Coverage 
+actions ignore Coverage
 {
   gcov $(>) -o $(LOCATE_TARGET)/ > $(<)
   $(MV) *.gcov $(LOCATE_TARGET)/
@@ -102,9 +102,9 @@ rule Pde
 
 actions Pde
 {
-  echo "#include <WProgram.h>" > $(<) 
+  echo "#include <WProgram.h>" > $(<)
   echo "#line 1 \"$(>)\"" >> $(<)
-  cat $(>) >> $(<) 
+  cat $(>) >> $(<)
 }
 
 rule C++Pde
@@ -140,11 +140,62 @@ rule Main
 
 TestRoot runner.cpp ;
 Main Tests : runner.cpp $(INTERNAL_MODULES) $(MOCK_MODULES) $(TEST_MODULES) ;
+LINKFLAGS on Tests = $(LINKFLAGS) -lreadline -lpthread ;
 RunTest result : Tests ;
 Coverage coverage : $(INTERNAL_MODULES) ;
 
 #Main Shell : $(EXTRAS_DIR)/shellmain.cpp $(INTERNAL_MODULES) $(CORE_MODULES) $(SKETCH_MODULES) ;
 #LINKFLAGS on Shell = $(LINKFLAGS) -lreadline -lpthread ;
 
-#TestSuite macrunner.cpp : SchedulerTest.test QueueTSTest.test SpiQueueTest.test ParserTest.test ClockTest.test LoggerTest.test EepromTest.test SketchThreadTest.test ;
-#Main MacTests : macrunner.cpp  $(INTERNAL_DIR)/Scheduler.cpp  $(INTERNAL_DIR)/Parser.cpp  $(INTERNAL_DIR)/SketchThread.cpp $(INTERNAL_DIR)/Clock.cpp $(INTERNAL_DIR)/Logger.cpp $(INTERNAL_DIR)/Eeprom.cpp $(INTERNAL_DIR)/Dispatcher.cpp $(INTERNAL_DIR)/SpiQueue.cpp $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
+TestSuite clock.cpp : ClockTest.test ;
+Main clock : clock.cpp runner.cpp $(INTERNAL_DIR)/Clock.cpp $(EXTRAS_DIR)/mock_time.cpp ;
+RunTest run_clock : clock ;
+
+TestSuite commands.cpp : CommandsTest.test ;
+Main commands : commands.cpp runner.cpp $(INTERNAL_DIR)/Dispatcher.cpp $(INTERNAL_DIR)/Parser.cpp ;
+RunTest run_commands : commands ;
+
+TestSuite eeprom.cpp : EepromTest.test ;
+Main eeprom : eeprom.cpp runner.cpp $(INTERNAL_DIR)/EepromInternal.cpp $(LOGGER_MODULES) ;
+RunTest run_eeprom : eeprom ;
+
+TestSuite logger.cpp : LoggerTest.test ;
+Main logger : logger.cpp runner.cpp $(LOGGER_MODULES) ;
+RunTest run_logger : logger ;
+
+TestSuite parser.cpp : ParserTest.test ;
+Main parser : parser.cpp runner.cpp $(INTERNAL_DIR)/Parser.cpp ;
+RunTest run_parser : parser ;
+
+TestSuite pins.cpp : PinsTest.test ;
+Main pins : pins.cpp runner.cpp $(INTERNAL_DIR)/Pins.cpp $(LOGGER_MODULES) ;
+RunTest run_pins : pins ;
+
+TestSuite queue_ts.cpp : QueueTSTest.test ;
+Main queue_ts : queue_ts.cpp runner.cpp $(SKETCHTHREAD_MODULES) $(INTERNAL_DIR)/Clock.cpp ;
+RunTest run_queue_ts : queue_ts ;
+
+TestSuite scheduler.cpp : SchedulerTest.test ;
+Main scheduler : scheduler.cpp runner.cpp $(INTERNAL_DIR)/Scheduler.cpp $(LOGGER_MODULES) $(SKETCHTHREAD_MODULES) $(EXTRAS_DIR)/mock_time.cpp $(CORE_DIR)/test/globals.cpp ;
+RunTest run_scheduler : scheduler ;
+
+TestSuite serial_buffer.cpp : SerialBufferTest.test ;
+Main serial_buffer : serial_buffer.cpp runner.cpp $(INTERNAL_DIR)/SerialBuffer.cpp $(LOGGER_MODULES) ;
+RunTest run_serial_buffer : serial_buffer ;
+
+TestSuite shell_suite.cpp : ShellTest.test ;
+Main shell_suite : shell_suite.cpp runner.cpp $(INTERNAL_DIR)/Shell.cpp $(INTERNAL_DIR)/Pins.cpp $(EXTRAS_DIR)/readline.cpp $(LOGGER_MODULES) ;
+RunTest run_shell_suite : shell_suite ;
+
+TestSuite sketch_thread.cpp : SketchThreadTest.test ;
+Main sketch_thread : sketch_thread.cpp runner.cpp $(INTERNAL_DIR)/SketchThread.cpp $(INTERNAL_DIR)/Clock.cpp $(INTERNAL_DIR)/Logger.cpp ;
+RunTest run_sketch_thread : sketch_thread ;
+
+TestSuite spi_queue.cpp : SpiQueueTest.test ;
+Main spi_queue : spi_queue.cpp runner.cpp $(INTERNAL_DIR)/SpiQueue.cpp $(SKETCHTHREAD_MODULES) $(LOGGER_MODULES) $(CORE_DIR)/test/globals.cpp ;
+RunTest run_spi_queue : spi_queue ;
+
+TestSuite wire_queue.cpp : WireQueueTest.test ;
+Main wire_queue : wire_queue.cpp runner.cpp $(INTERNAL_DIR)/WireQueue.cpp $(INTERNAL_DIR)/Logger.cpp $(INTERNAL_DIR)/Clock.cpp ;
+RunTest run_wire_queue : wire_queue ;
+
