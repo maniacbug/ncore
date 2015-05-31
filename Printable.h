@@ -1,6 +1,6 @@
 /*
-  HardwareSerial.h - Hardware serial library for Wiring
-  Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
+  Printable.h - Interface class that allows printing of complex types
+  Copyright (c) 2011 Adrian McEwen.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,35 +15,25 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-  Modified 28 September 2010 by Mark Sproul
 */
 
-#ifndef HardwareSerial_h
-#define HardwareSerial_h
+#ifndef Printable_h
+#define Printable_h
 
-#include <inttypes.h>
 
-#include "Stream.h"
+class Print;
 
-struct ring_buffer;
+/** The Printable class provides a way for new classes to allow themselves to be printed.
+    By deriving from Printable and implementing the printTo method, it will then be possible
+    for users to print out instances of this class by passing them into the usual
+    Print::print and Print::println methods.
+*/
 
-class HardwareSerial : public Stream
+class Printable
 {
   public:
-    HardwareSerial() {}
-    void begin(long);
-    void end();
-    virtual int available(void);
-    virtual int peek(void);
-    virtual int read(void);
-    virtual void flush(void);
-    virtual size_t write(uint8_t);
-    using Print::write; // pull in write(str) and write(buf, size) from Print
+    virtual size_t printTo(Print& p) const = 0;
 };
 
-  extern HardwareSerial Serial;
-  extern HardwareSerial Serial1;
-
 #endif
-// vim:cin:ai:sts=2 sw=2
+
