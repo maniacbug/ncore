@@ -4,7 +4,7 @@
 #include <Logger.h>
 #include <SerialBuffer.h>
 
-#include <WProgram.h>
+#include <Arduino.h>
 #include "HardwareSerial.h"
 
 HardwareSerial Serial;
@@ -44,9 +44,9 @@ void HardwareSerial::flush()
   // theSerialBuffer.flush();
 }
 
-void HardwareSerial::write(uint8_t c)
+size_t HardwareSerial::write(uint8_t c)
 {
-  theSerialBuffer.put(c);
+  return theSerialBuffer.put(c);
 }
 
 // vim:cin:ai:sts=2 sw=2

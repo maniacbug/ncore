@@ -7,6 +7,7 @@
 #include <iomanip>
 // C includes
 #include <inttypes.h>
+#include <cstring>
 // Library includes
 // Project includes
 #include <Logger.h>
@@ -41,25 +42,29 @@ void SerialBuffer::flush(void)
 
 /****************************************************************************/
 
-void SerialBuffer::put(const string& str)
+size_t SerialBuffer::put(const string& str)
 {
   // WTF is this for??!!
-  log.sketch("SERL",str);
+  log.sketch("SERL", str);
+  return strlen(str.c_str());
 }
 
 /****************************************************************************/
 
-void SerialBuffer::put(char c)
+size_t SerialBuffer::put(char c)
 {
+  size_t n = 0;
   if ( outstream_has_data && internalClock.millis() - last_logged_at > 1000 )
   {
     outstream << "[nocr]";
     flush();
+    n+=6;
   }
 
   if ( c == '\n' )
   {
     flush();
+    n+=1;
   }
   else if ( c == '\r' )
   {
@@ -68,17 +73,19 @@ void SerialBuffer::put(char c)
   else if ( c < ' ' || c > 'z' )
   {
     outstream << "[0x" << setbase(16) << (unsigned int)(unsigned char)c << "]" ;
+    n+= 4 + strlen((const char*)&c);
     if ( !outstream_has_data )
       last_logged_at = internalClock.millis();
     outstream_has_data = true;
   }
-  else
-  {
+  else {
+    n+= strlen((const char*)&c);
     outstream << c;
     if ( !outstream_has_data )
       last_logged_at = internalClock.millis();
     outstream_has_data = true;
   }
+  return n;
 
 }
 
@@ -106,7 +113,7 @@ char SerialBuffer::get(void)
 }
 
 /****************************************************************************/
-  
+
 char SerialBuffer::peek(void) const
 {
   SerialBuffer* nonconst_this = const_cast<SerialBuffer*>(this);

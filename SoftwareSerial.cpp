@@ -30,9 +30,9 @@ void SoftwareSerial::begin(long /*speed*/)
 {
   theLogger.sketch("CORE","Software Serial started.");
 }
-void SoftwareSerial::write(uint8_t c)
+size_t SoftwareSerial::write(uint8_t c)
 {
-  theSerialBuffer.put(c);
+  return theSerialBuffer.put(c);
 }
 void SoftwareSerial::flush()
 {

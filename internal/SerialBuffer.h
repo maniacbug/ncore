@@ -38,8 +38,8 @@ protected:
 
 public:
   SerialBuffer(Logger& _log): log(_log), outstream_has_data(false) {}
-  void put(const std::string &);
-  void put(char);
+  size_t put(const std::string &);
+  size_t put(char);
   bool available(void) const;
   char get(void);
   void flush(void);

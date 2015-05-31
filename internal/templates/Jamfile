@@ -53,7 +53,7 @@ actions RunTest
   $(>) | tee $(<)
 }
 
-rule Coverage 
+rule Coverage
 {
 	Depends $(<) : $(>) ;
 	Depends $(<) : result ;
@@ -62,7 +62,7 @@ rule Coverage
 	Clean clean : $(2:D=).gcov ;
 }
 
-actions ignore Coverage 
+actions ignore Coverage
 {
 	gcov $(>) -o $(LOCATE_TARGET)/ > $(<)
 	$(MV) *.gcov $(LOCATE_TARGET)/
@@ -79,7 +79,7 @@ rule Pde
 
 actions Pde
 {
-	echo "#include <WProgram.h>" > $(<)
+	echo "#include <Arduino.h>" > $(<)
 	echo "#line 1 \"$(>)\"" >> $(<)
 	cat $(>) >> $(<)
 }
