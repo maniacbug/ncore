@@ -102,7 +102,7 @@ rule Pde
 
 actions Pde
 {
-  echo "#include <WProgram.h>" > $(<)
+  echo "#include <Arduino.h>" > $(<)
   echo "#line 1 \"$(>)\"" >> $(<)
   cat $(>) >> $(<)
 }

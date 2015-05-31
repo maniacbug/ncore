@@ -10,7 +10,7 @@
 #include <Logger.h>
 #include <Pins.h>
 #include <Clock.h>
-#include <WProgram.h>
+#include <Arduino.h>
 
 using namespace std;
 
@@ -20,10 +20,10 @@ extern Clock theClock;
 
 extern "C" {
 
-void __cxa_pure_virtual() 
+void __cxa_pure_virtual()
 {
   theLogger.sketch("CORE","SYSTEM HALT -- cxa_pure_virtual");
-  while (1) {} 
+  while (1) {}
 }
 
 //
@@ -114,8 +114,8 @@ void printf_P(const char* format,...)
   va_start (args, format);
   //vprintf (formatstr.c_str(), args);
   theLogger.sketch_v("PRTF",formatstr.c_str(),args);
-  
-  va_end (args); 
+
+  va_end (args);
 }
 
 //
@@ -125,7 +125,7 @@ void printf_P(const char* format,...)
 unsigned long pulseIn(uint8_t pin, uint8_t /*state*/, unsigned long /*timeout*/ )
 {
   theLogger.sketch("CORE","%i: pulseIn 1000",pin);
-  
+
   return 1000LU;
 }
 

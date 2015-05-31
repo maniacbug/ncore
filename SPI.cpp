@@ -9,7 +9,7 @@
  */
 
 #include <SpiQueue.h>
-#include <WProgram.h>
+#include <Arduino.h>
 #include "pins_arduino.h"
 #include "SPI.h"
 

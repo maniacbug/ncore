@@ -4,7 +4,7 @@
 #include <Logger.h>
 #include <SerialBuffer.h>
 
-#include <WProgram.h>
+#include <Arduino.h>
 #include "HardwareSerial.h"
 
 HardwareSerial Serial;

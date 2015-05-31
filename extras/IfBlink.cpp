@@ -1,4 +1,4 @@
-#include <WProgram.h>
+#include <Arduino.h>
 #line 1 "./Blink.pde"
 /*
   Blink
