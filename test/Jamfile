@@ -1,38 +1,40 @@
-CXXTEST_DIR	= $(HOME)/Source/cxxtest ;
-CORE_DIR	= .. ;
+CXXTEST_DIR = $(HOME)/Source/cxxtest ;
+CORE_DIR  = .. ;
 INTERNAL_DIR  = $(CORE_DIR)/internal ;
-EXTRAS_DIR	= $(CORE_DIR)/extras ;
+EXTRAS_DIR    = $(CORE_DIR)/extras ;
 
-HDRS		+= $(CXXTEST_DIR) $(PWD) $(INTERNAL_DIR) $(CORE_DIR) ;
-DEFINES		+= NATIVE=1 ;
+HDRS      += $(CXXTEST_DIR) $(PWD) $(INTERNAL_DIR) $(CORE_DIR) ;
+DEFINES   += NATIVE=1 ;
 
-CORE_MODULES	= [ GLOB $(CORE_DIR) : *.cpp ] ;
-INTERNAL_MODULES = [ GLOB $(INTERNAL_DIR) : *.cpp ] ;
-TEST_MODULES	= [ GLOB $(PWD) : *Test.test ] ;
-MOCK_MODULES	= $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
-SKETCH_MODULES	= $(EXTRAS_DIR)/IfBlink.cpp ;
+CORE_MODULES          = [ GLOB $(CORE_DIR) : *.cpp ] ;
+INTERNAL_MODULES      = [ GLOB $(INTERNAL_DIR) : *.cpp ] ;
+TEST_MODULES          = [ GLOB $(PWD) : *Test.test ] ;
+MOCK_MODULES          = $(EXTRAS_DIR)/readline.cpp $(EXTRAS_DIR)/mock_time.cpp ;
+SKETCH_MODULES        = $(EXTRAS_DIR)/IfBlink.cpp ;
+LOGGER_MODULES        = $(INTERNAL_DIR)/Logger.cpp $(INTERNAL_DIR)/Parser.cpp $(INTERNAL_DIR)/Dispatcher.cpp $(INTERNAL_DIR)/Clock.cpp ;
+SKETCHTHREAD_MODULES  = $(INTERNAL_DIR)/SketchThread.cpp $(EXTRAS_DIR)/setuploop.cpp ;
 
-CXXTEST_GEN	= $(CXXTEST_DIR)/bin/cxxtestgen --error-printer ;
-LINK		= c++ ;
-C++		= c++ ;
-LOCATE_TARGET	= out ;
-LOCATE_SOURCE	= out ;
-CCFLAGS		= -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
-C++FLAGS	= $(CCFLAGS) ;
-LINKFLAGS	= -fprofile-arcs ;
+CXXTEST_GEN = $(CXXTEST_DIR)/bin/cxxtestgen --error-printer ;
+LINK    = c++ ;
+C++   = c++ ;
+LOCATE_TARGET = out ;
+LOCATE_SOURCE = out ;
+CCFLAGS   = -fprofile-arcs -ftest-coverage -g -O0 -fno-inline -Wall -Wextra ;
+C++FLAGS  = $(CCFLAGS) ;
+LINKFLAGS = -fprofile-arcs ;
 
 if ( $(OS) = MACOSX )
 {
-	HDRS 		+= /Developer/SDKs/MacOSX10.6.sdk/usr/include ;
-	DEFINES 	+= MAC=1 ;
-	CXXTEST_GEN	= $(CXXTEST_DIR)/python/scripts/cxxtestgen ;
-	LINKFLAGS	+= -lpthread ;
+  HDRS    += /Developer/SDKs/MacOSX10.6.sdk/usr/include ;
+  DEFINES   += MAC=1 ;
+  CXXTEST_GEN = $(CXXTEST_DIR)/python/scripts/cxxtestgen ;
+  LINKFLAGS += -lpthread ;
 }
 else
 {
-	LINKFLAGS	+= -Wl,--no-as-needed -lpthread ;
-	LINKFLAGS	+= -lrt ;
-	C++FLAGS	+= -std=c++0x ;
+  LINKFLAGS += -Wl,--no-as-needed -lpthread ;
+  LINKFLAGS += -lrt ;
+  C++FLAGS  += -std=c++0x ;
 }
 
 rule TestSuite
@@ -124,18 +126,18 @@ rule UserObject
 }
 rule Objects
 {
-        local _i ;
+  local _i ;
 
-        for _i in [ FGristFiles $(<) ]
-        {
-                Object $(_i:B)$(SUFOBJ) : $(_i) ;
-                Depends obj : $(_i:B)$(SUFOBJ) ;
-        }
+  for _i in [ FGristFiles $(<) ]
+  {
+    Object $(_i:B)$(SUFOBJ) : $(_i) ;
+    Depends obj : $(_i:B)$(SUFOBJ) ;
+  }
 }
 rule Main
 {
-        MainFromObjects $(<) : $(>:B)$(SUFOBJ) ;
-        Objects $(>) ;
+  MainFromObjects $(<) : $(>:B)$(SUFOBJ) ;
+  Objects $(>) ;
 }
 
 TestRoot runner.cpp ;
@@ -198,4 +200,3 @@ RunTest run_spi_queue : spi_queue ;
 TestSuite wire_queue.cpp : WireQueueTest.test ;
 Main wire_queue : wire_queue.cpp runner.cpp $(INTERNAL_DIR)/WireQueue.cpp $(INTERNAL_DIR)/Logger.cpp $(INTERNAL_DIR)/Clock.cpp ;
 RunTest run_wire_queue : wire_queue ;
-
